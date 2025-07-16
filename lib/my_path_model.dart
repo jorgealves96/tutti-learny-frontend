@@ -8,6 +8,7 @@ enum PathCategory {
   Business,
   Wellness,
   LifeSkills,
+  Gaming, // Added Gaming
   Academic,
   Other
 }
@@ -42,6 +43,8 @@ class MyPath {
         return Icons.favorite_border;
       case PathCategory.LifeSkills:
         return Icons.home_work_outlined;
+      case PathCategory.Gaming:
+        return Icons.sports_esports_outlined;
       case PathCategory.Academic:
         return Icons.school_outlined;
       default:
@@ -53,7 +56,7 @@ class MyPath {
     // Convert the category string from the API to our enum
     final categoryString = json['category'] ?? 'Other';
     final category = PathCategory.values.firstWhere(
-      (e) => e.toString().split('.').last == categoryString,
+      (e) => e.toString().split('.').last.toLowerCase() == categoryString.toLowerCase(),
       orElse: () => PathCategory.Other,
     );
 

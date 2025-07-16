@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'api_service.dart';
-import 'path_detail_screen.dart';
 
 class GeneratingPathScreen extends StatefulWidget {
   final String prompt;
@@ -29,24 +28,17 @@ class _GeneratingPathScreenState extends State<GeneratingPathScreen> with Single
 
   Future<void> _createPathAndNavigate() async {
     try {
-      // Call the API to create the new path
       final newPath = await _apiService.createLearningPath(widget.prompt);
       
-      // If the widget is still mounted after the API call, navigate to the detail screen
+      // If the widget is still mounted, pop back and return the new path's ID
       if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PathDetailScreen(pathId: newPath.id),
-          ),
-        );
+        Navigator.pop(context, newPath.id);
       }
     } catch (e) {
-      // If there's an error (including a timeout), show a snackbar and pop back to the home screen
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: ${e.toString().replaceFirst("Exception: ", "")}'),
+            content: Text('Error creating path: ${e.toString()}'),
             backgroundColor: Colors.red,
           ),
         );
@@ -74,7 +66,7 @@ class _GeneratingPathScreenState extends State<GeneratingPathScreen> with Single
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        automaticallyImplyLeading: false, // Hide the back button
+        automaticallyImplyLeading: false,
       ),
       body: Center(
         child: Padding(
@@ -82,7 +74,6 @@ class _GeneratingPathScreenState extends State<GeneratingPathScreen> with Single
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Pulsating icon animation
               FadeTransition(
                 opacity: _animationController,
                 child: Container(

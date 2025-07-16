@@ -1,44 +1,30 @@
 import 'package:flutter/material.dart';
 import 'my_path_model.dart';
-import 'api_service.dart';
 import 'path_detail_screen.dart';
 
-class MyPathsScreen extends StatefulWidget {
-  const MyPathsScreen({super.key});
+// This is now a StatelessWidget because it no longer manages its own state.
+class MyPathsScreen extends StatelessWidget {
+  final List<MyPath> myPaths;
+  final VoidCallback onRefresh; // Callback to refresh the data in the parent
+  final VoidCallback onAddPath; // Callback to navigate to the home screen
 
-  @override
-  State<MyPathsScreen> createState() => _MyPathsScreenState();
-}
+  const MyPathsScreen({
+    super.key,
+    required this.myPaths,
+    required this.onRefresh,
+    required this.onAddPath,
+  });
 
-class _MyPathsScreenState extends State<MyPathsScreen> {
-  late Future<List<MyPath>> _myPathsFuture;
-  final ApiService _apiService = ApiService();
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchPaths(); // Initial data fetch
-  }
-
-  // Helper method to fetch or re-fetch the list of paths
-  void _fetchPaths() {
-    setState(() {
-      _myPathsFuture = _apiService.fetchMyPaths();
-    });
-  }
-
-  // Handles navigation and refreshes the data when the user returns
-  Future<void> _navigateToDetail(int pathId) async {
-    // Wait for the detail screen to be "popped" (i.e., when the user presses the back arrow)
+  // Handles navigation and tells the parent to refresh when the user returns
+  Future<void> _navigateToDetail(BuildContext context, int pathId) async {
     await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => PathDetailScreen(pathId: pathId),
       ),
     );
-
-    // After returning from the detail screen, refresh the list of paths
-    _fetchPaths();
+    // After returning from the detail screen, call the parent's refresh callback.
+    onRefresh();
   }
 
   @override
@@ -49,30 +35,21 @@ class _MyPathsScreenState extends State<MyPathsScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.add_circle_outline, size: 28),
-            onPressed: () {},
+            onPressed: onAddPath,
           ),
         ],
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: FutureBuilder<List<MyPath>>(
-        future: _myPathsFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No paths created yet.'));
-          } else {
-            final paths = snapshot.data!;
-            return ListView.builder(
+      body: myPaths.isEmpty
+          ? const Center(child: Text('No paths created yet.'))
+          : ListView.builder(
               padding: const EdgeInsets.all(16.0),
-              itemCount: paths.length,
+              itemCount: myPaths.length,
               itemBuilder: (context, index) {
-                final path = paths[index];
+                final path = myPaths[index];
                 return GestureDetector(
-                  onTap: () => _navigateToDetail(path.id), // Call the new navigation method
+                  onTap: () => _navigateToDetail(context, path.id),
                   child: Card(
                     margin: const EdgeInsets.only(bottom: 16.0),
                     elevation: 4,
@@ -128,10 +105,7 @@ class _MyPathsScreenState extends State<MyPathsScreen> {
                   ),
                 );
               },
-            );
-          }
-        },
-      ),
+            ),
     );
   }
 }

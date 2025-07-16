@@ -1,60 +1,84 @@
 import 'package:flutter/material.dart';
 
-// Enum to represent the different types of path items
-enum PathItemType { article, video, book, project, documentation }
+// Enum for the resource type
+enum ResourceType { article, video, book, project, documentation, other }
 
-// Model for a single item in the detailed path view
+// Model for a single resource link
+class ResourceDetail {
+  final int id;
+  final String title;
+  final String url;
+  final ResourceType type;
+  bool isCompleted; // This is mutable
+
+  ResourceDetail({
+    required this.id,
+    required this.title,
+    required this.url,
+    required this.type,
+    required this.isCompleted,
+  });
+
+  IconData get icon {
+    switch (type) {
+      case ResourceType.article:
+        return Icons.article_outlined;
+      case ResourceType.video:
+        return Icons.play_circle_outline;
+      case ResourceType.book:
+        return Icons.book_outlined;
+      case ResourceType.project:
+        return Icons.code;
+      case ResourceType.documentation:
+        return Icons.description_outlined;
+      default:
+        return Icons.link;
+    }
+  }
+
+  factory ResourceDetail.fromJson(Map<String, dynamic> json) {
+    final typeString = (json['type'] as String? ?? 'other').toLowerCase();
+    final type = ResourceType.values.firstWhere(
+      (e) => e.name.toLowerCase() == typeString,
+      orElse: () => ResourceType.other,
+    );
+
+    return ResourceDetail(
+      id: json['id'] ?? 0,
+      title: json['title'] ?? 'Untitled Resource',
+      url: json['url'] ?? '',
+      type: type,
+      isCompleted: json['isCompleted'] ?? false,
+    );
+  }
+}
+
+// Model for a single item (a conceptual step) in the detailed path view
 class PathItemDetail {
   final int id;
   final String title;
-  final String? url;
-  final PathItemType type;
   final int order;
-  bool isCompleted;
+  bool isCompleted; // isCompleted is now back on the model
+  final List<ResourceDetail> resources;
 
   PathItemDetail({
     required this.id,
     required this.title,
-    this.url,
-    required this.type,
     required this.order,
-    this.isCompleted = false,
+    required this.isCompleted,
+    required this.resources,
   });
 
-  // Helper method to get the correct icon based on the type
-  IconData get icon {
-    switch (type) {
-      case PathItemType.article:
-        return Icons.article_outlined;
-      case PathItemType.video:
-        return Icons.play_circle_outline;
-      case PathItemType.book:
-        return Icons.book_outlined;
-      case PathItemType.project:
-        return Icons.code;
-      case PathItemType.documentation:
-        return Icons.description_outlined;
-      default:
-        return Icons.article_outlined;
-    }
-  }
-
-  // Factory constructor to create a PathItemDetail from JSON
   factory PathItemDetail.fromJson(Map<String, dynamic> json) {
-    // Convert the string type from the API to our enum
-    final typeString = (json['type'] as String).toLowerCase();
-    final type = PathItemType.values.firstWhere(
-      (e) => e.toString().split('.').last == typeString,
-      orElse: () => PathItemType.article, // Default to article if type is unknown
-    );
+    var resourcesList = json['resources'] as List? ?? [];
+    List<ResourceDetail> resources = resourcesList.map((i) => ResourceDetail.fromJson(i)).toList();
 
     return PathItemDetail(
-      id: json['id'],
-      title: json['title'],
-      url: json['url'],
-      type: type,
-      order: json['order'],
-      isCompleted: json['isCompleted'],
+      id: json['id'] ?? 0,
+      title: json['title'] ?? 'Untitled Step',
+      order: json['order'] ?? 0,
+      isCompleted: json['isCompleted'] ?? false,
+      resources: resources,
     );
   }
 }
@@ -76,14 +100,14 @@ class LearningPathDetail {
   });
 
   factory LearningPathDetail.fromJson(Map<String, dynamic> json) {
-    var itemsList = json['pathItems'] as List;
+    var itemsList = json['pathItems'] as List? ?? [];
     List<PathItemDetail> pathItems = itemsList.map((i) => PathItemDetail.fromJson(i)).toList();
 
     return LearningPathDetail(
-      id: json['id'],
-      title: json['title'],
-      description: json['description'],
-      createdAt: DateTime.parse(json['createdAt']),
+      id: json['id'] ?? 0,
+      title: json['title'] ?? 'Untitled Path',
+      description: json['description'] ?? '',
+      createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : DateTime.now(),
       pathItems: pathItems,
     );
   }

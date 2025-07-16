@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'api_service.dart';
 import 'home_screen.dart';
+import 'my_path_model.dart';
 import 'my_paths_screen.dart';
 import 'profile_screen.dart';
 
@@ -16,15 +18,13 @@ class TuttiLearnyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Tutti Learny',
       theme: ThemeData(
-        // Define the color scheme based on the design
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF0A192F), // Deep Navy Blue
+          seedColor: const Color(0xFF0A192F),
           primary: const Color(0xFF0A192F),
-          secondary: const Color(0xFF007BFF), // A vibrant blue for buttons
-          surface: const Color(0xFFF4F6F8), // Light grey background
+          secondary: const Color(0xFF007BFF),
+          surface: const Color(0xFFF4F6F8),
         ),
         scaffoldBackgroundColor: const Color(0xFFF4F6F8),
-        // Use the Inter font throughout the app
         textTheme: GoogleFonts.interTextTheme(
           Theme.of(context).textTheme,
         ),
@@ -36,7 +36,6 @@ class TuttiLearnyApp extends StatelessWidget {
   }
 }
 
-// This widget manages the state of the Bottom Navigation Bar
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
@@ -46,13 +45,27 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
+  final ApiService _apiService = ApiService();
+  late Future<List<MyPath>> _pathsFuture;
+  final FocusNode _homeScreenFocusNode = FocusNode();
 
-  // A list of the widgets to display for each tab
-  static const List<Widget> _widgetOptions = <Widget>[
-    HomeScreen(),
-    MyPathsScreen(),
-    ProfileScreen()
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _fetchPaths();
+  }
+
+  @override
+  void dispose() {
+    _homeScreenFocusNode.dispose();
+    super.dispose();
+  }
+
+  void _fetchPaths() {
+    setState(() {
+      _pathsFuture = _apiService.fetchMyPaths();
+    });
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -60,39 +73,102 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
+  void _navigateAndFocusHome() {
+    _onItemTapped(0);
+    Future.delayed(const Duration(milliseconds: 50), () {
+      _homeScreenFocusNode.requestFocus();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
+      body: FutureBuilder<List<MyPath>>(
+        future: _pathsFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return ErrorDisplay(
+              errorMessage: snapshot.error.toString().replaceFirst("Exception: ", ""),
+              onRetry: _fetchPaths,
+            );
+          } else if (!snapshot.hasData) {
+            return const Center(child: Text('No data available.'));
+          }
+
+          final paths = snapshot.data!;
+          
+          final List<Widget> widgetOptions = <Widget>[
+            HomeScreen(
+              recentPaths: paths, 
+              onPathAction: _fetchPaths,
+              homeFocusNode: _homeScreenFocusNode,
+            ),
+            MyPathsScreen(
+              myPaths: paths, 
+              onRefresh: _fetchPaths, // Pass the refresh callback
+              onAddPath: _navigateAndFocusHome, // Pass the navigation callback
+            ),
+            const ProfileScreen(),
+          ];
+
+          return IndexedStack(
+            index: _selectedIndex,
+            children: widgetOptions,
+          );
+        },
       ),
       bottomNavigationBar: BottomNavigationBar(
-        // Updated list of navigation items
         items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.school_outlined),
-            activeIcon: Icon(Icons.school),
-            label: 'My Paths',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            activeIcon: Icon(Icons.person),
-            label: 'Profile',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), activeIcon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.school_outlined), activeIcon: Icon(Icons.school), label: 'My Paths'),
+          BottomNavigationBarItem(icon: Icon(Icons.person_outline), activeIcon: Icon(Icons.person), label: 'Profile'),
         ],
         currentIndex: _selectedIndex,
-        // Use the accent color for the selected item
         selectedItemColor: Theme.of(context).colorScheme.secondary,
         unselectedItemColor: Colors.grey[600],
         onTap: _onItemTapped,
-        // These properties are needed to show labels and prevent the bar from shifting
         showUnselectedLabels: true,
         type: BottomNavigationBarType.fixed,
+      ),
+    );
+  }
+}
+
+class ErrorDisplay extends StatelessWidget {
+  final String errorMessage;
+  final VoidCallback onRetry;
+
+  const ErrorDisplay({super.key, required this.errorMessage, required this.onRetry});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.cloud_off, size: 60, color: Colors.grey),
+            const SizedBox(height: 20),
+            Text(
+              errorMessage,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton.icon(
+              onPressed: onRetry,
+              icon: const Icon(Icons.refresh),
+              label: const Text('Try Again'),
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Theme.of(context).colorScheme.secondary,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

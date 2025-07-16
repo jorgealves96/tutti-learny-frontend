@@ -1,56 +1,64 @@
 import 'package:flutter/material.dart';
-import 'api_service.dart';
 import 'my_path_model.dart';
 import 'path_detail_screen.dart';
-import 'generating_path_screen.dart'; // Import the new screen
+import 'generating_path_screen.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class HomeScreen extends StatelessWidget {
+  final List<MyPath> recentPaths;
+  final VoidCallback onPathAction;
+  final FocusNode homeFocusNode;
 
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  final TextEditingController _promptController = TextEditingController();
-  final ApiService _apiService = ApiService();
-  late Future<List<MyPath>> _recentPathsFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    // Fetch the paths when the screen is first loaded
-    _recentPathsFuture = _apiService.fetchMyPaths();
-  }
-
-  void _generatePath() {
-    final prompt = _promptController.text;
-    if (prompt.isNotEmpty) {
-      // Navigate to the generating screen and pass the prompt
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => GeneratingPathScreen(prompt: prompt),
-        ),
-      ).then((_) {
-        // After returning from the path creation flow, refresh the recent paths
-        setState(() {
-          _recentPathsFuture = _apiService.fetchMyPaths();
-        });
-      });
-    } else {
-      // Show an error if the prompt is empty
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter a topic to generate a path.'),
-          backgroundColor: Colors.orange,
-        ),
-      );
-    }
-  }
+  const HomeScreen({
+    super.key,
+    required this.recentPaths,
+    required this.onPathAction,
+    required this.homeFocusNode,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController promptController = TextEditingController();
+
+    void generatePath() {
+      final prompt = promptController.text;
+      if (prompt.isNotEmpty) {
+        // Navigate to the generating screen and wait for a result (the new path ID)
+        Navigator.push<int>(
+          context,
+          MaterialPageRoute(
+            builder: (context) => GeneratingPathScreen(prompt: prompt),
+          ),
+        ).then((newPathId) {
+          // This block runs after the GeneratingPathScreen pops
+          if (newPathId != null) {
+            // First, refresh the main list in the background
+            onPathAction();
+            
+            // Then, navigate to the new detail screen
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PathDetailScreen(pathId: newPathId),
+              ),
+            ).then((_) {
+              // This block runs when the user returns from the new detail screen,
+              // ensuring the progress is updated.
+              onPathAction();
+            });
+          }
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please enter a topic to generate a path.'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
+    }
+
+    final displayedPaths = recentPaths.take(3).toList();
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -77,14 +85,12 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 20),
             const Text(
               'What will you master today?',
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 30),
             TextField(
-              controller: _promptController,
+              controller: promptController,
+              focusNode: homeFocusNode,
               decoration: InputDecoration(
                 hintText: 'e.g., Learn Python for data analysis...',
                 filled: true,
@@ -95,13 +101,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 contentPadding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
               ),
-              onSubmitted: (_) => _generatePath(),
+              onSubmitted: (_) => generatePath(),
             ),
             const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _generatePath, // Call the new method
+                onPressed: generatePath,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.secondary,
                   foregroundColor: Colors.white,
@@ -113,75 +119,53 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 child: const Text(
                   'Generate Path',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
             const SizedBox(height: 40),
             const Text(
               'Recently Created Paths',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            // Use a FutureBuilder to display the recent paths
-            FutureBuilder<List<MyPath>>(
-              future: _recentPathsFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return const Center(child: Text('Could not load recent paths.'));
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(child: Text('No recent paths found.'));
-                }
-
-                final recentPaths = snapshot.data!.take(3).toList();
-
-                return ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: recentPaths.length,
-                  itemBuilder: (context, index) {
-                    final path = recentPaths[index];
-                    return Card(
-                      margin: const EdgeInsets.only(bottom: 12.0),
-                      elevation: 2,
-                      shadowColor: Colors.black.withOpacity(0.1),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      child: ListTile(
-                        title: Text(path.title, style: const TextStyle(fontWeight: FontWeight.w600)),
-                        trailing: const Icon(Icons.chevron_right),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => PathDetailScreen(pathId: path.id),
-                            ),
-                          );
-                        },
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
+            if (displayedPaths.isEmpty)
+              const Center(child: Padding(
+                padding: EdgeInsets.only(top: 20.0),
+                child: Text('No recent paths found.'),
+              ))
+            else
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: displayedPaths.length,
+                itemBuilder: (context, index) {
+                  final path = displayedPaths[index];
+                  return Card(
+                    margin: const EdgeInsets.only(bottom: 12.0),
+                    elevation: 2,
+                    shadowColor: Colors.black.withOpacity(0.1),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    child: ListTile(
+                      title: Text(path.title, style: const TextStyle(fontWeight: FontWeight.w600)),
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PathDetailScreen(pathId: path.id),
+                          ),
+                        ).then((_) => onPathAction());
+                      },
+                    ),
+                  );
+                },
+              ),
           ],
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _promptController.dispose();
-    super.dispose();
   }
 }

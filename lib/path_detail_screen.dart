@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'path_detail_model.dart';
 import 'api_service.dart';
+import 'content_viewer_screen.dart';
 
 class PathDetailScreen extends StatefulWidget {
   final int pathId;
@@ -24,45 +25,20 @@ class _PathDetailScreenState extends State<PathDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: const Text("Learning Path", style: TextStyle(fontWeight: FontWeight.bold)),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.more_horiz),
-            onPressed: () {},
-          ),
-        ],
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
-        label: const Text('Extend Path', style: TextStyle(fontWeight: FontWeight.bold)),
-        icon: const Icon(Icons.auto_awesome),
-        backgroundColor: Theme.of(context).colorScheme.secondary,
-        foregroundColor: Colors.white,
-      ),
-      body: FutureBuilder<LearningPathDetail>(
-        future: _pathDetailFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text("Error: ${snapshot.error}"));
-          } else if (!snapshot.hasData) {
-            return const Center(child: Text("Path not found."));
-          }
+    return FutureBuilder<LearningPathDetail>(
+      future: _pathDetailFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+        } else if (snapshot.hasError) {
+          return Scaffold(body: Center(child: Text("Error: ${snapshot.error}")));
+        } else if (!snapshot.hasData) {
+          return const Scaffold(body: Center(child: Text("Path not found.")));
+        }
 
-          final pathDetail = snapshot.data!;
-          return _PathDetailView(pathDetail: pathDetail);
-        },
-      ),
+        final pathDetail = snapshot.data!;
+        return _PathDetailView(pathDetail: pathDetail);
+      },
     );
   }
 }
@@ -86,108 +62,203 @@ class _PathDetailViewState extends State<_PathDetailView> {
   }
 
   double get _completionPercent {
-    if (_items.isEmpty) return 0.0;
-    final completedCount = _items.where((item) => item.isCompleted).length;
-    return completedCount / _items.length;
+    final allResources = _items.expand((item) => item.resources).toList();
+    if (allResources.isEmpty) return 0.0;
+    final completedCount = allResources.where((r) => r.isCompleted).length;
+    return completedCount / allResources.length;
   }
 
-  // Method to handle toggling the completion status
-  Future<void> _toggleCompletion(PathItemDetail item) async {
-    // Optimistically update the UI
+  Future<void> _togglePathItem(PathItemDetail item) async {
+    final originalState = item.isCompleted;
     setState(() {
-      item.isCompleted = !item.isCompleted;
+      item.isCompleted = !originalState;
+      for (var resource in item.resources) {
+        resource.isCompleted = item.isCompleted;
+      }
     });
 
     try {
-      // Call the API to update the backend
       await _apiService.togglePathItemCompletion(item.id);
     } catch (e) {
-      // If the API call fails, revert the change and show an error
       setState(() {
-        item.isCompleted = !item.isCompleted;
+        item.isCompleted = originalState;
       });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to update task: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text('Failed to update task: ${e.toString()}'), backgroundColor: Colors.red),
         );
       }
     }
   }
 
+  Future<void> _toggleResource(ResourceDetail resource, PathItemDetail parentItem) async {
+    final originalResourceState = resource.isCompleted;
+    final originalParentState = parentItem.isCompleted;
+    setState(() {
+      resource.isCompleted = !originalResourceState;
+      parentItem.isCompleted = parentItem.resources.every((r) => r.isCompleted);
+    });
+
+    try {
+      await _apiService.toggleResourceCompletion(resource.id);
+    } catch (e) {
+      setState(() {
+        resource.isCompleted = originalResourceState;
+        parentItem.isCompleted = originalParentState;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to update resource: ${e.toString()}'), backgroundColor: Colors.red),
+        );
+      }
+    }
+  }
+
+  void _openContent(ResourceDetail resource) {
+    if (resource.url.isNotEmpty) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ContentViewerScreen(url: resource.url, title: resource.title),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('This resource has no link available.')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              CircularPercentIndicator(
-                radius: 45.0,
-                lineWidth: 8.0,
-                percent: _completionPercent,
-                center: Text(
-                  "${(_completionPercent * 100).toInt()}%",
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
-                ),
-                progressColor: Theme.of(context).colorScheme.secondary,
-                backgroundColor: Colors.grey.shade300,
-                circularStrokeCap: CircularStrokeCap.round,
-              ),
-              const SizedBox(width: 20),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.pathDetail.title,
-                      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      widget.pathDetail.description,
-                      style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
-                    ),
-                  ],
-                ),
-              )
-            ],
+    return Scaffold(
+      appBar: AppBar(
+        // When the back button is pressed, pop with the current progress value
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new),
+          onPressed: () => Navigator.of(context).pop(_completionPercent),
+        ),
+        title: Text(widget.pathDetail.title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.more_horiz),
+            onPressed: () {},
           ),
-          const SizedBox(height: 30),
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: _items.length,
-            itemBuilder: (context, index) {
-              final item = _items[index];
-              return Card(
-                margin: const EdgeInsets.only(bottom: 12.0),
-                elevation: 2,
-                shadowColor: Colors.black.withOpacity(0.1),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-                child: ListTile(
-                  leading: Checkbox(
-                    value: item.isCompleted,
-                    onChanged: (bool? value) {
-                      // Call the handler method when the checkbox is tapped
-                      _toggleCompletion(item);
-                    },
-                    activeColor: Theme.of(context).colorScheme.secondary,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                  ),
-                  title: Text(item.title, style: const TextStyle(fontWeight: FontWeight.w600)),
-                  trailing: Icon(item.icon, color: Colors.grey.shade700),
-                  onTap: () {},
-                ),
-              );
-            },
-          ),
-          const SizedBox(height: 80),
         ],
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {},
+        label: const Text('Extend Path', style: TextStyle(fontWeight: FontWeight.bold)),
+        icon: const Icon(Icons.auto_awesome),
+        backgroundColor: Theme.of(context).colorScheme.secondary,
+        foregroundColor: Colors.white,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                CircularPercentIndicator(
+                  radius: 45.0,
+                  lineWidth: 8.0,
+                  percent: _completionPercent,
+                  center: Text(
+                    "${(_completionPercent * 100).toInt()}%",
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+                  ),
+                  progressColor: Theme.of(context).colorScheme.secondary,
+                  backgroundColor: Colors.grey.shade300,
+                  circularStrokeCap: CircularStrokeCap.round,
+                ),
+                const SizedBox(width: 20),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.pathDetail.title,
+                        style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        widget.pathDetail.description,
+                        style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+            const SizedBox(height: 30),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: _items.length,
+              itemBuilder: (context, index) {
+                final item = _items[index];
+                return Card(
+                  margin: const EdgeInsets.only(bottom: 16.0),
+                  elevation: 2,
+                  shadowColor: Colors.black.withOpacity(0.1),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Transform.scale(
+                              scale: 1.2,
+                              child: Checkbox(
+                                value: item.isCompleted,
+                                tristate: !item.resources.every((r) => r.isCompleted) && item.resources.any((r) => r.isCompleted),
+                                onChanged: (bool? value) {
+                                  _togglePathItem(item);
+                                },
+                                activeColor: Theme.of(context).colorScheme.secondary,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                              ),
+                            ),
+                            Expanded(
+                              child: Text(
+                                item.title,
+                                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Divider(height: 1),
+                        ...item.resources.map((resource) {
+                          return ListTile(
+                            leading: Checkbox(
+                              value: resource.isCompleted,
+                              onChanged: (bool? value) {
+                                _toggleResource(resource, item);
+                              },
+                              activeColor: Theme.of(context).colorScheme.secondary,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                            ),
+                            title: Text(resource.title),
+                            trailing: Icon(resource.icon, color: Colors.grey.shade700),
+                            onTap: () => _openContent(resource),
+                            contentPadding: EdgeInsets.zero,
+                          );
+                        }).toList(),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 80),
+          ],
+        ),
       ),
     );
   }
