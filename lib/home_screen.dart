@@ -22,7 +22,6 @@ class HomeScreen extends StatelessWidget {
     void generatePath() {
       final prompt = promptController.text;
       if (prompt.isNotEmpty) {
-        // Navigate to the generating screen and wait for a result (the new path ID)
         Navigator.push<int>(
           context,
           MaterialPageRoute(
@@ -31,7 +30,7 @@ class HomeScreen extends StatelessWidget {
         ).then((newPathId) {
           // This block runs after the GeneratingPathScreen pops
           if (newPathId != null) {
-            // First, refresh the main list in the background
+            // First, refresh the master list in the background
             onPathAction();
             
             // Then, navigate to the new detail screen
@@ -42,7 +41,7 @@ class HomeScreen extends StatelessWidget {
               ),
             ).then((_) {
               // This block runs when the user returns from the new detail screen,
-              // ensuring the progress is updated.
+              // ensuring the progress is updated on the home screen as well.
               onPathAction();
             });
           }
@@ -65,9 +64,11 @@ class HomeScreen extends StatelessWidget {
           'Tutti Learny',
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.primary,
+            fontSize: 45,
+            color: Theme.of(context).colorScheme.secondary,
           ),
         ),
+        centerTitle: true, // This line centers the title
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),

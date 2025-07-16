@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'api_service.dart';
+import 'path_detail_model.dart';
 
 class GeneratingPathScreen extends StatefulWidget {
   final String prompt;
@@ -30,7 +31,8 @@ class _GeneratingPathScreenState extends State<GeneratingPathScreen> with Single
     try {
       final newPath = await _apiService.createLearningPath(widget.prompt);
       
-      // If the widget is still mounted, pop back and return the new path's ID
+      // If the widget is still mounted, pop back to the home screen
+      // and pass the ID of the newly created path as a result.
       if (mounted) {
         Navigator.pop(context, newPath.id);
       }
@@ -74,18 +76,14 @@ class _GeneratingPathScreenState extends State<GeneratingPathScreen> with Single
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // Pulsating logo animation
               FadeTransition(
                 opacity: _animationController,
-                child: Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-                  child: const Icon(
-                    Icons.explore_outlined,
-                    color: Colors.white,
-                    size: 60,
+                child: ClipOval(
+                  child: Image.asset(
+                    'assets/images/logo.png', // This should be the path to your logo
+                    width: 120, // Adjust the size as needed
+                    height: 120,
                   ),
                 ),
               ),

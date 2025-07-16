@@ -35,6 +35,8 @@ dependencies:
   http: ^1.4.0
   webview_flutter: ^4.13.0
   youtube_player_flutter: ^9.1.1
+  auth0_flutter: ^1.12.0
+  flutter_secure_storage: ^9.2.4 # For securely storing tokens
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -70,6 +72,8 @@ flutter:
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
+  assets:
+    - assets/images/
 
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/to/asset-from-package

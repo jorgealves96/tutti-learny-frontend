@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'auth_service.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+  final VoidCallback onLogout;
+
+  const ProfileScreen({super.key, required this.onLogout});
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +35,19 @@ class ProfileScreen extends StatelessWidget {
             _SectionTitle(title: 'Account Management'),
             const SizedBox(height: 16),
             const _AccountManagement(),
+            const SizedBox(height: 30),
+            // Logout Button
+            TextButton.icon(
+              onPressed: () async {
+                await AuthService.logout();
+                onLogout();
+              },
+              icon: const Icon(Icons.logout, color: Colors.red),
+              label: const Text(
+                'Logout',
+                style: TextStyle(color: Colors.red),
+              ),
+            )
           ],
         ),
       ),
@@ -67,7 +83,6 @@ class _ProfileHeader extends StatelessWidget {
       children: [
         const CircleAvatar(
           radius: 50,
-          // Replace with your actual image asset
           backgroundImage: NetworkImage('https://placehold.co/100x100/E0E0E0/0A192F?text=A'),
           backgroundColor: Colors.grey,
         ),

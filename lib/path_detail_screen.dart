@@ -29,9 +29,13 @@ class _PathDetailScreenState extends State<PathDetailScreen> {
       future: _pathDetailFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
         } else if (snapshot.hasError) {
-          return Scaffold(body: Center(child: Text("Error: ${snapshot.error}")));
+          return Scaffold(
+            body: Center(child: Text("Error: ${snapshot.error}")),
+          );
         } else if (!snapshot.hasData) {
           return const Scaffold(body: Center(child: Text("Path not found.")));
         }
@@ -85,13 +89,19 @@ class _PathDetailViewState extends State<_PathDetailView> {
       });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to update task: ${e.toString()}'), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text('Failed to update task: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     }
   }
 
-  Future<void> _toggleResource(ResourceDetail resource, PathItemDetail parentItem) async {
+  Future<void> _toggleResource(
+    ResourceDetail resource,
+    PathItemDetail parentItem,
+  ) async {
     final originalResourceState = resource.isCompleted;
     final originalParentState = parentItem.isCompleted;
     setState(() {
@@ -108,7 +118,10 @@ class _PathDetailViewState extends State<_PathDetailView> {
       });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to update resource: ${e.toString()}'), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text('Failed to update resource: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     }
@@ -119,7 +132,8 @@ class _PathDetailViewState extends State<_PathDetailView> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ContentViewerScreen(url: resource.url, title: resource.title),
+          builder: (context) =>
+              ContentViewerScreen(url: resource.url, title: resource.title),
         ),
       );
     } else {
@@ -129,20 +143,87 @@ class _PathDetailViewState extends State<_PathDetailView> {
     }
   }
 
+  Future<void> _showDeleteConfirmation() async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Delete Path'),
+          content: const Text(
+            'Are you sure you want to permanently delete this learning path?',
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Delete', style: TextStyle(color: Colors.red)),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+                _deletePath(); // Call the delete method
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _deletePath() async {
+    try {
+      await _apiService.deletePath(widget.pathDetail.id);
+      if (mounted) {
+        // Pop back to the previous screen (My Paths) after successful deletion
+        // Pass a value to indicate a refresh is needed
+        Navigator.of(context).pop(true);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to delete path: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // When the back button is pressed, pop with the current progress value
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new),
           onPressed: () => Navigator.of(context).pop(_completionPercent),
         ),
-        title: Text(widget.pathDetail.title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(
+          widget.pathDetail.title,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
         actions: [
-          IconButton(
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              if (value == 'delete') {
+                _showDeleteConfirmation();
+              }
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              const PopupMenuItem<String>(
+                value: 'delete',
+                child: ListTile(
+                  leading: Icon(Icons.delete_outline, color: Colors.red),
+                  title: Text(
+                    'Delete Path',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+              ),
+            ],
             icon: const Icon(Icons.more_horiz),
-            onPressed: () {},
           ),
         ],
         backgroundColor: Colors.transparent,
@@ -151,7 +232,10 @@ class _PathDetailViewState extends State<_PathDetailView> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {},
-        label: const Text('Extend Path', style: TextStyle(fontWeight: FontWeight.bold)),
+        label: const Text(
+          'Extend Path',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         icon: const Icon(Icons.auto_awesome),
         backgroundColor: Theme.of(context).colorScheme.secondary,
         foregroundColor: Colors.white,
@@ -169,7 +253,10 @@ class _PathDetailViewState extends State<_PathDetailView> {
                   percent: _completionPercent,
                   center: Text(
                     "${(_completionPercent * 100).toInt()}%",
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20.0,
+                    ),
                   ),
                   progressColor: Theme.of(context).colorScheme.secondary,
                   backgroundColor: Colors.grey.shade300,
@@ -182,16 +269,22 @@ class _PathDetailViewState extends State<_PathDetailView> {
                     children: [
                       Text(
                         widget.pathDetail.title,
-                        style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         widget.pathDetail.description,
-                        style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey.shade600,
+                        ),
                       ),
                     ],
                   ),
-                )
+                ),
               ],
             ),
             const SizedBox(height: 30),
@@ -205,30 +298,46 @@ class _PathDetailViewState extends State<_PathDetailView> {
                   margin: const EdgeInsets.only(bottom: 16.0),
                   elevation: 2,
                   shadowColor: Colors.black.withOpacity(0.1),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 8.0,
+                      horizontal: 16.0,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
                             Transform.scale(
-                              scale: 1.2,
+                              scale: 1.4,
                               child: Checkbox(
                                 value: item.isCompleted,
-                                tristate: !item.resources.every((r) => r.isCompleted) && item.resources.any((r) => r.isCompleted),
+                                tristate:
+                                    !item.resources.every(
+                                      (r) => r.isCompleted,
+                                    ) &&
+                                    item.resources.any((r) => r.isCompleted),
                                 onChanged: (bool? value) {
                                   _togglePathItem(item);
                                 },
-                                activeColor: Theme.of(context).colorScheme.secondary,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                                activeColor: Theme.of(
+                                  context,
+                                ).colorScheme.secondary,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
                               ),
                             ),
                             Expanded(
                               child: Text(
                                 item.title,
-                                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ],
@@ -241,11 +350,18 @@ class _PathDetailViewState extends State<_PathDetailView> {
                               onChanged: (bool? value) {
                                 _toggleResource(resource, item);
                               },
-                              activeColor: Theme.of(context).colorScheme.secondary,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                              activeColor: Theme.of(
+                                context,
+                              ).colorScheme.secondary,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
                             ),
                             title: Text(resource.title),
-                            trailing: Icon(resource.icon, color: Colors.grey.shade700),
+                            trailing: Icon(
+                              resource.icon,
+                              color: Colors.grey.shade700,
+                            ),
                             onTap: () => _openContent(resource),
                             contentPadding: EdgeInsets.zero,
                           );

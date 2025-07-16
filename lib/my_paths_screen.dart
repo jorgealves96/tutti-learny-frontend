@@ -2,29 +2,64 @@ import 'package:flutter/material.dart';
 import 'my_path_model.dart';
 import 'path_detail_screen.dart';
 
-// This is now a StatelessWidget because it no longer manages its own state.
-class MyPathsScreen extends StatelessWidget {
-  final List<MyPath> myPaths;
-  final VoidCallback onRefresh; // Callback to refresh the data in the parent
-  final VoidCallback onAddPath; // Callback to navigate to the home screen
+class MyPathsScreen extends StatefulWidget {
+  final List<MyPath> myPaths; // Corrected from initialPaths
+  final VoidCallback onAddPath;
+  final VoidCallback onRefresh;
 
   const MyPathsScreen({
     super.key,
-    required this.myPaths,
-    required this.onRefresh,
+    required this.myPaths, // Corrected from initialPaths
     required this.onAddPath,
+    required this.onRefresh,
   });
 
-  // Handles navigation and tells the parent to refresh when the user returns
-  Future<void> _navigateToDetail(BuildContext context, int pathId) async {
-    await Navigator.push(
+  @override
+  State<MyPathsScreen> createState() => _MyPathsScreenState();
+}
+
+class _MyPathsScreenState extends State<MyPathsScreen> {
+  late List<MyPath> _currentPaths;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentPaths = List.from(widget.myPaths); // Corrected from initialPaths
+  }
+
+  @override
+  void didUpdateWidget(covariant MyPathsScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Use the correct property name to check for updates
+    if (widget.myPaths != oldWidget.myPaths) {
+      setState(() {
+        _currentPaths = List.from(widget.myPaths);
+      });
+    }
+  }
+
+  Future<void> _navigateToDetail(BuildContext context, int pathId, int index) async {
+    final result = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => PathDetailScreen(pathId: pathId),
       ),
     );
-    // After returning from the detail screen, call the parent's refresh callback.
-    onRefresh();
+
+    if (result is double) { // It's a progress update
+      setState(() {
+        final oldPath = _currentPaths[index];
+        _currentPaths[index] = MyPath(
+          id: oldPath.id,
+          title: oldPath.title,
+          description: oldPath.description,
+          category: oldPath.category,
+          progress: result,
+        );
+      });
+    } else if (result == true) { // It's a delete confirmation
+      widget.onRefresh();
+    }
   }
 
   @override
@@ -35,21 +70,21 @@ class MyPathsScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.add_circle_outline, size: 28),
-            onPressed: onAddPath,
+            onPressed: widget.onAddPath,
           ),
         ],
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: myPaths.isEmpty
+      body: _currentPaths.isEmpty
           ? const Center(child: Text('No paths created yet.'))
           : ListView.builder(
               padding: const EdgeInsets.all(16.0),
-              itemCount: myPaths.length,
+              itemCount: _currentPaths.length,
               itemBuilder: (context, index) {
-                final path = myPaths[index];
+                final path = _currentPaths[index];
                 return GestureDetector(
-                  onTap: () => _navigateToDetail(context, path.id),
+                  onTap: () => _navigateToDetail(context, path.id, index),
                   child: Card(
                     margin: const EdgeInsets.only(bottom: 16.0),
                     elevation: 4,
