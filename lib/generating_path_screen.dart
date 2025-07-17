@@ -60,7 +60,7 @@ class _GeneratingPathScreenState extends State<GeneratingPathScreen> with Single
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Tutti Learny',
+          'Tutti Learni',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Theme.of(context).colorScheme.primary,

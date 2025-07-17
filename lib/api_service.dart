@@ -17,7 +17,9 @@ class ApiService {
   }
 
   IOClient _createIOClient() {
-    final client = HttpClient()..badCertificateCallback = ((X509Certificate cert, String host, int port) => true);
+    final client = HttpClient()
+      ..badCertificateCallback =
+          ((X509Certificate cert, String host, int port) => true);
     return IOClient(client);
   }
 
@@ -44,7 +46,9 @@ class ApiService {
       );
 
       if (response.statusCode != 200) {
-        throw Exception('Failed to sync user. Status code: ${response.statusCode}');
+        throw Exception(
+          'Failed to sync user. Status code: ${response.statusCode}',
+        );
       }
     } catch (e) {
       throw Exception('Failed to sync user: $e');
@@ -216,6 +220,26 @@ class ApiService {
       }
     } catch (e) {
       throw Exception('Failed to load profile stats: $e');
+    }
+  }
+
+  Future<void> updateUserName(String newName) async {
+    try {
+      final ioClient = _createIOClient();
+      final headers = await _getHeaders();
+      final response = await ioClient.patch(
+        Uri.parse('$_baseUrl/users/name'),
+        headers: headers,
+        body: jsonEncode({'newName': newName}),
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception(
+          'Failed to update name. Status code: ${response.statusCode}',
+        );
+      }
+    } catch (e) {
+      throw Exception('Failed to update name: $e');
     }
   }
 }

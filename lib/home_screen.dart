@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:percent_indicator/percent_indicator.dart';
+import 'auth_service.dart';
 import 'my_path_model.dart';
 import 'path_detail_screen.dart';
 import 'generating_path_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   final List<MyPath> recentPaths;
   final VoidCallback onPathAction;
   final FocusNode homeFocusNode;
@@ -16,65 +19,86 @@ class HomeScreen extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final TextEditingController promptController = TextEditingController();
+  State<HomeScreen> createState() => _HomeScreenState();
+}
 
-    void generatePath() {
-      final prompt = promptController.text;
-      if (prompt.isNotEmpty) {
-        Navigator.push<int>(
-          context,
-          MaterialPageRoute(
-            builder: (context) => GeneratingPathScreen(prompt: prompt),
-          ),
-        ).then((newPathId) {
-          // This block runs after the GeneratingPathScreen pops
-          if (newPathId != null) {
-            // First, refresh the master list in the background
-            onPathAction();
-            
-            // Then, navigate to the new detail screen
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => PathDetailScreen(pathId: newPathId),
-              ),
-            ).then((_) {
-              // This block runs when the user returns from the new detail screen,
-              // ensuring the progress is updated on the home screen as well.
-              onPathAction();
-            });
-          }
-        });
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Please enter a topic to generate a path.'),
-            backgroundColor: Colors.orange,
-          ),
-        );
-      }
+class _HomeScreenState extends State<HomeScreen> {
+  final TextEditingController _promptController = TextEditingController();
+  User? _user;
+
+  @override
+  void initState() {
+    super.initState();
+    // Get the currently logged-in user from your AuthService
+    _user = AuthService.currentUser;
+  }
+
+  @override
+  void dispose() {
+    _promptController.dispose();
+    super.dispose();
+  }
+
+  void _generatePath() {
+    final prompt = _promptController.text;
+    if (prompt.isNotEmpty) {
+      Navigator.push<int>(
+        context,
+        MaterialPageRoute(
+          builder: (context) => GeneratingPathScreen(prompt: prompt),
+        ),
+      ).then((newPathId) {
+        if (newPathId != null) {
+          widget.onPathAction();
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PathDetailScreen(pathId: newPathId),
+            ),
+          ).then((_) => widget.onPathAction());
+        }
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter a topic to generate a path.'),
+          backgroundColor: Colors.orange,
+        ),
+      );
     }
+  }
 
-    final displayedPaths = recentPaths.take(3).toList();
+  @override
+  Widget build(BuildContext context) {
+    final displayedPaths = widget.recentPaths.take(3).toList();
+    final userName = _user?.displayName?.split(' ').first ?? 'there';
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Tutti Learny',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 45,
-            color: Theme.of(context).colorScheme.secondary,
-          ),
+        // The title is now a Row to accommodate the logo and text
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Add the logo image
+            Image.asset(
+              'assets/images/logo_original_size.png',
+              height: 40, // Adjust the height as needed
+            ),
+            const SizedBox(
+              width: 35,
+            ), // Add some space between the logo and text
+            Text(
+              'Tutti Learni',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 30, // Adjusted font size to fit
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+            ),
+          ],
         ),
-        centerTitle: true, // This line centers the title
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {},
-          ),
-        ],
+        centerTitle: false,
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -84,14 +108,22 @@ class HomeScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20),
-            const Text(
-              'What will you master today?',
-              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+            RichText(
+              text: TextSpan(
+                style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+                children: <TextSpan>[
+                  TextSpan(text: 'Hi $userName, '),
+                  const TextSpan(text: 'what are you learning today?'),
+                ],
+              ),
             ),
             const SizedBox(height: 30),
             TextField(
-              controller: promptController,
-              focusNode: homeFocusNode,
+              controller: _promptController,
+              focusNode: widget.homeFocusNode,
               decoration: InputDecoration(
                 hintText: 'e.g., Learn Python for data analysis...',
                 filled: true,
@@ -100,15 +132,18 @@ class HomeScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12.0),
                   borderSide: BorderSide.none,
                 ),
-                contentPadding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 16.0,
+                  horizontal: 20.0,
+                ),
               ),
-              onSubmitted: (_) => generatePath(),
+              onSubmitted: (_) => _generatePath(),
             ),
             const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: generatePath,
+                onPressed: _generatePath,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.secondary,
                   foregroundColor: Colors.white,
@@ -131,10 +166,12 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             if (displayedPaths.isEmpty)
-              const Center(child: Padding(
-                padding: EdgeInsets.only(top: 20.0),
-                child: Text('No recent paths found.'),
-              ))
+              const Center(
+                child: Padding(
+                  padding: EdgeInsets.only(top: 20.0),
+                  child: Text('No recent paths found.'),
+                ),
+              )
             else
               ListView.builder(
                 shrinkWrap: true,
@@ -150,15 +187,33 @@ class HomeScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12.0),
                     ),
                     child: ListTile(
-                      title: Text(path.title, style: const TextStyle(fontWeight: FontWeight.w600)),
-                      trailing: const Icon(Icons.chevron_right),
+                      title: Text(
+                        path.title,
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      trailing: CircularPercentIndicator(
+                        radius: 22.0,
+                        lineWidth: 5.0,
+                        percent: path.progress,
+                        center: Text(
+                          "${(path.progress * 100).toInt()}%",
+                          style: const TextStyle(
+                            fontSize: 10.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        progressColor: Theme.of(context).colorScheme.secondary,
+                        backgroundColor: Colors.grey.shade300,
+                        circularStrokeCap: CircularStrokeCap.round,
+                      ),
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => PathDetailScreen(pathId: path.id),
+                            builder: (context) =>
+                                PathDetailScreen(pathId: path.id),
                           ),
-                        ).then((_) => onPathAction());
+                        ).then((_) => widget.onPathAction());
                       },
                     ),
                   );

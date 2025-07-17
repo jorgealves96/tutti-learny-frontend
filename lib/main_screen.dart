@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'api_service.dart';
 import 'home_screen.dart';
 import 'my_path_model.dart';
 import 'my_paths_screen.dart';
 import 'profile_screen.dart';
+import 'profile_stats_model.dart';
+import 'auth_service.dart';
 
 class MainScreen extends StatefulWidget {
   final VoidCallback onLogout;
@@ -17,13 +20,15 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 1;
   final ApiService _apiService = ApiService();
+  // We now have two futures to manage
   late Future<List<MyPath>> _pathsFuture;
+  late Future<ProfileStats?> _profileStatsFuture;
   final FocusNode _homeScreenFocusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
-    _fetchPaths();
+    _reloadData(); // Initial data fetch
   }
 
   @override
@@ -32,9 +37,11 @@ class _MainScreenState extends State<MainScreen> {
     super.dispose();
   }
 
-  void _fetchPaths() {
+  // This method now re-fetches ALL shared data for the app
+  void _reloadData() {
     setState(() {
       _pathsFuture = _apiService.fetchMyPaths();
+      _profileStatsFuture = _apiService.fetchProfileStats();
     });
   }
 
@@ -54,34 +61,36 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder<List<MyPath>>(
-        future: _pathsFuture,
+      // Use Future.wait to handle both futures simultaneously
+      body: FutureBuilder<List<dynamic>>(
+        future: Future.wait([_pathsFuture, _profileStatsFuture]),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return ErrorDisplay(
               errorMessage: snapshot.error.toString().replaceFirst("Exception: ", ""),
-              onRetry: _fetchPaths,
+              onRetry: _reloadData,
             );
           } else if (!snapshot.hasData) {
             return const Center(child: Text('No data available.'));
           }
 
-          final paths = snapshot.data!;
+          final paths = snapshot.data![0] as List<MyPath>;
+          final stats = snapshot.data![1] as ProfileStats?;
           
           final List<Widget> widgetOptions = <Widget>[
             MyPathsScreen(
               myPaths: paths,
               onAddPath: _navigateAndFocusHome,
-              onRefresh: _fetchPaths,
+              onRefresh: _reloadData, // Pass the unified refresh callback
             ),
             HomeScreen(
               recentPaths: paths, 
-              onPathAction: _fetchPaths,
+              onPathAction: _reloadData, // Pass the unified refresh callback
               homeFocusNode: _homeScreenFocusNode,
             ),
-            ProfileScreen(onLogout: widget.onLogout),
+            ProfileScreen(onLogout: widget.onLogout, stats: stats),
           ];
 
           return IndexedStack(
@@ -97,9 +106,9 @@ class _MainScreenState extends State<MainScreen> {
           BottomNavigationBarItem(icon: Icon(Icons.person_outline), activeIcon: Icon(Icons.person), label: 'Profile'),
         ],
         currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
         selectedItemColor: Theme.of(context).colorScheme.secondary,
         unselectedItemColor: Colors.grey[600],
-        onTap: _onItemTapped,
         showUnselectedLabels: true,
         type: BottomNavigationBarType.fixed,
       ),

@@ -7,8 +7,9 @@ import 'profile_stats_model.dart';
 
 class ProfileScreen extends StatefulWidget {
   final VoidCallback onLogout;
+  final ProfileStats? stats;
 
-  const ProfileScreen({super.key, required this.onLogout});
+  const ProfileScreen({super.key, required this.onLogout, this.stats});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -16,17 +17,66 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final ApiService _apiService = ApiService();
-  final User? _user = AuthService.currentUser;
-  late Future<ProfileStats?> _profileStatsFuture;
+  late User? _user;
 
   @override
   void initState() {
     super.initState();
-    _profileStatsFuture = _apiService.fetchProfileStats();
+    _user = AuthService.currentUser;
   }
 
-  // --- NEW: Method to show the logout confirmation dialog ---
+  Future<void> _showEditNameDialog() async {
+    final nameController = TextEditingController(text: _user?.displayName);
+    final newName = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Edit Name'),
+        content: TextField(
+          controller: nameController,
+          autofocus: true,
+          decoration: const InputDecoration(
+            hintText: 'Enter your name',
+            counterText: "", // Hide the default counter
+          ),
+          maxLength: 50, // Set the max length
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context, nameController.text);
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+
+    if (newName != null && newName.isNotEmpty && mounted) {
+      try {
+        await _apiService.updateUserName(newName);
+        await _user?.updateDisplayName(newName);
+        setState(() {
+          _user = AuthService.currentUser;
+        });
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to update name: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    }
+  }
+
   Future<void> _showLogoutConfirmation() async {
+    if (!mounted) return;
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -37,13 +87,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             TextButton(
               child: const Text('Cancel'),
               onPressed: () {
-                Navigator.of(dialogContext).pop(); // Close the dialog
+                Navigator.of(dialogContext).pop();
               },
             ),
             TextButton(
               child: const Text('Logout', style: TextStyle(color: Colors.red)),
               onPressed: () async {
-                Navigator.of(dialogContext).pop(); // Close the dialog
+                Navigator.of(dialogContext).pop();
                 await AuthService.logout();
                 if (mounted) {
                   widget.onLogout();
@@ -59,53 +109,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile', style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-      ),
-      body: FutureBuilder<ProfileStats?>(
-        future: _profileStatsFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (snapshot.hasError) {
-            return Center(child: Text('Error loading profile: ${snapshot.error}'));
-          }
-          
-          final profileStats = snapshot.data;
-
-          return SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-            child: Column(
-              children: [
-                _ProfileHeader(user: _user, joinedDate: profileStats?.joinedDate),
-                const SizedBox(height: 30),
-                _SectionTitle(title: 'Learning Statistics'),
-                const SizedBox(height: 16),
-                _LearningStats(stats: profileStats),
-                const SizedBox(height: 30),
-                _SectionTitle(title: 'Achievements'),
-                const SizedBox(height: 16),
-                const _Achievements(),
-                const SizedBox(height: 30),
-                _SectionTitle(title: 'Account Management'),
-                const SizedBox(height: 16),
-                const _AccountManagement(),
-                const SizedBox(height: 30),
-                TextButton.icon(
-                  // Call the confirmation method instead of logging out directly
-                  onPressed: _showLogoutConfirmation,
-                  icon: const Icon(Icons.logout, color: Colors.red),
-                  label: const Text('Logout', style: TextStyle(color: Colors.red)),
-                )
-              ],
-            ),
-          );
-        },
+      // Wrap the body with a SafeArea widget
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+          child: Column(
+            children: [
+              _ProfileHeader(
+                user: _user,
+                joinedDate: widget.stats?.joinedDate,
+                onEdit: _showEditNameDialog,
+              ),
+              const SizedBox(height: 30),
+              _SectionTitle(title: 'Learning Statistics'),
+              const SizedBox(height: 16),
+              _LearningStats(stats: widget.stats),
+              const SizedBox(height: 30),
+              _SectionTitle(title: 'Account Management'),
+              const SizedBox(height: 16),
+              const _AccountManagement(),
+              const SizedBox(height: 30),
+              TextButton.icon(
+                onPressed: _showLogoutConfirmation,
+                icon: const Icon(Icons.logout, color: Colors.red),
+                label: const Text(
+                  'Logout',
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -123,10 +157,7 @@ class _SectionTitle extends StatelessWidget {
       alignment: Alignment.centerLeft,
       child: Text(
         title,
-        style: const TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-        ),
+        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -135,8 +166,9 @@ class _SectionTitle extends StatelessWidget {
 class _ProfileHeader extends StatelessWidget {
   final User? user;
   final DateTime? joinedDate;
+  final VoidCallback onEdit;
 
-  const _ProfileHeader({this.user, this.joinedDate});
+  const _ProfileHeader({this.user, this.joinedDate, required this.onEdit});
 
   @override
   Widget build(BuildContext context) {
@@ -144,13 +176,34 @@ class _ProfileHeader extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 50,
-          backgroundImage: user?.photoURL != null ? NetworkImage(user!.photoURL!) : null,
-          child: user?.photoURL == null ? const Icon(Icons.person, size: 50) : null,
+          backgroundImage: user?.photoURL != null
+              ? NetworkImage(user!.photoURL!)
+              : null,
+          child: user?.photoURL == null
+              ? const Icon(Icons.person, size: 50)
+              : null,
         ),
         const SizedBox(height: 16),
-        Text(
-          user?.displayName ?? 'User',
-          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              user?.displayName ?? 'User',
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(width: 4),
+            IconButton(
+              icon: const Icon(
+                Icons.edit_outlined,
+                size: 22,
+                color: Colors.grey,
+              ),
+              onPressed: onEdit,
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+            ),
+          ],
         ),
         const SizedBox(height: 4),
         if (joinedDate != null)
@@ -172,9 +225,18 @@ class _LearningStats extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        _StatCard(value: stats?.pathsStarted.toString() ?? '0', label: 'Paths Started'),
-        _StatCard(value: stats?.pathsCompleted.toString() ?? '0', label: 'Paths Completed'),
-        _StatCard(value: stats?.itemsCompleted.toString() ?? '0', label: 'Resources Completed'),
+        _StatCard(
+          value: stats?.pathsStarted.toString() ?? '0',
+          label: 'Paths Started',
+        ),
+        _StatCard(
+          value: stats?.pathsCompleted.toString() ?? '0',
+          label: 'Paths Completed',
+        ),
+        _StatCard(
+          value: stats?.itemsCompleted.toString() ?? '0',
+          label: 'Resources Completed',
+        ),
       ],
     );
   }
@@ -215,50 +277,6 @@ class _StatCard extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _Achievements extends StatelessWidget {
-  const _Achievements();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        _AchievementBadge(icon: Icons.lightbulb_outline, label: 'First Path', isUnlocked: true),
-        _AchievementBadge(icon: Icons.star_border, label: '5 Paths Done', isUnlocked: true),
-        _AchievementBadge(icon: Icons.school_outlined, label: 'Path Master', isUnlocked: true),
-        _AchievementBadge(icon: Icons.lock_outline, label: 'Locked', isUnlocked: false),
-      ],
-    );
-  }
-}
-
-class _AchievementBadge extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool isUnlocked;
-
-  const _AchievementBadge({required this.icon, required this.label, required this.isUnlocked});
-
-  @override
-  Widget build(BuildContext context) {
-    final color = isUnlocked ? Theme.of(context).colorScheme.secondary : Colors.grey.shade400;
-    return Column(
-      children: [
-        CircleAvatar(
-          radius: 30,
-          backgroundColor: color.withOpacity(0.1),
-          child: Icon(icon, size: 30, color: color),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          style: TextStyle(fontSize: 12, color: isUnlocked ? Colors.black87 : Colors.grey.shade600),
-        ),
-      ],
     );
   }
 }

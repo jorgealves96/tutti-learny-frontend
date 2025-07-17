@@ -16,18 +16,18 @@ class LoginScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                'assets/images/logo.png',
-                width: 120,
+                'assets/images/logo_original_size.png',
+                width: 150,
               ),
               const SizedBox(height: 20),
               const Text(
-                'Welcome to Tutti Learny',
+                'Welcome to Tutti Learni',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 10),
               const Text(
-                'Your personal guide to mastering any skill.',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
+                'Your personal guide to learn anything.',
+                style: TextStyle(fontSize: 16, color: Color.fromARGB(255, 143, 142, 142)),
               ),
               const SizedBox(height: 60),
               // Google Sign-In Button
