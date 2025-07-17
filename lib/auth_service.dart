@@ -1,56 +1,66 @@
-import 'package:auth0_flutter/auth0_flutter.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter/foundation.dart';
+import 'api_service.dart';
 
 class AuthService {
-  // Replace with your Auth0 Domain and Client ID
-  static const String _auth0Domain = 'dev-wu2380ysyl7jqidm.eu.auth0.com';
-  static const String _auth0ClientId = '7YoiGcglKQjv6rZgZHnhGgA1rLmdJI8k';
-  
-  // This should be the 'Identifier' of the API you created in the Auth0 Dashboard
-  static const String _auth0Audience = 'https://api.learning-app.com';
+  static final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  static final ApiService _apiService = ApiService();
 
-  static final Auth0 _auth0 = Auth0(_auth0Domain, _auth0ClientId);
-  static const FlutterSecureStorage _secureStorage = FlutterSecureStorage();
-
-  // Method to handle user login
-  static Future<bool> login() async {
+  // --- Native Google Sign-In Flow for Firebase ---
+  static Future<bool> signInWithGoogle() async {
     try {
-      final credentials = await _auth0
-          .webAuthentication(scheme: 'demo')
-          .login(audience: _auth0Audience); // Add the audience parameter here
+      // 1. Configure Google Sign-In to request an idToken
+      final GoogleSignIn googleSignIn = GoogleSignIn();
 
-      // Securely store the access token
-      await _secureStorage.write(
-        key: 'access_token',
-        value: credentials.accessToken,
+      // 2. Trigger the native Google Sign-In UI
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      if (googleUser == null) {
+        // User canceled the sign-in
+        return false;
+      }
+
+      // 3. Obtain the auth details from the request
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      // 4. Create a new credential for Firebase
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
       );
+
+      // 5. Sign in to Firebase with the credential
+      await _firebaseAuth.signInWithCredential(credential);
+
+      // 6. Sync user with our backend
+      await _apiService.syncUser();
+      
       return true;
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print('Error during Google Sign-In: $e');
+      }
       return false;
     }
   }
 
-  // Method to handle user logout
+  // --- Logout ---
   static Future<void> logout() async {
     try {
-      await _auth0
-          .webAuthentication(scheme: 'demo')
-          .logout();
-      await _secureStorage.delete(key: 'access_token');
+      await GoogleSignIn().signOut();
+      await _firebaseAuth.signOut();
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print('Error during logout: $e');
+      }
     }
   }
 
-  // Method to get the stored access token
-  static Future<String?> getAccessToken() async {
-    return await _secureStorage.read(key: 'access_token');
+  // --- Helper Methods ---
+  static Future<String?> getIdToken() async {
+    return await _firebaseAuth.currentUser?.getIdToken();
   }
 
-  // Method to check if the user is currently logged in
-  static Future<bool> isLoggedIn() async {
-    final token = await getAccessToken();
-    return token != null;
-  }
+  static Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
+  static User? get currentUser => _firebaseAuth.currentUser;
 }

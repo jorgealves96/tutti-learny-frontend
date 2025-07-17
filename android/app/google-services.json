@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "215912661867",
+    "project_id": "tuttilearni-54f1f",
+    "storage_bucket": "tuttilearni-54f1f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:215912661867:android:bd875dda743b10934dc22e",
+        "android_client_info": {
+          "package_name": "com.example.tutti_learny_frontend"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "215912661867-5i3id6to634p86vgavjib6g8b4jd6hkv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.tutti_learny_frontend",
+            "certificate_hash": "fb9f5a76512e01fed75362a741bddcf615fe773c"
+          }
+        },
+        {
+          "client_id": "215912661867-d7k8tnt55gekdlvb4684mq6c4f918ojh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_wFF1mJHgxvBe0P6Vl-qM8Ed1_oOAGP8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "215912661867-3l3tq9rujk6pvuko7i7d36bcsu43rgha.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "215912661867-8mj95ej61jdkn6e4qtg9ko9oe95jd2mh.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.tuttiLearnyFrontend"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

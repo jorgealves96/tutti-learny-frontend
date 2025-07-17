@@ -35,8 +35,10 @@ dependencies:
   http: ^1.4.0
   webview_flutter: ^4.13.0
   youtube_player_flutter: ^9.1.1
-  auth0_flutter: ^1.12.0
-  flutter_secure_storage: ^9.2.4 # For securely storing tokens
+  intl: ^0.19.0
+  google_sign_in: ^6.2.1
+  firebase_core: ^3.2.0
+  firebase_auth: ^5.1.2
 
 
   # The following adds the Cupertino Icons font to your application.
