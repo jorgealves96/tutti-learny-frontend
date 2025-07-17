@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'auth_service.dart';
+import 'phone_login_screen.dart'; // Import the new screen
 
 class LoginScreen extends StatelessWidget {
   final VoidCallback onLoginSuccess;
@@ -15,19 +16,16 @@ class LoginScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(
-                'assets/images/logo_original_size.png',
-                width: 150,
-              ),
+              Image.asset('assets/images/logo.png', width: 120),
               const SizedBox(height: 20),
               const Text(
-                'Welcome to Tutti Learni',
+                'Welcome to Tutti Learny',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 10),
               const Text(
                 'Your personal guide to learn anything.',
-                style: TextStyle(fontSize: 16, color: Color.fromARGB(255, 143, 142, 142)),
+                style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
               const SizedBox(height: 60),
               // Google Sign-In Button
@@ -41,12 +39,8 @@ class LoginScreen extends StatelessWidget {
                     if (success) {
                       onLoginSuccess();
                     } else {
-                      // Optionally show an error message
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Failed to sign in with Google.'),
-                          backgroundColor: Colors.red,
-                        ),
+                        const SnackBar(content: Text('Failed to sign in with Google.')),
                       );
                     }
                   },
@@ -57,6 +51,27 @@ class LoginScreen extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12.0),
                       side: BorderSide(color: Colors.grey.shade300),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              // Phone Sign-In Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  icon: const Icon(Icons.phone_android),
+                  label: const Text('Sign in with Phone Number'),
+                  onPressed: () {
+                    // Navigate to the PhoneLoginScreen
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => PhoneLoginScreen(onLoginSuccess: onLoginSuccess)));
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Theme.of(context).colorScheme.secondary,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
                     ),
                   ),
                 ),

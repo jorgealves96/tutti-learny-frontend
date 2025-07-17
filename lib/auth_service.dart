@@ -10,53 +10,72 @@ class AuthService {
   // --- Native Google Sign-In Flow for Firebase ---
   static Future<bool> signInWithGoogle() async {
     try {
-      // 1. Configure Google Sign-In to request an idToken
-      final GoogleSignIn googleSignIn = GoogleSignIn();
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) return false;
 
-      // 2. Trigger the native Google Sign-In UI
-      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-      if (googleUser == null) {
-        // User canceled the sign-in
-        return false;
-      }
-
-      // 3. Obtain the auth details from the request
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-
-      // 4. Create a new credential for Firebase
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      // 5. Sign in to Firebase with the credential
       await _firebaseAuth.signInWithCredential(credential);
-
-      // 6. Sync user with our backend
       await _apiService.syncUser();
       
       return true;
     } catch (e) {
-      if (kDebugMode) {
-        print('Error during Google Sign-In: $e');
-      }
+      if (kDebugMode) print('Error during Google Sign-In: $e');
       return false;
     }
   }
 
-  // --- Logout ---
+  // --- NEW: Passwordless Phone Login Flow ---
+  static Future<void> startPhoneLogin({
+    required String phoneNumber,
+    required void Function(String, int?) codeSent,
+    required void Function(FirebaseAuthException) verificationFailed,
+  }) async {
+    await _firebaseAuth.verifyPhoneNumber(
+      phoneNumber: phoneNumber,
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        // This callback will be triggered on Android devices that support automatic SMS code resolution.
+        await _firebaseAuth.signInWithCredential(credential);
+        await _apiService.syncUser();
+      },
+      verificationFailed: verificationFailed,
+      codeSent: codeSent,
+      codeAutoRetrievalTimeout: (String verificationId) {},
+    );
+  }
+
+  static Future<bool> verifyPhoneLogin({
+    required String verificationId,
+    required String otp,
+  }) async {
+    try {
+      final credential = PhoneAuthProvider.credential(
+        verificationId: verificationId,
+        smsCode: otp,
+      );
+      await _firebaseAuth.signInWithCredential(credential);
+      await _apiService.syncUser();
+      return true;
+    } catch (e) {
+      if (kDebugMode) print('Error verifying phone login: $e');
+      return false;
+    }
+  }
+
+  // --- Existing Methods ---
   static Future<void> logout() async {
     try {
       await GoogleSignIn().signOut();
       await _firebaseAuth.signOut();
     } catch (e) {
-      if (kDebugMode) {
-        print('Error during logout: $e');
-      }
+      if (kDebugMode) print('Error during logout: $e');
     }
   }
 
-  // --- Helper Methods ---
   static Future<String?> getIdToken() async {
     return await _firebaseAuth.currentUser?.getIdToken();
   }

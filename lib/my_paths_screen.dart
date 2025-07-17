@@ -19,9 +19,7 @@ class MyPathsScreen extends StatelessWidget {
   Future<void> _navigateToDetail(BuildContext context, int pathId) async {
     await Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => PathDetailScreen(pathId: pathId),
-      ),
+      MaterialPageRoute(builder: (context) => PathDetailScreen(pathId: pathId)),
     );
     // After returning from the detail screen, call the parent's refresh callback.
     // This ensures the MainScreen has the latest data for all child screens.
@@ -32,8 +30,17 @@ class MyPathsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Paths', style: TextStyle(fontWeight: FontWeight.bold),
-        textAlign: TextAlign.center,),
+        title: Text(
+          'My Paths',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 30,
+            color: Theme.of(
+              context,
+            ).colorScheme.secondary, // Use the secondary color
+          ),
+        ),
+        centerTitle: true,
         actions: [
           IconButton(
             icon: const Icon(Icons.add_circle_outline, size: 28),
@@ -56,7 +63,9 @@ class MyPathsScreen extends StatelessWidget {
                     margin: const EdgeInsets.only(bottom: 16.0),
                     elevation: 4,
                     shadowColor: Colors.black.withOpacity(0.1),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
@@ -67,19 +76,39 @@ class MyPathsScreen extends StatelessWidget {
                               Container(
                                 padding: const EdgeInsets.all(12.0),
                                 decoration: BoxDecoration(
-                                  color: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.secondary.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(12.0),
                                 ),
-                                child: Icon(path.icon, color: Theme.of(context).colorScheme.secondary, size: 28),
+                                child: Icon(
+                                  path.icon,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.secondary,
+                                  size: 28,
+                                ),
                               ),
                               const SizedBox(width: 16),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(path.title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                    Text(
+                                      path.title,
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                     const SizedBox(height: 4),
-                                    Text(path.description, style: TextStyle(fontSize: 14, color: Colors.grey.shade600)),
+                                    Text(
+                                      path.description,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey.shade600,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -92,15 +121,23 @@ class MyPathsScreen extends StatelessWidget {
                                 child: LinearProgressIndicator(
                                   value: path.progress,
                                   backgroundColor: Colors.grey.shade300,
-                                  color: Theme.of(context).colorScheme.secondary,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.secondary,
                                   minHeight: 8,
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                               ),
                               const SizedBox(width: 12),
-                              Text('${(path.progress * 100).toInt()}%', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+                              Text(
+                                '${(path.progress * 100).toInt()}%',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey,
+                                ),
+                              ),
                             ],
-                          )
+                          ),
                         ],
                       ),
                     ),
