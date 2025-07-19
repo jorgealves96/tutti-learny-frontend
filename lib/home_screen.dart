@@ -29,7 +29,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // Get the currently logged-in user from your AuthService
     _user = AuthService.currentUser;
   }
 
@@ -73,6 +72,17 @@ class _HomeScreenState extends State<HomeScreen> {
     final displayedPaths = widget.recentPaths.take(3).toList();
     final userName = _user?.displayName?.split(' ').first ?? 'there';
 
+    // Define a list of "tutti frutti" colors
+    final List<Color> tuttiFruttiColors = [
+      Colors.red,
+      Colors.orange,
+      Colors.yellow.shade700,
+      Colors.green,
+      Colors.blue,
+      Colors.indigo,
+      Colors.purple,
+    ];
+
     return Scaffold(
       appBar: AppBar(
         // The title is now a Row to accommodate the logo and text
@@ -83,17 +93,30 @@ class _HomeScreenState extends State<HomeScreen> {
             // Add the logo image
             Image.asset(
               'assets/images/logo_original_size.png',
-              height: 40, // Adjust the height as needed
+              height: 50, // Adjust the height as needed
             ),
             const SizedBox(
               width: 35,
             ), // Add some space between the logo and text
-            Text(
-              'Tutti Learni',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 30, // Adjusted font size to fit
-                color: Theme.of(context).colorScheme.secondary,
+            // Use RichText to apply different colors to each letter
+            RichText(
+              text: TextSpan(
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 40, // Adjusted font size to fit
+                  fontFamily: 'Inter', // Make sure to use the same font
+                ),
+                children: List.generate(
+                  'Tutti Learni'.length,
+                  (index) => TextSpan(
+                    text: 'Tutti Learni'[index],
+                    style: TextStyle(
+                      // Cycle through the colors for each letter
+                      color:
+                          tuttiFruttiColors[index % tuttiFruttiColors.length].withAlpha((255 * 0.9).round()),
+                    ),
+                  ),
+                ),
               ),
             ),
           ],
@@ -115,8 +138,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: Colors.black,
                 ),
                 children: <TextSpan>[
-                  TextSpan(text: 'Hi $userName, '),
-                  const TextSpan(text: 'what are you learning today?'),
+                  const TextSpan(text: 'Hi '),
+                  // Generate a list of colored TextSpans for each letter of the name
+                  ...List.generate(
+                    userName.length,
+                    (index) => TextSpan(
+                      text: userName[index],
+                      style: TextStyle(
+                        // Apply the color with reduced opacity (e.g., 70%)
+                        color:
+                            tuttiFruttiColors[index % tuttiFruttiColors.length]
+                                .withAlpha((255 * 0.8).round()),
+                      ),
+                    ),
+                  ),
+                  const TextSpan(text: ',\nwhat do you want to learn today?'),
                 ],
               ),
             ),
@@ -210,8 +246,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
+                            // Use the correct userPathId property here
                             builder: (context) =>
-                                PathDetailScreen(pathId: path.id),
+                                PathDetailScreen(pathId: path.userPathId),
                           ),
                         ).then((_) => widget.onPathAction());
                       },

@@ -1,32 +1,17 @@
 import 'package:flutter/material.dart';
+import 'my_path_model.dart'; // We can reuse the PathCategory enum
 
-// Enum to represent the categories from the backend
-enum PathCategory {
-  Technology,
-  CreativeArts,
-  Music,
-  Business,
-  Wellness,
-  LifeSkills,
-  Gaming,
-  Academic,
-  Other
-}
-
-class MyPath {
-  // The property is now correctly named userPathId
-  final int userPathId;
+class PathSuggestion {
+  final int id; // This is the PathTemplate ID
   final String title;
   final String description;
   final PathCategory category;
-  final double progress;
 
-  MyPath({
-    required this.userPathId,
+  PathSuggestion({
+    required this.id,
     required this.title,
     required this.description,
     required this.category,
-    required this.progress,
   });
 
   // Helper method to get an icon based on the category
@@ -53,20 +38,18 @@ class MyPath {
     }
   }
 
-  factory MyPath.fromJson(Map<String, dynamic> json) {
+  factory PathSuggestion.fromJson(Map<String, dynamic> json) {
     final categoryString = json['category'] ?? 'Other';
     final category = PathCategory.values.firstWhere(
       (e) => e.name.toLowerCase() == categoryString.toLowerCase(),
       orElse: () => PathCategory.Other,
     );
 
-    return MyPath(
-      // Read from the correct JSON key: 'userPathId'
-      userPathId: json['userPathId'] ?? 0,
+    return PathSuggestion(
+      id: json['id'] ?? 0,
       title: json['title'] ?? 'Untitled Path',
       description: json['description'] ?? '',
       category: category,
-      progress: (json['progress'] as num? ?? 0.0).toDouble(),
     );
   }
 }

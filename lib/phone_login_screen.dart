@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:country_code_picker/country_code_picker.dart';
 import 'auth_service.dart';
 
 class PhoneLoginScreen extends StatefulWidget {
@@ -18,6 +19,7 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
   bool _isOtpSent = false;
   bool _isLoading = false;
   String? _verificationId;
+  String _countryCode = '+1'; // Default to US
 
   @override
   void dispose() {
@@ -27,10 +29,17 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
   }
 
   Future<void> _sendOtp() async {
+    if (_phoneController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a phone number.')),
+      );
+      return;
+    }
     setState(() { _isLoading = true; });
     try {
+      final fullPhoneNumber = '$_countryCode${_phoneController.text.trim()}';
       await AuthService.startPhoneLogin(
-        phoneNumber: '+${_phoneController.text.trim()}',
+        phoneNumber: fullPhoneNumber,
         codeSent: (verificationId, forceResendingToken) {
           setState(() {
             _verificationId = verificationId;
@@ -67,9 +76,7 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
     if (!mounted) return;
 
     if (success) {
-      // Pop this screen off the navigation stack first.
       Navigator.of(context).pop();
-      // Then, call the callback to update the app's root state.
       widget.onLoginSuccess();
     } else {
       setState(() { _isLoading = false; });
@@ -98,21 +105,38 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
             const SizedBox(height: 16),
             Text(
               _isOtpSent 
-                ? 'A 6-digit code was sent to +${_phoneController.text}'
-                : 'Please include your country code (e.g., 1 for US).',
+                ? 'A 6-digit code was sent to $_countryCode${_phoneController.text}'
+                : 'Select your country and enter your phone number.',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
             ),
             const SizedBox(height: 32),
             if (!_isOtpSent)
-              TextField(
-                controller: _phoneController,
-                keyboardType: TextInputType.phone,
-                decoration: const InputDecoration(
-                  labelText: 'Phone Number',
-                  prefixText: '+',
-                  border: OutlineInputBorder(),
-                ),
+              Row(
+                children: [
+                  CountryCodePicker(
+                    onChanged: (country) {
+                      setState(() {
+                        _countryCode = country.dialCode!;
+                      });
+                    },
+                    initialSelection: 'US',
+                    favorite: const ['+1', 'US'],
+                    showCountryOnly: false,
+                    showOnlyCountryWhenClosed: false,
+                    alignLeft: false,
+                  ),
+                  Expanded(
+                    child: TextField(
+                      controller: _phoneController,
+                      keyboardType: TextInputType.phone,
+                      decoration: const InputDecoration(
+                        labelText: 'Phone Number',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                ],
               )
             else
               TextField(

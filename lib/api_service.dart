@@ -159,7 +159,7 @@ class ApiService {
       final headers = await _getHeaders();
       final response = await ioClient
           .post(
-            Uri.parse('$_baseUrl/paths'),
+            Uri.parse('$_baseUrl/paths/generate'),
             headers: headers, // Add headers here
             body: jsonEncode(<String, String>{'prompt': prompt}),
           )

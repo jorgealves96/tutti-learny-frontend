@@ -174,7 +174,7 @@ class _PathDetailViewState extends State<_PathDetailView> {
 
   Future<void> _deletePath() async {
     try {
-      await _apiService.deletePath(widget.pathDetail.id);
+      await _apiService.deletePath(widget.pathDetail.userPathId);
       if (mounted) {
         // Pop back to the previous screen (My Paths) after successful deletion
         // Pass a value to indicate a refresh is needed

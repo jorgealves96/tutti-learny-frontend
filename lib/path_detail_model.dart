@@ -9,7 +9,7 @@ class ResourceDetail {
   final String title;
   final String url;
   final ResourceType type;
-  bool isCompleted; // This is mutable
+  bool isCompleted;
 
   ResourceDetail({
     required this.id,
@@ -58,7 +58,7 @@ class PathItemDetail {
   final int id;
   final String title;
   final int order;
-  bool isCompleted; // isCompleted is now back on the model
+  bool isCompleted;
   final List<ResourceDetail> resources;
 
   PathItemDetail({
@@ -85,14 +85,15 @@ class PathItemDetail {
 
 // Model for the entire detailed learning path
 class LearningPathDetail {
-  final int id;
+  // The property is now correctly named userPathId
+  final int userPathId;
   final String title;
   final String description;
   final DateTime createdAt;
   final List<PathItemDetail> pathItems;
 
   LearningPathDetail({
-    required this.id,
+    required this.userPathId,
     required this.title,
     required this.description,
     required this.createdAt,
@@ -104,7 +105,8 @@ class LearningPathDetail {
     List<PathItemDetail> pathItems = itemsList.map((i) => PathItemDetail.fromJson(i)).toList();
 
     return LearningPathDetail(
-      id: json['id'] ?? 0,
+      // Read from the correct JSON key: 'userPathId'
+      userPathId: json['userPathId'] ?? 0,
       title: json['title'] ?? 'Untitled Path',
       description: json['description'] ?? '',
       createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : DateTime.now(),

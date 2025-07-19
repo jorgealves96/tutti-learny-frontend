@@ -34,7 +34,7 @@ class _GeneratingPathScreenState extends State<GeneratingPathScreen> with Single
       // If the widget is still mounted, pop back to the home screen
       // and pass the ID of the newly created path as a result.
       if (mounted) {
-        Navigator.pop(context, newPath.id);
+        Navigator.pop(context, newPath.userPathId);
       }
     } catch (e) {
       if (mounted) {
