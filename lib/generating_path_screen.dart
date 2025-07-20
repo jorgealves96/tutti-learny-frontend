@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'api_service.dart';
-import 'path_detail_model.dart';
 
 class GeneratingPathScreen extends StatefulWidget {
   final String prompt;

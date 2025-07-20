@@ -58,6 +58,8 @@ class _PathDetailView extends StatefulWidget {
 class _PathDetailViewState extends State<_PathDetailView> {
   late List<PathItemDetail> _items;
   final ApiService _apiService = ApiService();
+  bool _isExtending = false;
+  bool _isPathComplete = false;
 
   @override
   void initState() {
@@ -70,6 +72,48 @@ class _PathDetailViewState extends State<_PathDetailView> {
     if (allResources.isEmpty) return 0.0;
     final completedCount = allResources.where((r) => r.isCompleted).length;
     return completedCount / allResources.length;
+  }
+
+  Future<void> _extendPath() async {
+    setState(() {
+      _isExtending = true;
+    });
+    try {
+      final newItems = await _apiService.extendLearningPath(
+        widget.pathDetail.userPathId,
+      );
+      if (newItems.isEmpty) {
+        setState(() {
+          _isPathComplete = true;
+        });
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Congratulations! You have completed this path.'),
+            ),
+          );
+        }
+      } else {
+        setState(() {
+          _items.addAll(newItems);
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to extend path: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isExtending = false;
+        });
+      }
+    }
   }
 
   Future<void> _togglePathItem(PathItemDetail item) async {
@@ -230,16 +274,29 @@ class _PathDetailViewState extends State<_PathDetailView> {
         elevation: 0,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
-        label: const Text(
-          'Extend Path',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        icon: const Icon(Icons.auto_awesome),
-        backgroundColor: Theme.of(context).colorScheme.secondary,
-        foregroundColor: Colors.white,
-      ),
+      floatingActionButton: _isPathComplete
+          ? FloatingActionButton.extended(
+              onPressed: null, // Disabled button
+              label: const Text('Path Complete!'),
+              icon: const Icon(Icons.check_circle),
+              backgroundColor: Colors.green,
+            )
+          : FloatingActionButton.extended(
+              onPressed: _isExtending ? null : _extendPath,
+              label: Text(_isExtending ? 'Generating...' : 'Extend Path'),
+              icon: _isExtending
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
+                    )
+                  : const Icon(Icons.auto_awesome),
+              backgroundColor: Theme.of(context).colorScheme.secondary,
+              foregroundColor: Colors.white,
+            ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Column(

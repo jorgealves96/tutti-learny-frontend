@@ -40,6 +40,7 @@ dependencies:
   firebase_core: ^3.2.0
   firebase_auth: ^5.1.2
   country_code_picker: ^3.3.0
+  flutter_launcher_icons: ^0.13.1
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -100,3 +101,13 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  # Path to your main icon for older Android versions and as a fallback
+  image_path: "assets/images/launcher_icons/icon_transparent_bg.png" 
+  
+  # Adaptive Icon specific settings
+  adaptive_icon_background: "assets/images/launcher_icons/icon_white_bg.png" # A solid white background
+  adaptive_icon_foreground: "assets/images/launcher_icons/icon_transparent_bg.png" # Your logo with a transparent background

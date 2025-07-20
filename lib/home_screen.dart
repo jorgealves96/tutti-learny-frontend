@@ -4,7 +4,7 @@ import 'package:percent_indicator/percent_indicator.dart';
 import 'auth_service.dart';
 import 'my_path_model.dart';
 import 'path_detail_screen.dart';
-import 'generating_path_screen.dart';
+import 'suggestions_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final List<MyPath> recentPaths;
@@ -38,23 +38,32 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  void _generatePath() {
+  void _startPathCreationFlow() {
     final prompt = _promptController.text;
     if (prompt.isNotEmpty) {
+      // Navigate to the suggestions screen and wait for a result (a userPathId)
       Navigator.push<int>(
         context,
         MaterialPageRoute(
-          builder: (context) => GeneratingPathScreen(prompt: prompt),
+          builder: (context) => SuggestionsScreen(
+            prompt: prompt,
+            onPathCreated: widget.onPathAction,
+          ),
         ),
       ).then((newPathId) {
+        // This block runs after the SuggestionsScreen pops with an ID
         if (newPathId != null) {
-          widget.onPathAction();
+          // Now, navigate to the detail screen for the new path
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => PathDetailScreen(pathId: newPathId),
             ),
-          ).then((_) => widget.onPathAction());
+          ).then((_) {
+            // This block runs when the user returns from the detail screen,
+            // ensuring the progress is updated on the home screen.
+            widget.onPathAction();
+          });
         }
       });
     } else {
@@ -93,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
             // Add the logo image
             Image.asset(
               'assets/images/logo_original_size.png',
-              height: 50, // Adjust the height as needed
+              height: 45, // Adjust the height as needed
             ),
             const SizedBox(
               width: 35,
@@ -112,8 +121,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     text: 'Tutti Learni'[index],
                     style: TextStyle(
                       // Cycle through the colors for each letter
-                      color:
-                          tuttiFruttiColors[index % tuttiFruttiColors.length].withAlpha((255 * 0.9).round()),
+                      color: tuttiFruttiColors[index % tuttiFruttiColors.length]
+                          .withAlpha((255 * 0.9).round()),
                     ),
                   ),
                 ),
@@ -138,21 +147,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: Colors.black,
                 ),
                 children: <TextSpan>[
-                  const TextSpan(text: 'Hi '),
-                  // Generate a list of colored TextSpans for each letter of the name
-                  ...List.generate(
-                    userName.length,
-                    (index) => TextSpan(
-                      text: userName[index],
-                      style: TextStyle(
-                        // Apply the color with reduced opacity (e.g., 70%)
-                        color:
-                            tuttiFruttiColors[index % tuttiFruttiColors.length]
-                                .withAlpha((255 * 0.8).round()),
-                      ),
-                    ),
-                  ),
-                  const TextSpan(text: ',\nwhat do you want to learn today?'),
+                  TextSpan(text: 'Hi $userName,\n'),
+                  const TextSpan(text: 'what do you want to learn today?'),
                 ],
               ),
             ),
@@ -173,13 +169,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   horizontal: 20.0,
                 ),
               ),
-              onSubmitted: (_) => _generatePath(),
+              onSubmitted: (_) => _startPathCreationFlow(),
             ),
             const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _generatePath,
+                onPressed: _startPathCreationFlow,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.secondary,
                   foregroundColor: Colors.white,
@@ -246,7 +242,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            // Use the correct userPathId property here
                             builder: (context) =>
                                 PathDetailScreen(pathId: path.userPathId),
                           ),
