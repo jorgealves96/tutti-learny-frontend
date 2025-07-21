@@ -160,14 +160,22 @@ class ApiService {
       final headers = await _getHeaders();
       final response = await ioClient
           .post(
-            Uri.parse('$_baseUrl/paths/generate'),
-            headers: headers, // Add headers here
-            body: jsonEncode(<String, String>{'prompt': prompt}),
+            Uri.parse(
+              '$_baseUrl/paths/generate',
+            ),
+            headers: headers,
+            body: jsonEncode({'prompt': prompt}),
           )
           .timeout(const Duration(seconds: 120));
 
       if (response.statusCode == 201) {
+        // 201 Created
         return LearningPathDetail.fromJson(jsonDecode(response.body));
+      } else if (response.statusCode == 400) {
+        // 400 Bad Request
+        // If the server returns a 400, parse the error message and throw it.
+        final errorBody = jsonDecode(response.body);
+        throw Exception(errorBody['message'] ?? 'Invalid prompt.');
       } else {
         throw Exception(
           'Failed to create path. Status code: ${response.statusCode}',
@@ -176,7 +184,8 @@ class ApiService {
     } on TimeoutException {
       throw Exception('The request timed out. Please try again.');
     } catch (e) {
-      throw Exception('Failed to create path: $e');
+      // Re-throw the exception to be caught by the UI
+      rethrow;
     }
   }
 
@@ -295,20 +304,28 @@ class ApiService {
     }
   }
 
-    Future<List<PathItemDetail>> extendLearningPath(int userPathId) async {
+  Future<List<PathItemDetail>> extendLearningPath(int userPathId) async {
     try {
       final ioClient = _createIOClient();
       final headers = await _getHeaders();
-      final response = await ioClient.post(
-        Uri.parse('$_baseUrl/paths/$userPathId/extend'),
-        headers: headers,
-      ).timeout(const Duration(seconds: 120)); // Longer timeout for AI generation
+      final response = await ioClient
+          .post(
+            Uri.parse('$_baseUrl/paths/$userPathId/extend'),
+            headers: headers,
+          )
+          .timeout(
+            const Duration(seconds: 300), // This should prob be shorter in production like 60 maybe
+          ); // Longer timeout for AI generation
 
       if (response.statusCode == 200) {
         List<dynamic> body = jsonDecode(response.body);
-        return body.map((dynamic item) => PathItemDetail.fromJson(item)).toList();
+        return body
+            .map((dynamic item) => PathItemDetail.fromJson(item))
+            .toList();
       } else {
-        throw Exception('Failed to extend path. Status code: ${response.statusCode}');
+        throw Exception(
+          'Failed to extend path. Status code: ${response.statusCode}',
+        );
       }
     } on TimeoutException {
       throw Exception('The request to extend the path timed out.');

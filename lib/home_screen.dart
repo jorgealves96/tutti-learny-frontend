@@ -4,7 +4,9 @@ import 'package:percent_indicator/percent_indicator.dart';
 import 'auth_service.dart';
 import 'my_path_model.dart';
 import 'path_detail_screen.dart';
+import 'generating_path_screen.dart';
 import 'suggestions_screen.dart';
+import 'api_service.dart';
 
 class HomeScreen extends StatefulWidget {
   final List<MyPath> recentPaths;
@@ -24,7 +26,9 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _promptController = TextEditingController();
+  final ApiService _apiService = ApiService();
   User? _user;
+  bool _isCheckingSuggestions = false;
 
   @override
   void initState() {
@@ -38,50 +42,95 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  void _startPathCreationFlow() {
+  Future<void> _startPathCreationFlow() async {
     final prompt = _promptController.text;
-    if (prompt.isNotEmpty) {
-      // Navigate to the suggestions screen and wait for a result (a userPathId)
-      Navigator.push<int>(
-        context,
-        MaterialPageRoute(
-          builder: (context) => SuggestionsScreen(
-            prompt: prompt,
-            onPathCreated: widget.onPathAction,
-          ),
-        ),
-      ).then((newPathId) {
-        // This block runs after the SuggestionsScreen pops with an ID
-        if (newPathId != null) {
-          // Now, navigate to the detail screen for the new path
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => PathDetailScreen(pathId: newPathId),
-            ),
-          ).then((_) {
-            // This block runs when the user returns from the detail screen,
-            // ensuring the progress is updated on the home screen.
-            widget.onPathAction();
-          });
-        }
-      });
-    } else {
+    if (prompt.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please enter a topic to generate a path.'),
           backgroundColor: Colors.orange,
         ),
       );
+      return;
     }
+
+    setState(() {
+      _isCheckingSuggestions = true;
+    });
+
+    try {
+      final suggestions = await _apiService.fetchSuggestions(prompt);
+
+      if (!mounted) return;
+
+      if (suggestions.isNotEmpty) {
+        // Navigate to suggestions and wait for an ID to be returned
+        final newPathId = await Navigator.push<int>(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SuggestionsScreen(
+              prompt: prompt,
+              suggestions: suggestions,
+              onPathCreated: widget.onPathAction,
+            ),
+          ),
+        );
+        if (newPathId != null) {
+          _navigateToDetailAndRefresh(newPathId);
+        }
+      } else {
+        // If no suggestions, go directly to generation
+        _generateNewPath();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error finding suggestions: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isCheckingSuggestions = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _generateNewPath() async {
+    final newPathId = await Navigator.push<int>(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            GeneratingPathScreen(prompt: _promptController.text),
+      ),
+    );
+    if (newPathId != null) {
+      _navigateToDetailAndRefresh(newPathId);
+    }
+  }
+
+  void _navigateToDetailAndRefresh(int pathId) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => PathDetailScreen(pathId: pathId)),
+    ).then((_) => widget.onPathAction());
   }
 
   @override
   Widget build(BuildContext context) {
     final displayedPaths = widget.recentPaths.take(3).toList();
-    final userName = _user?.displayName?.split(' ').first ?? 'there';
+    var firstName = _user?.displayName?.split(' ').first;
 
-    // Define a list of "tutti frutti" colors
+    // If it's null OR empty, fall back to 'there'
+    if (firstName == null || firstName.isEmpty) {
+      firstName = 'there';
+    }
+    final userName = firstName;
+
     final List<Color> tuttiFruttiColors = [
       Colors.red,
       Colors.orange,
@@ -94,12 +143,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        // The title is now a Row to accommodate the logo and text
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Add the logo image
             Image.asset(
               'assets/images/logo_original_size.png',
               height: 45, // Adjust the height as needed
@@ -147,8 +194,19 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: Colors.black,
                 ),
                 children: <TextSpan>[
-                  TextSpan(text: 'Hi $userName,\n'),
-                  const TextSpan(text: 'what do you want to learn today?'),
+                  const TextSpan(text: 'Hi '),
+                  ...List.generate(
+                    userName.length,
+                    (index) => TextSpan(
+                      text: userName[index],
+                      style: TextStyle(
+                        color:
+                            tuttiFruttiColors[index % tuttiFruttiColors.length]
+                                .withAlpha((255 * 0.7).round()),
+                      ),
+                    ),
+                  ),
+                  const TextSpan(text: ',\nwhat do you want to learn today?'),
                 ],
               ),
             ),
@@ -175,7 +233,9 @@ class _HomeScreenState extends State<HomeScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _startPathCreationFlow,
+                onPressed: _isCheckingSuggestions
+                    ? null
+                    : _startPathCreationFlow,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.secondary,
                   foregroundColor: Colors.white,
@@ -185,10 +245,22 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   elevation: 5,
                 ),
-                child: const Text(
-                  'Generate Path',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
+                child: _isCheckingSuggestions
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : const Text(
+                        'Generate Path',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
               ),
             ),
             const SizedBox(height: 40),

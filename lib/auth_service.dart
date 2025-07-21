@@ -7,21 +7,35 @@ class AuthService {
   static final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   static final ApiService _apiService = ApiService();
 
+  // Create a ValueNotifier to broadcast user changes
+  static final ValueNotifier<User?> currentUserNotifier = ValueNotifier(
+    currentUser,
+  );
+
+  // --- Helper to update and notify ---
+  static Future<void> _syncAndRefreshUser() async {
+    await _apiService.syncUser();
+    await _firebaseAuth.currentUser?.reload();
+    // Update the notifier with the latest user object
+    currentUserNotifier.value = _firebaseAuth.currentUser;
+  }
+
   // --- Native Google Sign-In Flow for Firebase ---
   static Future<bool> signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) return false;
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
       await _firebaseAuth.signInWithCredential(credential);
-      await _apiService.syncUser();
-      
+      await _syncAndRefreshUser();
+
       return true;
     } catch (e) {
       if (kDebugMode) print('Error during Google Sign-In: $e');
@@ -29,7 +43,6 @@ class AuthService {
     }
   }
 
-  // --- NEW: Passwordless Phone Login Flow ---
   static Future<void> startPhoneLogin({
     required String phoneNumber,
     required void Function(String, int?) codeSent,
@@ -40,7 +53,7 @@ class AuthService {
       verificationCompleted: (PhoneAuthCredential credential) async {
         // This callback will be triggered on Android devices that support automatic SMS code resolution.
         await _firebaseAuth.signInWithCredential(credential);
-        await _apiService.syncUser();
+        await _syncAndRefreshUser();
       },
       verificationFailed: verificationFailed,
       codeSent: codeSent,
@@ -58,7 +71,8 @@ class AuthService {
         smsCode: otp,
       );
       await _firebaseAuth.signInWithCredential(credential);
-      await _apiService.syncUser();
+      await _syncAndRefreshUser();
+      
       return true;
     } catch (e) {
       if (kDebugMode) print('Error verifying phone login: $e');

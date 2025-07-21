@@ -30,20 +30,25 @@ class _GeneratingPathScreenState extends State<GeneratingPathScreen> with Single
     try {
       final newPath = await _apiService.createLearningPath(widget.prompt);
       
-      // If the widget is still mounted, pop back to the home screen
-      // and pass the ID of the newly created path as a result.
       if (mounted) {
         Navigator.pop(context, newPath.userPathId);
       }
     } catch (e) {
       if (mounted) {
+        // Show the specific error message from the API
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error creating path: ${e.toString()}'),
-            backgroundColor: Colors.red,
+            // Remove the generic "Exception: " prefix for a cleaner message
+            content: Text(e.toString().replaceFirst("Exception: ", "")),
+            backgroundColor: Colors.orange, // Use a warning color for this type of error
           ),
         );
-        Navigator.pop(context);
+        
+        // --- START OF FIX ---
+        // Pop all routes until we get back to the first one (the MainScreen).
+        // This ensures the user is returned to the home screen, not the suggestions screen.
+        Navigator.of(context).popUntil((route) => route.isFirst);
+        // --- END OF FIX ---
       }
     }
   }
@@ -59,7 +64,7 @@ class _GeneratingPathScreenState extends State<GeneratingPathScreen> with Single
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Tutti Learni',
+          'Tutti Learny',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Theme.of(context).colorScheme.primary,
@@ -75,13 +80,12 @@ class _GeneratingPathScreenState extends State<GeneratingPathScreen> with Single
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Pulsating logo animation
               FadeTransition(
                 opacity: _animationController,
                 child: ClipOval(
                   child: Image.asset(
-                    'assets/images/logo.png', // This should be the path to your logo
-                    width: 120, // Adjust the size as needed
+                    'assets/images/logo.png',
+                    width: 120,
                     height: 120,
                   ),
                 ),

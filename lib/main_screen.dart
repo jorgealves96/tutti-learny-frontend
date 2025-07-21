@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'api_service.dart';
+import 'auth_service.dart';
 import 'home_screen.dart';
 import 'my_path_model.dart';
 import 'my_paths_screen.dart';
 import 'profile_screen.dart';
 import 'profile_stats_model.dart';
-import 'auth_service.dart';
 
 class MainScreen extends StatefulWidget {
   final VoidCallback onLogout;
@@ -20,7 +19,6 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 1;
   final ApiService _apiService = ApiService();
-  // We now have two futures to manage
   late Future<List<MyPath>> _pathsFuture;
   late Future<ProfileStats?> _profileStatsFuture;
   final FocusNode _homeScreenFocusNode = FocusNode();
@@ -29,15 +27,31 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     _reloadData(); // Initial data fetch
+
+    // Listen for any updates to the user's profile (like name changes).
+    AuthService.currentUserNotifier.addListener(_onUserChanged);
   }
 
   @override
   void dispose() {
     _homeScreenFocusNode.dispose();
+    
+    // Clean up the listener to prevent memory leaks.
+    AuthService.currentUserNotifier.removeListener(_onUserChanged);
     super.dispose();
   }
 
-  // This method now re-fetches ALL shared data for the app
+  // This method is called when the user data changes, triggering a rebuild.
+  void _onUserChanged() {
+    if (mounted) {
+      setState(() {
+        // The only purpose of this is to rebuild the widget tree.
+        // The children widgets will get the updated user data from
+        // AuthService.currentUser when they rebuild.
+      });
+    }
+  }
+
   void _reloadData() {
     setState(() {
       _pathsFuture = _apiService.fetchMyPaths();
@@ -61,7 +75,6 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Use Future.wait to handle both futures simultaneously
       body: FutureBuilder<List<dynamic>>(
         future: Future.wait([_pathsFuture, _profileStatsFuture]),
         builder: (context, snapshot) {
@@ -78,16 +91,16 @@ class _MainScreenState extends State<MainScreen> {
 
           final paths = snapshot.data![0] as List<MyPath>;
           final stats = snapshot.data![1] as ProfileStats?;
-          
+
           final List<Widget> widgetOptions = <Widget>[
             MyPathsScreen(
               myPaths: paths,
               onAddPath: _navigateAndFocusHome,
-              onRefresh: _reloadData, // Pass the unified refresh callback
+              onRefresh: _reloadData,
             ),
             HomeScreen(
-              recentPaths: paths, 
-              onPathAction: _reloadData, // Pass the unified refresh callback
+              recentPaths: paths,
+              onPathAction: _reloadData,
               homeFocusNode: _homeScreenFocusNode,
             ),
             ProfileScreen(onLogout: widget.onLogout, stats: stats),
