@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ContentViewerScreen extends StatefulWidget {
   final String url;
@@ -24,7 +25,6 @@ class _ContentViewerScreenState extends State<ContentViewerScreen> {
   @override
   void initState() {
     super.initState();
-    // Check if the URL is a YouTube link
     final String? videoId = YoutubePlayer.convertUrlToId(widget.url);
 
     if (videoId != null) {
@@ -37,16 +37,29 @@ class _ContentViewerScreenState extends State<ContentViewerScreen> {
         ),
       );
     } else {
-      // If not a YouTube link, initialize the WebView controller
       _webViewController = WebViewController()
         ..setJavaScriptMode(JavaScriptMode.unrestricted)
         ..loadRequest(Uri.parse(widget.url));
     }
   }
 
+  // --- 2. Add the function to launch the URL externally ---
+  Future<void> _launchUrl() async {
+    final uri = Uri.parse(widget.url);
+    if (await canLaunchUrl(uri)) {
+      // This mode tries to open the URL in an external app (like YouTube)
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Could not launch ${widget.url}')),
+        );
+      }
+    }
+  }
+
   @override
   void dispose() {
-    // Dispose of the controllers to free up resources
     _youtubeController?.dispose();
     super.dispose();
   }
@@ -60,17 +73,24 @@ class _ContentViewerScreenState extends State<ContentViewerScreen> {
           icon: const Icon(Icons.close),
           onPressed: () => Navigator.of(context).pop(),
         ),
+        // --- 3. Add the button to the AppBar's actions ---
+        actions: [
+          // Conditionally add the button only for YouTube videos
+          if (_isYoutubeLink)
+            IconButton(
+              icon: const Icon(Icons.open_in_new),
+              tooltip: 'Open in YouTube',
+              onPressed: _launchUrl,
+            ),
+        ],
       ),
-      // Conditionally build the body based on the link type
       body: _isYoutubeLink
           ? Center(
               child: YoutubePlayer(
                 controller: _youtubeController!,
                 showVideoProgressIndicator: true,
                 progressIndicatorColor: Theme.of(context).colorScheme.secondary,
-                onReady: () {
-                  // Optional: You can add logic here for when the player is ready.
-                },
+                onReady: () {},
               ),
             )
           : WebViewWidget(controller: _webViewController!),

@@ -7,14 +7,22 @@ import 'path_detail_model.dart';
 import 'auth_service.dart';
 import 'profile_stats_model.dart';
 import 'path_suggestion_model.dart';
+import 'package:flutter/foundation.dart'; 
 
 class ApiService {
   static String get _baseUrl {
-    if (Platform.isAndroid) {
-      return 'https://10.0.2.2:7251/api';
-    } else {
-      return 'https://localhost:7251/api';
+    // Use local URLs ONLY when in debug mode
+    if (kDebugMode) {
+      if (Platform.isAndroid) {
+        //return 'http://10.0.2.2:5000/api'; 
+        return 'https://tutti-learni-api-215912661867.europe-west1.run.app/api';
+      } else {
+        return 'http://localhost:5000/api';
+      }
     }
+    
+    // For all other modes (release, profile), use the deployed cloud URL.
+    return 'https://tutti-learni-api-215912661867.europe-west1.run.app/api';
   }
 
   IOClient _createIOClient() {
@@ -65,7 +73,7 @@ class ApiService {
             Uri.parse('$_baseUrl/paths'),
             headers: headers, // Add headers here
           )
-          .timeout(const Duration(seconds: 10));
+          .timeout(const Duration(seconds: 5));
 
       if (response.statusCode == 200) {
         List<dynamic> body = jsonDecode(response.body);

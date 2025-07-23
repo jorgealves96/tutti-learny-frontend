@@ -7,6 +7,7 @@ import 'path_detail_screen.dart';
 import 'generating_path_screen.dart';
 import 'suggestions_screen.dart';
 import 'api_service.dart';
+import 'rotating_hint_text_field.dart';
 
 class HomeScreen extends StatefulWidget {
   final List<MyPath> recentPaths;
@@ -131,53 +132,38 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     final userName = firstName;
 
-    final List<Color> tuttiFruttiColors = [
-      Colors.red,
-      Colors.orange,
-      Colors.yellow.shade700,
-      Colors.green,
-      Colors.blue,
-      Colors.indigo,
-      Colors.purple,
-    ];
-
     return Scaffold(
       appBar: AppBar(
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset(
-              'assets/images/logo_original_size.png',
-              height: 45, // Adjust the height as needed
-            ),
-            const SizedBox(
-              width: 35,
-            ), // Add some space between the logo and text
-            // Use RichText to apply different colors to each letter
             RichText(
-              text: TextSpan(
-                style: const TextStyle(
+              text: const TextSpan(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 40, // Adjusted font size to fit
-                  fontFamily: 'Inter', // Make sure to use the same font
+                  fontSize: 40,
+                  fontFamily: 'Inter',
                 ),
-                children: List.generate(
-                  'Tutti Learni'.length,
-                  (index) => TextSpan(
-                    text: 'Tutti Learni'[index],
+                children: [
+                  TextSpan(
+                    text: 'Tutti',
                     style: TextStyle(
-                      // Cycle through the colors for each letter
-                      color: tuttiFruttiColors[index % tuttiFruttiColors.length]
-                          .withAlpha((255 * 0.9).round()),
+                      color: Color(0xFF141443), // Hex color for #141443
                     ),
                   ),
-                ),
+                  TextSpan(
+                    text: ' Learni',
+                    style: TextStyle(
+                      color: Color(0xFF0067F9), // Hex color for #0067f9
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
         ),
-        centerTitle: false,
+        centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -195,39 +181,26 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 children: <TextSpan>[
                   const TextSpan(text: 'Hi '),
-                  ...List.generate(
-                    userName.length,
-                    (index) => TextSpan(
-                      text: userName[index],
-                      style: TextStyle(
-                        color:
-                            tuttiFruttiColors[index % tuttiFruttiColors.length]
-                                .withAlpha((255 * 0.7).round()),
+                  ...[
+                    for (int i = 0; i < userName.length; i++)
+                      TextSpan(
+                        text: userName[i],
+                        style: TextStyle(
+                          color: i < userName.length / 2
+                              ? const Color(0xFF141443) // First half
+                              : const Color(0xFF0067F9), // Second half
+                        ),
                       ),
-                    ),
-                  ),
+                  ],
                   const TextSpan(text: ',\nwhat do you want to learn today?'),
                 ],
               ),
             ),
             const SizedBox(height: 30),
-            TextField(
+            RotatingHintTextField(
               controller: _promptController,
               focusNode: widget.homeFocusNode,
-              decoration: InputDecoration(
-                hintText: 'e.g., Learn Python for data analysis...',
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                  vertical: 16.0,
-                  horizontal: 20.0,
-                ),
-              ),
-              onSubmitted: (_) => _startPathCreationFlow(),
+              onSubmitted: _startPathCreationFlow,
             ),
             const SizedBox(height: 20),
             SizedBox(
@@ -254,11 +227,12 @@ class _HomeScreenState extends State<HomeScreen> {
                           strokeWidth: 2,
                         ),
                       )
-                    : const Text(
+                    : Text(
                         'Generate Path',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
                       ),
               ),

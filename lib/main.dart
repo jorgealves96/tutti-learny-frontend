@@ -24,10 +24,10 @@ class TuttiLearnyApp extends StatelessWidget {
       title: 'Tutti Learni',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF0A192F),
-          primary: const Color(0xFF0A192F),
-          secondary: const Color(0xFF007BFF),
-          background: const Color(0xFFF4F6F8),
+          seedColor: const Color(0xFF141443),
+          primary: const Color.fromARGB(255, 2, 2, 112),
+          secondary: const Color(0xFF0067F9),
+          surface: const Color(0xFFF4F6F8),
         ),
         scaffoldBackgroundColor: const Color(0xFFF4F6F8),
         textTheme: GoogleFonts.interTextTheme(

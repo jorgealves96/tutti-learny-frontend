@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'auth_service.dart';
-import 'phone_login_screen.dart'; // Import the new screen
+import 'phone_login_screen.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget { // Changed to StatefulWidget
   final VoidCallback onLoginSuccess;
 
   const LoginScreen({super.key, required this.onLoginSuccess});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +25,7 @@ class LoginScreen extends StatelessWidget {
               Image.asset('assets/images/logo_original_size.png', width: 150),
               const SizedBox(height: 20),
               const Text(
-                'Welcome to Tutti Learny',
+                'Welcome to Tutti Learni',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 10),
@@ -37,11 +43,13 @@ class LoginScreen extends StatelessWidget {
                   onPressed: () async {
                     final success = await AuthService.signInWithGoogle();
                     if (success) {
-                      onLoginSuccess();
+                      widget.onLoginSuccess();
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Failed to sign in with Google.')),
-                      );
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Failed to sign in with Google.')),
+                        );
+                      }
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -63,8 +71,7 @@ class LoginScreen extends StatelessWidget {
                   icon: const Icon(Icons.phone_android),
                   label: const Text('Sign in with Phone Number'),
                   onPressed: () {
-                    // Navigate to the PhoneLoginScreen
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => PhoneLoginScreen(onLoginSuccess: onLoginSuccess)));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => PhoneLoginScreen(onLoginSuccess: widget.onLoginSuccess)));
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,

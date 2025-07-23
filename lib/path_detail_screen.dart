@@ -60,6 +60,8 @@ class _PathDetailViewState extends State<_PathDetailView> {
   final ApiService _apiService = ApiService();
   bool _isExtending = false;
   bool _isPathComplete = false;
+  // --- 1. State variable to track new item IDs ---
+  final Set<int> _newlyAddedItemIds = <int>{};
 
   @override
   void initState() {
@@ -77,6 +79,8 @@ class _PathDetailViewState extends State<_PathDetailView> {
   Future<void> _extendPath() async {
     setState(() {
       _isExtending = true;
+      // Clear previous highlights when extending again
+      _newlyAddedItemIds.clear(); 
     });
     try {
       final newItems = await _apiService.extendLearningPath(
@@ -96,6 +100,8 @@ class _PathDetailViewState extends State<_PathDetailView> {
       } else {
         setState(() {
           _items.addAll(newItems);
+          // --- 2. Store the new item IDs after extending the path ---
+          _newlyAddedItemIds.addAll(newItems.map((item) => item.id));
         });
       }
     } catch (e) {
@@ -344,19 +350,26 @@ class _PathDetailViewState extends State<_PathDetailView> {
                 ),
               ],
             ),
-            const SizedBox(height: 30),
+const SizedBox(height: 30),
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: _items.length,
               itemBuilder: (context, index) {
                 final item = _items[index];
+                // Check if the current item is newly added
+                final bool isNew = _newlyAddedItemIds.contains(item.id);
+
                 return Card(
                   margin: const EdgeInsets.only(bottom: 16.0),
                   elevation: 2,
                   shadowColor: Colors.black.withOpacity(0.1),
+                  // --- 3. Conditionally apply a green border to the Card ---
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16.0),
+                    side: isNew
+                        ? const BorderSide(color: Colors.green, width: 2)
+                        : BorderSide.none,
                   ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(

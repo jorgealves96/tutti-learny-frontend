@@ -10,10 +10,10 @@ class SuggestionsScreen extends StatelessWidget {
   final VoidCallback onPathCreated;
 
   const SuggestionsScreen({
-    super.key, 
-    required this.prompt, 
+    super.key,
+    required this.prompt,
     required this.suggestions,
-    required this.onPathCreated
+    required this.onPathCreated,
   });
 
   Future<void> _assignPath(BuildContext context, int templateId) async {
@@ -25,13 +25,14 @@ class SuggestionsScreen extends StatelessWidget {
         Navigator.pop(context, newPath.userPathId);
       }
     } catch (e) {
-      if(context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error assigning path: $e')));
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error assigning path: $e')));
       }
     }
   }
 
-  // --- START OF FIX ---
   // This method now correctly navigates to the generating screen and then
   // passes the result back up to the HomeScreen.
   Future<void> _generateNewPath(BuildContext context) async {
@@ -48,55 +49,67 @@ class SuggestionsScreen extends StatelessWidget {
       Navigator.pop(context, newPathId);
     }
   }
-  // --- END OF FIX ---
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Suggestions'),
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              'We found some existing paths for "$prompt". Start with one of these or generate your own.',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: suggestions.length,
-              itemBuilder: (context, index) {
-                final suggestion = suggestions[index];
-                return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: ListTile(
-                    leading: Icon(suggestion.icon, color: Theme.of(context).colorScheme.secondary),
-                    title: Text(suggestion.title, style: const TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: Text(suggestion.description),
-                    onTap: () => _assignPath(context, suggestion.id),
-                  ),
-                );
-              },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () => _generateNewPath(context),
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16)
-                ),
-                child: const Text('Generate My Own Path', style: TextStyle(fontSize: 16)),
+      appBar: AppBar(title: const Text('Suggestions')),
+      // Wrap the Column with a SafeArea widget
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                'We found some existing paths for "$prompt". Start with one of these or generate your own.',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.titleMedium,
               ),
             ),
-          ),
-        ],
+            Expanded(
+              child: ListView.builder(
+                itemCount: suggestions.length,
+                itemBuilder: (context, index) {
+                  final suggestion = suggestions[index];
+                  return Card(
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    child: ListTile(
+                      leading: Icon(
+                        suggestion.icon,
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
+                      title: Text(
+                        suggestion.title,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text(suggestion.description),
+                      onTap: () => _assignPath(context, suggestion.id),
+                    ),
+                  );
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => _generateNewPath(context),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  child: const Text(
+                    'Generate My Own Path',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
