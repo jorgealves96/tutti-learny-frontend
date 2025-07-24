@@ -362,8 +362,7 @@ class ApiService {
       else if (response.statusCode == 404) {
         // If user is not found, it's a new account. Return default free status.
         return SubscriptionStatus.freeTier();
-      }
-      else {
+      } else {
         final errorBody = jsonDecode(response.body);
         throw Exception(
           errorBody['message'] ?? 'Failed to load subscription status',
@@ -373,6 +372,19 @@ class ApiService {
       throw Exception('The request for subscription status timed out.');
     } catch (e) {
       rethrow;
+    }
+  }
+
+  Future<void> deleteAccount() async {
+    final ioClient = _createIOClient();
+    final headers = await _getHeaders();
+    final response = await ioClient.delete(
+      Uri.parse('$_baseUrl/users/me'),
+      headers: headers,
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to delete account.');
     }
   }
 }

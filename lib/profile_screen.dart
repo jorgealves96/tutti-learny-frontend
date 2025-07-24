@@ -125,6 +125,53 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  Future<void> _deleteAccount() async {
+    try {
+      await _apiService.deleteAccount();
+      // After successful deletion, force a logout on the client.
+      await AuthService.logout();
+      if (mounted) {
+        widget.onLogout();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString().replaceFirst("Exception: ", "")),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _showDeleteConfirmationDialog() async {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Delete Account'),
+          content: const Text(
+            'Are you sure you want to permanently delete your account? This action cannot be undone.',
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () => Navigator.of(dialogContext).pop(),
+            ),
+            TextButton(
+              child: const Text('Delete', style: TextStyle(color: Colors.red)),
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                _deleteAccount();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -144,6 +191,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 16),
               _LearningStats(stats: widget.stats),
               const SizedBox(height: 30),
+              _SectionTitle(title: 'Subscription'),
+              const SizedBox(height: 16),
+              _SubscriptionDetails(
+                status: widget.subscriptionStatus,
+                onUpgrade: _showSubscriptionSheet,
+              ),
+              const SizedBox(height: 30),
               _SectionTitle(title: 'Monthly Usage'),
               const SizedBox(height: 16),
               _MonthlyUsage(stats: widget.subscriptionStatus),
@@ -151,18 +205,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
               _SectionTitle(title: 'Account Management'),
               const SizedBox(height: 16),
               const _AccountManagement(),
-              const SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: _showSubscriptionSheet,
-                child: const Text('Manage Subscription'),
-              ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 8),
               TextButton.icon(
                 onPressed: _showLogoutConfirmation,
                 icon: const Icon(Icons.logout, color: Colors.red),
                 label: const Text(
                   'Logout',
                   style: TextStyle(color: Colors.red),
+                ),
+              ),
+              const SizedBox(height: 30),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
+                  onPressed: _showDeleteConfirmationDialog,
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.red,
+                    side: const BorderSide(color: Colors.red, width: 1.5),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    textStyle: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  child: const Text('Delete Account'),
                 ),
               ),
             ],
@@ -413,6 +479,49 @@ class _MonthlyUsage extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _SubscriptionDetails extends StatelessWidget {
+  final SubscriptionStatus? status;
+  final VoidCallback onUpgrade;
+  const _SubscriptionDetails({this.status, required this.onUpgrade});
+
+  @override
+  Widget build(BuildContext context) {
+    final tier = status?.tier ?? 'Free';
+
+    return Card(
+      elevation: 2,
+      shadowColor: Colors.black.withOpacity(0.1),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Current Plan',
+                  style: TextStyle(color: Colors.grey),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  tier,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
+            TextButton(onPressed: onUpgrade, child: const Text('Upgrade')),
+          ],
+        ),
       ),
     );
   }
