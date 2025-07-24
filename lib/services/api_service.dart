@@ -342,6 +342,7 @@ class ApiService {
     }
   }
 
+  // In services/api_service.dart
   Future<SubscriptionStatus> fetchSubscriptionStatus() async {
     try {
       final ioClient = _createIOClient();
@@ -356,8 +357,13 @@ class ApiService {
 
       if (response.statusCode == 200) {
         return SubscriptionStatus.fromJson(jsonDecode(response.body));
-      } else {
-        // Handle non-200 status codes by trying to parse an error message
+      }
+      // --- Add this block to handle the race condition ---
+      else if (response.statusCode == 404) {
+        // If user is not found, it's a new account. Return default free status.
+        return SubscriptionStatus.freeTier();
+      }
+      else {
         final errorBody = jsonDecode(response.body);
         throw Exception(
           errorBody['message'] ?? 'Failed to load subscription status',
@@ -366,7 +372,6 @@ class ApiService {
     } on TimeoutException {
       throw Exception('The request for subscription status timed out.');
     } catch (e) {
-      // Rethrow the exception to preserve the clean error message
       rethrow;
     }
   }
