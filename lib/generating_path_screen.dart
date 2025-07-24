@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'api_service.dart';
+import 'services/api_service.dart';
+import 'subscription_screen.dart';
 
 class GeneratingPathScreen extends StatefulWidget {
   final String prompt;
@@ -11,7 +12,8 @@ class GeneratingPathScreen extends StatefulWidget {
   State<GeneratingPathScreen> createState() => _GeneratingPathScreenState();
 }
 
-class _GeneratingPathScreenState extends State<GeneratingPathScreen> with SingleTickerProviderStateMixin {
+class _GeneratingPathScreenState extends State<GeneratingPathScreen>
+    with SingleTickerProviderStateMixin {
   final ApiService _apiService = ApiService();
   late final AnimationController _animationController;
 
@@ -29,26 +31,19 @@ class _GeneratingPathScreenState extends State<GeneratingPathScreen> with Single
   Future<void> _createPathAndNavigate() async {
     try {
       final newPath = await _apiService.createLearningPath(widget.prompt);
-      
+
       if (mounted) {
         Navigator.pop(context, newPath.userPathId);
       }
     } catch (e) {
       if (mounted) {
-        // Show the specific error message from the API
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            // Remove the generic "Exception: " prefix for a cleaner message
-            content: Text(e.toString().replaceFirst("Exception: ", "")),
-            backgroundColor: Colors.orange, // Use a warning color for this type of error
-          ),
-        );
-        
-        // --- START OF FIX ---
-        // Pop all routes until we get back to the first one (the MainScreen).
-        // This ensures the user is returned to the home screen, not the suggestions screen.
-        Navigator.of(context).popUntil((route) => route.isFirst);
-        // --- END OF FIX ---
+        if (e.toString().toLowerCase().contains('limit')) {
+          // Pop and send a signal back to HomeScreen
+          Navigator.of(context).pop({'limit_error': e.toString()});
+        } else {
+          // For other errors, pop and send the error back
+          Navigator.of(context).pop({'error': e.toString()});
+        }
       }
     }
   }
@@ -82,10 +77,7 @@ class _GeneratingPathScreenState extends State<GeneratingPathScreen> with Single
               const Text(
                 'Crafting your personalized learning path',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
               Text(

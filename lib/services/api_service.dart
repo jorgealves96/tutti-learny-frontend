@@ -2,25 +2,26 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/io_client.dart';
-import 'my_path_model.dart';
-import 'path_detail_model.dart';
+import '../models/my_path_model.dart';
+import '../models/path_detail_model.dart';
 import 'auth_service.dart';
-import 'profile_stats_model.dart';
-import 'path_suggestion_model.dart';
-import 'package:flutter/foundation.dart'; 
+import '../models/profile_stats_model.dart';
+import '../models/path_suggestion_model.dart';
+import 'package:flutter/foundation.dart';
+import '../models/subscription_status_model.dart';
 
 class ApiService {
   static String get _baseUrl {
     // Use local URLs ONLY when in debug mode
     if (kDebugMode) {
       if (Platform.isAndroid) {
-        //return 'http://10.0.2.2:5000/api'; 
-        return 'https://tutti-learni-api-215912661867.europe-west1.run.app/api';
+        return 'https://10.0.2.2:7251/api'; // local API
+        // return 'https://tutti-learni-api-215912661867.europe-west1.run.app/api'; // deployed API
       } else {
-        return 'http://localhost:5000/api';
+        return 'https://10.0.2.2:7251/api';
       }
     }
-    
+
     // For all other modes (release, profile), use the deployed cloud URL.
     return 'https://tutti-learni-api-215912661867.europe-west1.run.app/api';
   }
@@ -73,7 +74,7 @@ class ApiService {
             Uri.parse('$_baseUrl/paths'),
             headers: headers, // Add headers here
           )
-          .timeout(const Duration(seconds: 5));
+          .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         List<dynamic> body = jsonDecode(response.body);
@@ -168,22 +169,17 @@ class ApiService {
       final headers = await _getHeaders();
       final response = await ioClient
           .post(
-            Uri.parse(
-              '$_baseUrl/paths/generate',
-            ),
+            Uri.parse('$_baseUrl/paths/generate'),
             headers: headers,
             body: jsonEncode({'prompt': prompt}),
           )
           .timeout(const Duration(seconds: 120));
 
       if (response.statusCode == 201) {
-        // 201 Created
         return LearningPathDetail.fromJson(jsonDecode(response.body));
-      } else if (response.statusCode == 400) {
-        // 400 Bad Request
-        // If the server returns a 400, parse the error message and throw it.
+      } else if (response.statusCode == 400 || response.statusCode == 429) {
         final errorBody = jsonDecode(response.body);
-        throw Exception(errorBody['message'] ?? 'Invalid prompt.');
+        throw Exception(errorBody['message'] ?? 'An error occurred.');
       } else {
         throw Exception(
           'Failed to create path. Status code: ${response.statusCode}',
@@ -192,7 +188,6 @@ class ApiService {
     } on TimeoutException {
       throw Exception('The request timed out. Please try again.');
     } catch (e) {
-      // Re-throw the exception to be caught by the UI
       rethrow;
     }
   }
@@ -322,14 +317,18 @@ class ApiService {
             headers: headers,
           )
           .timeout(
-            const Duration(seconds: 300), // This should prob be shorter in production like 60 maybe
-          ); // Longer timeout for AI generation
+            const Duration(seconds: 90),
+          ); // A 1.5-minute timeout is reasonable
 
       if (response.statusCode == 200) {
         List<dynamic> body = jsonDecode(response.body);
         return body
             .map((dynamic item) => PathItemDetail.fromJson(item))
             .toList();
+      } else if (response.statusCode == 429 || response.statusCode == 404) {
+        // Handle usage limits (429) or path not found (404)
+        final errorBody = jsonDecode(response.body);
+        throw Exception(errorBody['message'] ?? 'An error occurred.');
       } else {
         throw Exception(
           'Failed to extend path. Status code: ${response.statusCode}',
@@ -338,7 +337,37 @@ class ApiService {
     } on TimeoutException {
       throw Exception('The request to extend the path timed out.');
     } catch (e) {
-      throw Exception('Failed to extend path: $e');
+      // Rethrow the exception to preserve the clean error message
+      rethrow;
+    }
+  }
+
+  Future<SubscriptionStatus> fetchSubscriptionStatus() async {
+    try {
+      final ioClient = _createIOClient();
+      final headers = await _getHeaders();
+
+      final response = await ioClient
+          .get(
+            Uri.parse('$_baseUrl/users/me/subscription-status'),
+            headers: headers,
+          )
+          .timeout(const Duration(seconds: 30));
+
+      if (response.statusCode == 200) {
+        return SubscriptionStatus.fromJson(jsonDecode(response.body));
+      } else {
+        // Handle non-200 status codes by trying to parse an error message
+        final errorBody = jsonDecode(response.body);
+        throw Exception(
+          errorBody['message'] ?? 'Failed to load subscription status',
+        );
+      }
+    } on TimeoutException {
+      throw Exception('The request for subscription status timed out.');
+    } catch (e) {
+      // Rethrow the exception to preserve the clean error message
+      rethrow;
     }
   }
 }

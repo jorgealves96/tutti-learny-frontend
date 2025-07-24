@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:country_code_picker/country_code_picker.dart';
-import 'auth_service.dart';
+import 'services/auth_service.dart';
 
 class PhoneLoginScreen extends StatefulWidget {
   final VoidCallback onLoginSuccess;

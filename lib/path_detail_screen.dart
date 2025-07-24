@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-import 'path_detail_model.dart';
-import 'api_service.dart';
+import 'models/path_detail_model.dart';
+import 'services/api_service.dart';
 import 'content_viewer_screen.dart';
+import 'subscription_screen.dart';
 
 class PathDetailScreen extends StatefulWidget {
   final int pathId;
@@ -76,11 +77,49 @@ class _PathDetailViewState extends State<_PathDetailView> {
     return completedCount / allResources.length;
   }
 
+  void _showSubscriptionSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => const SubscriptionScreen(),
+    );
+  }
+
+  void _showUpgradeDialog(String errorMessage) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text("Usage Limit Reached"),
+          content: Text(errorMessage.replaceFirst("Exception: ", "")),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("Maybe Later"),
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+            ),
+            ElevatedButton(
+              child: const Text("Upgrade"),
+              onPressed: () {
+                Navigator.of(dialogContext).pop(); // Close the dialog
+                _showSubscriptionSheet(); // Open the subscription sheet
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> _extendPath() async {
     setState(() {
       _isExtending = true;
       // Clear previous highlights when extending again
-      _newlyAddedItemIds.clear(); 
+      _newlyAddedItemIds.clear();
     });
     try {
       final newItems = await _apiService.extendLearningPath(
@@ -105,13 +144,20 @@ class _PathDetailViewState extends State<_PathDetailView> {
         });
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to extend path: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
+      // --- 3. Update the catch block to check the error message ---
+      if (e.toString().toLowerCase().contains('limit')) {
+        // If the user hit their usage limit, show the upgrade dialog
+        _showUpgradeDialog(e.toString());
+      } else {
+        // Otherwise, show the normal error snackbar
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to extend path: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       }
     } finally {
       if (mounted) {
@@ -350,7 +396,7 @@ class _PathDetailViewState extends State<_PathDetailView> {
                 ),
               ],
             ),
-const SizedBox(height: 30),
+            const SizedBox(height: 30),
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),

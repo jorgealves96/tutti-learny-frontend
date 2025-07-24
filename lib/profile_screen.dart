@@ -1,15 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
-import 'auth_service.dart';
-import 'api_service.dart';
-import 'profile_stats_model.dart';
+import 'services/auth_service.dart';
+import 'services/api_service.dart';
+import 'models/profile_stats_model.dart';
+import 'subscription_screen.dart';
+import 'models/subscription_status_model.dart';
 
 class ProfileScreen extends StatefulWidget {
   final VoidCallback onLogout;
   final ProfileStats? stats;
+  final SubscriptionStatus? subscriptionStatus;
 
-  const ProfileScreen({super.key, required this.onLogout, this.stats});
+  const ProfileScreen({
+    super.key,
+    required this.onLogout,
+    this.stats,
+    this.subscriptionStatus,
+  });
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -106,6 +114,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  void _showSubscriptionSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true, // Allows the sheet to be taller
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => const SubscriptionScreen(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -125,9 +144,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 16),
               _LearningStats(stats: widget.stats),
               const SizedBox(height: 30),
+              _SectionTitle(title: 'Monthly Usage'),
+              const SizedBox(height: 16),
+              _MonthlyUsage(stats: widget.subscriptionStatus),
+              const SizedBox(height: 30),
               _SectionTitle(title: 'Account Management'),
               const SizedBox(height: 16),
               const _AccountManagement(),
+              const SizedBox(height: 30),
+              ElevatedButton(
+                onPressed: _showSubscriptionSheet,
+                child: const Text('Manage Subscription'),
+              ),
               const SizedBox(height: 30),
               TextButton.icon(
                 onPressed: _showLogoutConfirmation,
@@ -188,9 +216,18 @@ class _ProfileHeader extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              user?.displayName ?? 'User',
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            // --- Wrap the Text widget with Flexible ---
+            Flexible(
+              child: Text(
+                user?.displayName ?? 'User',
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+                // --- Add these properties for graceful handling of long text ---
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+              ),
             ),
             const SizedBox(width: 4),
             IconButton(
@@ -324,6 +361,55 @@ class _AccountManagementState extends State<_AccountManagement> {
                 });
               },
               activeColor: Theme.of(context).colorScheme.secondary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MonthlyUsage extends StatelessWidget {
+  final SubscriptionStatus? stats;
+  const _MonthlyUsage({this.stats});
+
+  @override
+  Widget build(BuildContext context) {
+    if (stats == null) {
+      // Don't show anything if stats aren't loaded
+      return const SizedBox.shrink();
+    }
+
+    final generationsUsed = stats!.pathsGeneratedThisMonth;
+    final generationLimit = stats!.pathGenerationLimit;
+    final extensionsUsed = stats!.pathsExtendedThisMonth;
+    final extensionLimit = stats!.pathExtensionLimit;
+
+    return Card(
+      elevation: 2,
+      shadowColor: Colors.black.withOpacity(0.1),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Column(
+        children: [
+          ListTile(
+            leading: const Icon(Icons.auto_awesome),
+            title: const Text('Paths Generated'),
+            trailing: Text(
+              generationLimit == null
+                  ? 'Unlimited'
+                  : '$generationsUsed / $generationLimit',
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+          ),
+          const Divider(height: 1, indent: 16, endIndent: 16),
+          ListTile(
+            leading: const Icon(Icons.add_road),
+            title: const Text('Paths Extended'),
+            trailing: Text(
+              extensionLimit == null
+                  ? 'Unlimited'
+                  : '$extensionsUsed / $extensionLimit',
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
           ),
         ],

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'api_service.dart';
-import 'path_suggestion_model.dart';
+import 'services/api_service.dart';
+import 'models/path_suggestion_model.dart';
 import 'generating_path_screen.dart';
 import 'path_detail_screen.dart';
 

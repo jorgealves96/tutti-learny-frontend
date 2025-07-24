@@ -1,24 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-import 'auth_service.dart';
-import 'my_path_model.dart';
+import 'services/auth_service.dart';
+import 'models/my_path_model.dart';
 import 'path_detail_screen.dart';
 import 'generating_path_screen.dart';
 import 'suggestions_screen.dart';
-import 'api_service.dart';
-import 'rotating_hint_text_field.dart';
+import 'services/api_service.dart';
+import 'widgets/rotating_hint_text_field.dart';
+import 'subscription_screen.dart';
+import 'models/subscription_status_model.dart';
 
 class HomeScreen extends StatefulWidget {
   final List<MyPath> recentPaths;
   final VoidCallback onPathAction;
   final FocusNode homeFocusNode;
+  final SubscriptionStatus subscriptionStatus; // Add this
 
   const HomeScreen({
     super.key,
     required this.recentPaths,
     required this.onPathAction,
     required this.homeFocusNode,
+    required this.subscriptionStatus,
   });
 
   @override
@@ -102,15 +106,36 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _generateNewPath() async {
-    final newPathId = await Navigator.push<int>(
+    // Await the result from the GeneratingPathScreen
+    final result = await Navigator.push<dynamic>(
       context,
       MaterialPageRoute(
         builder: (context) =>
             GeneratingPathScreen(prompt: _promptController.text),
       ),
     );
-    if (newPathId != null) {
-      _navigateToDetailAndRefresh(newPathId);
+
+    // After returning, check the result
+    if (result is int) {
+      // This means a path was created successfully (it returned an ID)
+      _navigateToDetailAndRefresh(result);
+    } else if (result is Map) {
+      if (result.containsKey('limit_error')) {
+        // This is our usage limit signal
+        _showUpgradeDialog(result['limit_error']);
+      } else if (result.containsKey('error')) {
+        // Handle any other errors
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                result['error'].toString().replaceFirst("Exception: ", ""),
+              ),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        }
+      }
     }
   }
 
@@ -119,6 +144,42 @@ class _HomeScreenState extends State<HomeScreen> {
       context,
       MaterialPageRoute(builder: (context) => PathDetailScreen(pathId: pathId)),
     ).then((_) => widget.onPathAction());
+  }
+
+  void _showSubscriptionSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => const SubscriptionScreen(),
+    );
+  }
+
+  void _showUpgradeDialog(String errorMessage) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text("Usage Limit Reached"),
+          content: Text(errorMessage.replaceFirst("Exception: ", "")),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("Maybe Later"),
+              onPressed: () => Navigator.of(dialogContext).pop(),
+            ),
+            ElevatedButton(
+              child: const Text("Upgrade"),
+              onPressed: () {
+                Navigator.of(dialogContext).pop(); // Close the dialog
+                _showSubscriptionSheet(); // Open the subscription sheet
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -201,6 +262,7 @@ class _HomeScreenState extends State<HomeScreen> {
               controller: _promptController,
               focusNode: widget.homeFocusNode,
               onSubmitted: _startPathCreationFlow,
+              subscriptionStatus: widget.subscriptionStatus,
             ),
             const SizedBox(height: 20),
             SizedBox(
@@ -227,8 +289,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           strokeWidth: 2,
                         ),
                       )
-                    : Text(
-                        'Generate Path',
+                    : const Text(
+                        'Create Learning Path',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -237,65 +299,65 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
               ),
             ),
-            const SizedBox(height: 40),
-            const Text(
-              'Recently Created Paths',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            if (displayedPaths.isEmpty)
-              const Center(
-                child: Padding(
-                  padding: EdgeInsets.only(top: 20.0),
-                  child: Text('No recent paths found.'),
-                ),
-              )
-            else
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: displayedPaths.length,
-                itemBuilder: (context, index) {
-                  final path = displayedPaths[index];
-                  return Card(
-                    margin: const EdgeInsets.only(bottom: 12.0),
-                    elevation: 2,
-                    shadowColor: Colors.black.withOpacity(0.1),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    child: ListTile(
-                      title: Text(
-                        path.title,
-                        style: const TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                      trailing: CircularPercentIndicator(
-                        radius: 22.0,
-                        lineWidth: 5.0,
-                        percent: path.progress,
-                        center: Text(
-                          "${(path.progress * 100).toInt()}%",
-                          style: const TextStyle(
-                            fontSize: 10.0,
-                            fontWeight: FontWeight.bold,
-                          ),
+            if (displayedPaths.isNotEmpty)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 40),
+                  const Text(
+                    'Recently Created Paths',
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: displayedPaths.length,
+                    itemBuilder: (context, index) {
+                      final path = displayedPaths[index];
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 12.0),
+                        elevation: 2,
+                        shadowColor: Colors.black.withOpacity(0.1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.0),
                         ),
-                        progressColor: Theme.of(context).colorScheme.secondary,
-                        backgroundColor: Colors.grey.shade300,
-                        circularStrokeCap: CircularStrokeCap.round,
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                PathDetailScreen(pathId: path.userPathId),
+                        child: ListTile(
+                          title: Text(
+                            path.title,
+                            style: const TextStyle(fontWeight: FontWeight.w600),
                           ),
-                        ).then((_) => widget.onPathAction());
-                      },
-                    ),
-                  );
-                },
+                          trailing: CircularPercentIndicator(
+                            radius: 22.0,
+                            lineWidth: 5.0,
+                            percent: path.progress,
+                            center: Text(
+                              "${(path.progress * 100).toInt()}%",
+                              style: const TextStyle(
+                                fontSize: 10.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            progressColor: Theme.of(
+                              context,
+                            ).colorScheme.secondary,
+                            backgroundColor: Colors.grey.shade300,
+                            circularStrokeCap: CircularStrokeCap.round,
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    PathDetailScreen(pathId: path.userPathId),
+                              ),
+                            ).then((_) => widget.onPathAction());
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
           ],
         ),
