@@ -7,6 +7,7 @@ import 'my_paths_screen.dart';
 import 'profile_screen.dart';
 import 'models/profile_stats_model.dart';
 import 'models/subscription_status_model.dart';
+import 'l10n/app_localizations.dart';
 
 class MainScreen extends StatefulWidget {
   final VoidCallback onLogout;
@@ -58,7 +59,7 @@ class _MainScreenState extends State<MainScreen> {
     setState(() {
       _pathsFuture = _apiService.fetchMyPaths();
       _profileStatsFuture = _apiService.fetchProfileStats();
-          _subscriptionStatusFuture = _apiService.fetchSubscriptionStatus();
+      _subscriptionStatusFuture = _apiService.fetchSubscriptionStatus();
     });
   }
 
@@ -82,9 +83,20 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
+    if (l10n == null) {
+      // Return a temporary widget or an empty container while localizations load
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Scaffold(
       body: FutureBuilder<List<dynamic>>(
-        future: Future.wait([_pathsFuture, _profileStatsFuture, _subscriptionStatusFuture]),
+        future: Future.wait([
+          _pathsFuture,
+          _profileStatsFuture,
+          _subscriptionStatusFuture,
+        ]),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -114,7 +126,7 @@ class _MainScreenState extends State<MainScreen> {
               recentPaths: paths,
               onPathAction: _reloadData,
               homeFocusNode: _homeScreenFocusNode,
-              subscriptionStatus: subscriptionStatus, 
+              subscriptionStatus: subscriptionStatus,
             ),
             ProfileScreen(
               onLogout: widget.onLogout,
@@ -127,21 +139,21 @@ class _MainScreenState extends State<MainScreen> {
         },
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.school_outlined),
             activeIcon: Icon(Icons.school),
-            label: 'My Paths',
+            label: l10n.mainScreen_labelMyPaths,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
             activeIcon: Icon(Icons.home),
-            label: 'Home',
+            label: l10n.mainScreen_labelHome,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_outline),
             activeIcon: Icon(Icons.person),
-            label: 'Profile',
+            label: l10n.mainScreen_labelProfile,
           ),
         ],
         currentIndex: _selectedIndex,

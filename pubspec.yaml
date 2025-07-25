@@ -30,12 +30,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.20.2  
   google_fonts: ^6.2.1
   percent_indicator: ^4.2.5
   http: ^1.4.0
   webview_flutter: ^4.13.0
   youtube_player_flutter: ^9.1.1
-  intl: ^0.19.0
   google_sign_in: ^6.2.1
   firebase_core: ^3.2.0
   firebase_auth: ^5.1.2
@@ -43,6 +45,8 @@ dependencies:
   flutter_launcher_icons: ^0.13.1
   url_launcher: ^6.2.6
   purchases_flutter: ^9.0.1
+  provider: ^6.1.5
+  shared_preferences: ^2.5.3
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -103,6 +107,7 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+  generate: true
 
 flutter_launcher_icons:
   android: true

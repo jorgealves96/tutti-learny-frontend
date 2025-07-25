@@ -1,0 +1,285 @@
+{
+   "generatingPathsScreen_craftingPersonalizedLearningPath":"Crafting your personalized learning path",
+   "generatingPathsScreen_loadingPathGenerationMessage":"Our AI is working hard to create a curriculum tailored to your goals and learning style. This may take a few moments.",
+   
+   "homeScreen_pleaseEnterATopic":"Please enter a topic to generate a path.",
+   "homeScreen_usageLimitReached":"Usage Limit Reached",
+   "homeScreen_maybeLater":"Maybe Later",
+   "homeScreen_upgrade":"Upgrade",
+   "homeScreen_namePlaceholder":"there",
+   "homeScreen_hi":"Hi ",
+   "homeScreen_callToActionMsg":",\nwhat do you want to learn today?",
+   "homeScreen_createLearningPath":"Create Learning Path",
+   "homeScreen_recentlyCreatedPaths":"Recently Created Paths",
+
+   "loginScreen_welcomePrimary":"Welcome to Tutti Learni",
+   "loginScreen_welcomeSecondary":"Your personal guide to learn anything.",
+   "loginScreen_continueWithGoogle":"Continue with Google",
+   "loginScreen_failedToSignInGoogle":"Failed to sign in with Google.",
+   "loginScreen_continueWithPhoneNumber":"Continue with Phone Number",
+
+   "mainScreen_labelMyPaths":"My Paths",
+   "mainScreen_labelHome":"Home",
+   "mainScreen_labelProfile":"Profile",
+   "mainScreen_tryAgain":"Try Again",
+
+   "myPathsScreen_noPathsCreatedYet":"No paths created yet",
+   "myPathsScreen_createANewPath":"Create a New Path",
+
+   "pathDetailScreen_error":"Error: {error}",
+   "@pathDetailScreen_error":{
+      "description":"Error message shown when a path fails to load.",
+      "placeholders":{
+         "error":{
+            "type":"String",
+            "example":"Network error"
+         }
+      }
+   },
+   "pathDetailScreen_pathNotFound":"Path not found.",
+   "pathDetailScreen_usageLimitReached":"Usage Limit Reached",
+   "pathDetailScreen_maybeLater":"Maybe Later",
+   "pathDetailScreen_upgrade":"Upgrade",
+   "pathDetailScreen_pathCompleted":"Congratulations! You have completed this path.",
+   "pathDetailScreen_failedToExtendPath":"Failed to extend path: {error}",
+   "@pathDetailScreen_failedToExtendPath":{
+      "placeholders":{
+         "error":{
+            "type":"String"
+         }
+      }
+   },
+   "pathDetailScreen_failedToUpdateTask":"Failed to update task: {error}",
+   "@pathDetailScreen_failedToUpdateTask":{
+      "placeholders":{
+         "error":{
+            "type":"String"
+         }
+      }
+   },
+   "pathDetailScreen_failedToUpdateResource":"Failed to update resource: {error}",
+   "@pathDetailScreen_failedToUpdateResource":{
+      "placeholders":{
+         "error":{
+            "type":"String"
+         }
+      }
+   },
+   "pathDetailScreen_noLinkAvailable":"This resource has no link available.",
+   "pathDetailScreen_deletePathTitle":"Delete Path",
+   "pathDetailScreen_deletePathConfirm":"Are you sure you want to permanently delete this learning path?",
+   "pathDetailScreen_cancel":"Cancel",
+   "pathDetailScreen_delete":"Delete",
+   "pathDetailScreen_failedToDeletePath":"Failed to delete path: {error}",
+   "@pathDetailScreen_failedToDeletePath":{
+      "placeholders":{
+         "error":{
+            "type":"String"
+         }
+      }
+   },
+   "pathDetailScreen_pathIsComplete":"Path Complete!",
+   "pathDetailScreen_generating":"Generating...",
+   "pathDetailScreen_extendPath":"Extend Path",
+
+   "phoneLoginScreen_enterPhoneNumberTitle":"Enter Your Phone Number",
+   "phoneLoginScreen_enterVerificationCodeTitle":"Enter Verification Code",
+   "phoneLoginScreen_enterPhoneNumberSubtitle":"Select your country and enter your phone number.",
+   "phoneLoginScreen_codeSentSubtitle":"A 6-digit code was sent to {fullPhoneNumber}",
+   "@phoneLoginScreen_codeSentSubtitle":{
+      "description":"Message indicating where the verification code was sent.",
+      "placeholders":{
+         "fullPhoneNumber":{
+            "type":"String",
+            "example":"+15551234567"
+         }
+      }
+   },
+   "phoneLoginScreen_phoneNumberLabel":"Phone Number",
+   "phoneLoginScreen_otpLabel":"6-Digit Code",
+   "phoneLoginScreen_sendCode":"Send Code",
+   "phoneLoginScreen_verifyCode":"Verify Code",
+   "phoneLoginScreen_pleaseEnterPhoneNumber":"Please enter a phone number.",
+   "phoneLoginScreen_failedToSendCode":"Failed to send code: {error}",
+   "@phoneLoginScreen_failedToSendCode":{
+      "placeholders":{
+         "error":{
+            "type":"String"
+         }
+      }
+   },
+   "phoneLoginScreen_anErrorOccurred":"An error occurred: {error}",
+   "@phoneLoginScreen_anErrorOccurred":{
+      "placeholders":{
+         "error":{
+            "type":"String"
+         }
+      }
+   },
+   "phoneLoginScreen_invalidCode":"Invalid code. Please try again.",
+
+   "profileScreen_editName":"Edit Name",
+   "profileScreen_enterYourName":"Enter your name",
+   "profileScreen_cancel":"Cancel",
+   "profileScreen_save":"Save",
+   "profileScreen_failedToUpdateName":"Failed to update name: {error}",
+   "@profileScreen_failedToUpdateName":{
+      "placeholders":{
+         "error":{
+            "type":"String"
+         }
+      }
+   },
+   "profileScreen_logout":"Logout",
+   "profileScreen_logoutConfirm":"Are you sure you want to log out?",
+   "profileScreen_deleteAccount":"Delete Account",
+   "profileScreen_deleteAccountConfirm":"Are you sure you want to permanently delete your account? This action cannot be undone.",
+   "profileScreen_delete":"Delete",
+   "profileScreen_user":"User",
+   "profileScreen_joined":"Joined {date}",
+   "@profileScreen_joined":{
+      "description":"Text showing the month and year the user joined.",
+      "placeholders":{
+         "date":{
+            "type":"String",
+            "example":"July 2025"
+         }
+      }
+   },
+   "profileScreen_sectionLearningStatistics":"Learning Statistics",
+   "profileScreen_sectionSubscription":"Subscription",
+   "profileScreen_sectionMonthlyUsage":"Monthly Usage",
+   "profileScreen_sectionAccountManagement":"Account Management",
+   "profileScreen_statPathsStarted":"Paths Started",
+   "profileScreen_statPathsCompleted":"Paths Completed",
+   "profileScreen_statResourcesCompleted":"Resources Completed",
+   "profileScreen_usagePathsGenerated":"Paths Generated",
+   "profileScreen_usagePathsExtended":"Paths Extended",
+   "profileScreen_usageUnlimited":"Unlimited",
+   "profileScreen_currentPlan":"Current Plan",
+   "profileScreen_upgrade":"Upgrade",
+   "profileScreen_manageEditProfile":"Edit Profile",
+   "profileScreen_manageNotifications":"Notifications",
+   "profileScreen_manageAppearance":"Appearance",
+   "profileScreen_manageLanguage": "Language",
+
+   "subscriptionScreen_title":"Upgrade Your Learning",
+   "subscriptionScreen_monthly":"Monthly",
+   "subscriptionScreen_yearly":"Yearly (Save ~30%)",
+   "subscriptionScreen_upgradeNow":"Upgrade Now",
+   "subscriptionScreen_startingPurchase":"Starting purchase for {tierTitle} ({duration})",
+   "@subscriptionScreen_startingPurchase":{
+      "description":"Snackbar message when a purchase is initiated.",
+      "placeholders":{
+         "tierTitle":{
+            "type":"String",
+            "example":"Pro"
+         },
+         "duration":{
+            "type":"String",
+            "example":"yearly"
+         }
+      }
+   },
+   "subscriptionScreen_tierPro_title":"Pro",
+   "subscriptionScreen_tierPro_priceMonthly":"{price}/month",
+   "@subscriptionScreen_tierPro_priceMonthly":{
+      "placeholders":{
+         "price":{
+            "type":"String",
+            "example":"5.99€"
+         }
+      }
+   },
+   "subscriptionScreen_tierPro_priceYearly":"{price}/year",
+   "@subscriptionScreen_tierPro_priceYearly":{
+      "placeholders":{
+         "price":{
+            "type":"String",
+            "example":"50€"
+         }
+      }
+   },
+   "subscriptionScreen_tierPro_feature1":"{count} Path Generations/month",
+   "@subscriptionScreen_tierPro_feature1":{
+      "placeholders":{
+         "count":{
+            "type":"int",
+            "example":"25"
+         }
+      }
+   },
+   "subscriptionScreen_tierPro_feature2":"{count} Path Extensions/month",
+   "@subscriptionScreen_tierPro_feature2":{
+      "placeholders":{
+         "count":{
+            "type":"int",
+            "example":"25"
+         }
+      }
+   },
+   "subscriptionScreen_tierUnlimited_title":"Unlimited",
+   "subscriptionScreen_tierUnlimited_priceMonthly":"{price}/month",
+   "@subscriptionScreen_tierUnlimited_priceMonthly":{
+      "placeholders":{
+         "price":{
+            "type":"String",
+            "example":"10.99€"
+         }
+      }
+   },
+   "subscriptionScreen_tierUnlimited_priceYearly":"{price}/year",
+   "@subscriptionScreen_tierUnlimited_priceYearly":{
+      "placeholders":{
+         "price":{
+            "type":"String",
+            "example":"100€"
+         }
+      }
+   },
+   "subscriptionScreen_tierUnlimited_feature1":"Unlimited Path Generations",
+   "subscriptionScreen_tierUnlimited_feature2":"Unlimited Path Extensions",
+
+   "suggestionsScreen_title":"Suggestions",
+   "suggestionsScreen_errorAssigningPath":"Error assigning path: {error}",
+   "@suggestionsScreen_errorAssigningPath":{
+      "placeholders":{
+         "error":{
+            "type":"String"
+         }
+      }
+   },
+   "suggestionsScreen_header":"We found some existing paths for \"{prompt}\". Start with one of these or generate your own.",
+   "@suggestionsScreen_header":{
+      "description":"Header text on the suggestions page.",
+      "placeholders":{
+         "prompt":{
+            "type":"String",
+            "example":"learn piano"
+         }
+      }
+   },
+   "suggestionsScreen_generateMyOwnPath":"Generate My Own Path",
+
+   "rotatingHintTextField_suggestion1":"e.g. Learn guitar basics…",
+   "rotatingHintTextField_suggestion2":"e.g. Start a course on public speaking…",
+   "rotatingHintTextField_suggestion3":"e.g. Master Excel in 30 days…",
+   "rotatingHintTextField_suggestion4":"e.g. Learn to cook Italian food…",
+   "rotatingHintTextField_suggestion5":"e.g. Improve your photography skills…",
+   "rotatingHintTextField_suggestion6":"e.g. Study for the SATs…",
+   "rotatingHintTextField_suggestion7":"e.g. Learn French for travel…",
+   "rotatingHintTextField_suggestion8":"e.g. Build a personal budget…",
+   "rotatingHintTextField_suggestion9":"e.g. Practice meditation techniques…",
+   "rotatingHintTextField_suggestion10":"e.g. Learn to code in Python...",
+   "rotatingHintTextField_unlimitedGenerations":"Unlimited Generations",
+   "rotatingHintTextField_generationsLeft":"{count} Path Generations Left",
+   "@rotatingHintTextField_generationsLeft":{
+      "description":"Text showing the remaining number of path generations.",
+      "placeholders":{
+         "count":{
+            "type":"int",
+            "example":"5"
+         }
+      }
+   }
+}

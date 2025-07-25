@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'services/auth_service.dart';
 import 'phone_login_screen.dart';
+import 'l10n/app_localizations.dart';
 
-class LoginScreen extends StatefulWidget { // Changed to StatefulWidget
+class LoginScreen extends StatefulWidget {
+  // Changed to StatefulWidget
   final VoidCallback onLoginSuccess;
 
   const LoginScreen({super.key, required this.onLoginSuccess});
@@ -12,9 +14,14 @@ class LoginScreen extends StatefulWidget { // Changed to StatefulWidget
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
+    if (l10n == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Scaffold(
       body: Center(
         child: Padding(
@@ -24,13 +31,13 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               Image.asset('assets/images/logo_original_size.png', width: 150),
               const SizedBox(height: 20),
-              const Text(
-                'Welcome to Tutti Learni',
+              Text(
+                l10n.loginScreen_welcomePrimary,
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 10),
-              const Text(
-                'Your personal guide to learn anything.',
+              Text(
+                l10n.loginScreen_welcomeSecondary,
                 style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
               const SizedBox(height: 60),
@@ -38,8 +45,11 @@ class _LoginScreenState extends State<LoginScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
-                  icon: Image.asset('assets/images/google_logo.png', height: 24.0),
-                  label: const Text('Continue with Google'),
+                  icon: Image.asset(
+                    'assets/images/google_logo.png',
+                    height: 24.0,
+                  ),
+                  label: Text(l10n.loginScreen_continueWithGoogle),
                   onPressed: () async {
                     final success = await AuthService.signInWithGoogle();
                     if (success) {
@@ -47,7 +57,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     } else {
                       if (mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Failed to sign in with Google.')),
+                          SnackBar(
+                            content: Text(
+                              l10n.loginScreen_failedToSignInGoogle,
+                            ),
+                          ),
                         );
                       }
                     }
@@ -69,9 +83,16 @@ class _LoginScreenState extends State<LoginScreen> {
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   icon: const Icon(Icons.phone_android),
-                  label: const Text('Sign in with Phone Number'),
+                  label: Text(l10n.loginScreen_continueWithPhoneNumber),
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => PhoneLoginScreen(onLoginSuccess: widget.onLoginSuccess)));
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PhoneLoginScreen(
+                          onLoginSuccess: widget.onLoginSuccess,
+                        ),
+                      ),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,

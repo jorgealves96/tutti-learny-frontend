@@ -1,13 +1,14 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import '../models/subscription_status_model.dart'; // Make sure to import your model
+import '../models/subscription_status_model.dart';
+import '../l10n/app_localizations.dart';
 
 class RotatingHintTextField extends StatefulWidget {
   final TextEditingController controller;
   final FocusNode focusNode;
   final VoidCallback? onSubmitted;
   final int maxLength;
-  final SubscriptionStatus? subscriptionStatus; // Add this
+  final SubscriptionStatus? subscriptionStatus;
 
   const RotatingHintTextField({
     super.key,
@@ -15,7 +16,7 @@ class RotatingHintTextField extends StatefulWidget {
     required this.focusNode,
     this.onSubmitted,
     this.maxLength = 300,
-    this.subscriptionStatus, // Add this
+    this.subscriptionStatus,
   });
 
   @override
@@ -23,19 +24,7 @@ class RotatingHintTextField extends StatefulWidget {
 }
 
 class _RotatingHintTextFieldState extends State<RotatingHintTextField> {
-  final List<String> _suggestions = [
-    'e.g. Learn guitar basics…',
-    'e.g. Start a course on public speaking…',
-    'e.g. Master Excel in 30 days…',
-    'e.g. Learn to cook Italian food…',
-    'e.g. Improve your photography skills…',
-    'e.g. Study for the SATs…',
-    'e.g. Learn French for travel…',
-    'e.g. Build a personal budget…',
-    'e.g. Practice meditation techniques…',
-    'e.g. Learn to code in Python...',
-  ];
-
+  // Suggestions will now be built inside the build method
   int _currentIndex = 0;
   late Timer _timer;
 
@@ -43,6 +32,7 @@ class _RotatingHintTextFieldState extends State<RotatingHintTextField> {
   void initState() {
     super.initState();
     widget.controller.addListener(_onTextChanged);
+    // Timer logic is now slightly different
     _startHintRotation();
   }
 
@@ -54,7 +44,9 @@ class _RotatingHintTextFieldState extends State<RotatingHintTextField> {
     _timer = Timer.periodic(const Duration(seconds: 4), (_) {
       if (!widget.focusNode.hasFocus && widget.controller.text.isEmpty) {
         setState(() {
-          _currentIndex = (_currentIndex + 1) % _suggestions.length;
+          // We don't know the list length here, so we just increment.
+          // The modulo will be applied in the build method.
+          _currentIndex++;
         });
       }
     });
@@ -69,17 +61,39 @@ class _RotatingHintTextFieldState extends State<RotatingHintTextField> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    if (l10n == null) {
+      return const SizedBox(height: 50); // Fallback height
+    }
+
+    // --- Build the suggestions list dynamically ---
+    final List<String> suggestions = [
+      l10n.rotatingHintTextField_suggestion1,
+      l10n.rotatingHintTextField_suggestion2,
+      l10n.rotatingHintTextField_suggestion3,
+      l10n.rotatingHintTextField_suggestion4,
+      l10n.rotatingHintTextField_suggestion5,
+      l10n.rotatingHintTextField_suggestion6,
+      l10n.rotatingHintTextField_suggestion7,
+      l10n.rotatingHintTextField_suggestion8,
+      l10n.rotatingHintTextField_suggestion9,
+      l10n.rotatingHintTextField_suggestion10,
+    ];
+
+    // Apply modulo here to prevent range errors
+    final int displayIndex = _currentIndex % suggestions.length;
     final bool showAnimatedHint = widget.controller.text.isEmpty;
 
+    // --- Build the usage text dynamically ---
     String usageText = '';
     if (widget.subscriptionStatus != null) {
       if (widget.subscriptionStatus!.pathGenerationLimit == null) {
-        usageText = 'Unlimited Generations';
+        usageText = l10n.rotatingHintTextField_unlimitedGenerations;
       } else {
         final remaining =
             widget.subscriptionStatus!.pathGenerationLimit! -
             widget.subscriptionStatus!.pathsGeneratedThisMonth;
-        usageText = '$remaining Path Generations Left';
+        usageText = l10n.rotatingHintTextField_generationsLeft(remaining);
       }
     }
 
@@ -98,9 +112,9 @@ class _RotatingHintTextFieldState extends State<RotatingHintTextField> {
                       FadeTransition(opacity: animation, child: child),
                   child: Align(
                     alignment: Alignment.centerLeft,
-                    key: ValueKey(_suggestions[_currentIndex]),
+                    key: ValueKey(suggestions[displayIndex]),
                     child: Text(
-                      _suggestions[_currentIndex],
+                      suggestions[displayIndex],
                       style: TextStyle(
                         color: Colors.grey.shade600,
                         fontSize: 16,
@@ -120,7 +134,7 @@ class _RotatingHintTextFieldState extends State<RotatingHintTextField> {
               decoration: InputDecoration(
                 hintText: '',
                 filled: false,
-                counterText: "", // Hide the default counter
+                counterText: "",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.0),
                   borderSide: BorderSide.none,
@@ -140,12 +154,10 @@ class _RotatingHintTextFieldState extends State<RotatingHintTextField> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // --- Usage Counter ---
               Text(
                 usageText,
                 style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
               ),
-              // --- Character Counter ---
               Text(
                 "${widget.controller.text.length} / ${widget.maxLength}",
                 style: TextStyle(color: Colors.grey.shade600, fontSize: 12),

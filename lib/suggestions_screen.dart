@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'services/api_service.dart';
 import 'models/path_suggestion_model.dart';
 import 'generating_path_screen.dart';
-import 'path_detail_screen.dart';
+import 'l10n/app_localizations.dart';
 
 class SuggestionsScreen extends StatelessWidget {
   final String prompt;
@@ -16,25 +16,25 @@ class SuggestionsScreen extends StatelessWidget {
     required this.onPathCreated,
   });
 
-  Future<void> _assignPath(BuildContext context, int templateId) async {
+  Future<void> _assignPath(BuildContext context, int templateId, AppLocalizations l10n) async {
     final apiService = ApiService();
     try {
       final newPath = await apiService.assignPath(templateId);
       if (context.mounted) {
-        // Pop this screen and return the new UserPath ID to the HomeScreen
         Navigator.pop(context, newPath.userPathId);
       }
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Error assigning path: $e')));
+        ).showSnackBar(SnackBar(
+          // Use translated string with placeholder
+          content: Text(l10n.suggestionsScreen_errorAssigningPath(e.toString())),
+        ));
       }
     }
   }
 
-  // This method now correctly navigates to the generating screen and then
-  // passes the result back up to the HomeScreen.
   Future<void> _generateNewPath(BuildContext context) async {
     final newPathId = await Navigator.push<int>(
       context,
@@ -44,24 +44,32 @@ class SuggestionsScreen extends StatelessWidget {
     );
 
     if (newPathId != null && context.mounted) {
-      // After the generating screen is done, pop this suggestions screen
-      // and pass the new ID back to the HomeScreen that is waiting for it.
       Navigator.pop(context, newPathId);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Get the l10n object
+    final l10n = AppLocalizations.of(context);
+    if (l10n == null) {
+      // Return a loading state if localizations are not yet available
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Suggestions')),
-      // Wrap the Column with a SafeArea widget
+      appBar: AppBar(
+        // Use translated string
+        title: Text(l10n.suggestionsScreen_title),
+      ),
       body: SafeArea(
         child: Column(
           children: [
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(
-                'We found some existing paths for "$prompt". Start with one of these or generate your own.',
+                // Use translated string with placeholder
+                l10n.suggestionsScreen_header(prompt),
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
@@ -86,7 +94,8 @@ class SuggestionsScreen extends StatelessWidget {
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       subtitle: Text(suggestion.description),
-                      onTap: () => _assignPath(context, suggestion.id),
+                      // Pass the l10n object to the handler
+                      onTap: () => _assignPath(context, suggestion.id, l10n),
                     ),
                   );
                 },
@@ -101,9 +110,10 @@ class SuggestionsScreen extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
-                  child: const Text(
-                    'Generate My Own Path',
-                    style: TextStyle(fontSize: 16),
+                  child: Text(
+                    // Use translated string
+                    l10n.suggestionsScreen_generateMyOwnPath,
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ),
               ),

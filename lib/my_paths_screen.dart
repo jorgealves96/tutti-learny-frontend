@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'models/my_path_model.dart';
 import 'path_detail_screen.dart';
+import 'l10n/app_localizations.dart';
 
 class MyPathsScreen extends StatelessWidget {
   final List<MyPath> myPaths;
@@ -28,6 +29,12 @@ class MyPathsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
+    if (l10n == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Scaffold(
       body: SafeArea(
         child: myPaths.isEmpty
@@ -38,8 +45,8 @@ class MyPathsScreen extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
-                        'No paths created yet',
+                      Text(
+                        l10n.myPathsScreen_noPathsCreatedYet,
                         style: TextStyle(fontSize: 18, color: Colors.grey),
                       ),
                       const SizedBox(height: 20),
@@ -64,7 +71,8 @@ class MyPathsScreen extends StatelessWidget {
                       ),
                       clipBehavior: Clip.antiAlias,
                       child: InkWell(
-                        onTap: () => _navigateToDetail(context, path.userPathId),
+                        onTap: () =>
+                            _navigateToDetail(context, path.userPathId),
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Column(
@@ -75,22 +83,24 @@ class MyPathsScreen extends StatelessWidget {
                                   Container(
                                     padding: const EdgeInsets.all(12.0),
                                     decoration: BoxDecoration(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary
-                                          .withOpacity(0.1),
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.secondary.withOpacity(0.1),
                                       borderRadius: BorderRadius.circular(12.0),
                                     ),
                                     child: Icon(
                                       path.icon,
-                                      color: Theme.of(context).colorScheme.secondary,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.secondary,
                                       size: 28,
                                     ),
                                   ),
                                   const SizedBox(width: 16),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           path.title,
@@ -121,8 +131,9 @@ class MyPathsScreen extends StatelessWidget {
                                     child: LinearProgressIndicator(
                                       value: path.progress,
                                       backgroundColor: Colors.grey.shade300,
-                                      color:
-                                          Theme.of(context).colorScheme.secondary,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.secondary,
                                       minHeight: 8,
                                       borderRadius: BorderRadius.circular(4),
                                     ),
@@ -162,6 +173,13 @@ class _AddPathButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
+    if (l10n == null) {
+      // Return a temporary widget or an empty container while localizations load
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return SizedBox(
       width: double.infinity,
       child: OutlinedButton(
@@ -175,7 +193,7 @@ class _AddPathButton extends StatelessWidget {
           ),
           textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        child: const Text('Create a New Path'),
+        child: Text(l10n.myPathsScreen_createANewPath),
       ),
     );
   }

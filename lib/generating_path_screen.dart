@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'services/api_service.dart';
-import 'subscription_screen.dart';
+import 'l10n/app_localizations.dart';
 
 class GeneratingPathScreen extends StatefulWidget {
   final String prompt;
@@ -56,6 +56,13 @@ class _GeneratingPathScreenState extends State<GeneratingPathScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
+    if (l10n == null) {
+      // Return a temporary widget or an empty container while localizations load
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Scaffold(
       body: Center(
         child: Padding(
@@ -74,14 +81,14 @@ class _GeneratingPathScreenState extends State<GeneratingPathScreen>
                 ),
               ),
               const SizedBox(height: 40),
-              const Text(
-                'Crafting your personalized learning path',
+              Text(
+                l10n.generatingPathsScreen_craftingPersonalizedLearningPath,
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
               Text(
-                'Our AI is working hard to create a curriculum tailored to your goals and learning style. This may take a few moments.',
+                l10n.generatingPathsScreen_loadingPathGenerationMessage,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 16,

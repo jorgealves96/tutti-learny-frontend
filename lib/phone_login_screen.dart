@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'services/auth_service.dart';
+import 'l10n/app_localizations.dart';
 
 class PhoneLoginScreen extends StatefulWidget {
   final VoidCallback onLoginSuccess;
@@ -27,14 +28,17 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
     super.dispose();
   }
 
-  Future<void> _sendOtp() async {
+  Future<void> _sendOtp(l10n) async {
     if (_phoneController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a phone number.')),
+        SnackBar(content: Text(l10n.phoneLoginScreen_pleaseEnterPhoneNumber)),
       );
       return;
     }
-    setState(() { _isLoading = true; });
+
+    setState(() {
+      _isLoading = true;
+    });
     try {
       final fullPhoneNumber = '$_countryCode${_phoneController.text.trim()}';
       await AuthService.startPhoneLogin(
@@ -48,7 +52,9 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
         },
         verificationFailed: (e) {
           if (!mounted) return;
-          setState(() { _isLoading = false; });
+          setState(() {
+            _isLoading = false;
+          });
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Failed to send code: ${e.message}')),
           );
@@ -56,56 +62,69 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      setState(() { _isLoading = false; });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('An error occurred: $e')),
-      );
+      setState(() {
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('An error occurred: $e')));
     }
   }
 
-  Future<void> _verifyOtp() async {
+  Future<void> _verifyOtp(AppLocalizations l10n) async {
     if (_verificationId == null) return;
-    setState(() { _isLoading = true; });
+    setState(() {
+      _isLoading = true;
+    });
 
     final success = await AuthService.verifyPhoneLogin(
       verificationId: _verificationId!,
       otp: _otpController.text.trim(),
     );
-    
+
     if (!mounted) return;
 
     if (success) {
       Navigator.of(context).pop();
       widget.onLoginSuccess();
     } else {
-      setState(() { _isLoading = false; });
+      setState(() {
+        _isLoading = false;
+      });
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Invalid code. Please try again.')),
+        SnackBar(content: Text(l10n.phoneLoginScreen_invalidCode)),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final fullPhoneNumber = '$_countryCode${_phoneController.text}';
+
+    if (l10n == null) {
+      // Return a temporary widget or an empty container while localizations load
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
+      appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              _isOtpSent ? 'Enter Verification Code' : 'Enter Your Phone Number',
+              _isOtpSent
+                  ? l10n.phoneLoginScreen_enterVerificationCodeTitle
+                  : l10n.phoneLoginScreen_enterPhoneNumberTitle,
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             Text(
-              _isOtpSent 
-                ? 'A 6-digit code was sent to $_countryCode${_phoneController.text}'
-                : 'Select your country and enter your phone number.',
+              _isOtpSent
+                  ? l10n.phoneLoginScreen_codeSentSubtitle(fullPhoneNumber)
+                  : l10n.phoneLoginScreen_enterPhoneNumberSubtitle,
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
             ),
@@ -129,8 +148,8 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
                     child: TextField(
                       controller: _phoneController,
                       keyboardType: TextInputType.phone,
-                      decoration: const InputDecoration(
-                        labelText: 'Phone Number',
+                      decoration: InputDecoration(
+                        labelText: l10n.phoneLoginScreen_phoneNumberLabel,
                         border: OutlineInputBorder(),
                       ),
                     ),
@@ -141,8 +160,8 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
               TextField(
                 controller: _otpController,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: '6-Digit Code',
+                decoration: InputDecoration(
+                  labelText: l10n.phoneLoginScreen_otpLabel,
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -150,15 +169,21 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _isLoading ? null : (_isOtpSent ? _verifyOtp : _sendOtp),
+                onPressed: _isLoading
+                    ? null
+                    : (_isOtpSent ? () => _verifyOtp(l10n) : () => _sendOtp(l10n)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.secondary,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
-                child: _isLoading 
-                  ? const CircularProgressIndicator(color: Colors.white) 
-                  : Text(_isOtpSent ? 'Verify Code' : 'Send Code'),
+                child: _isLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : Text(
+                        _isOtpSent
+                            ? l10n.phoneLoginScreen_verifyCode
+                            : l10n.phoneLoginScreen_sendCode,
+                      ),
               ),
             ),
           ],

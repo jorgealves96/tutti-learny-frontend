@@ -4,6 +4,7 @@ import 'models/path_detail_model.dart';
 import 'services/api_service.dart';
 import 'content_viewer_screen.dart';
 import 'subscription_screen.dart';
+import 'l10n/app_localizations.dart';
 
 class PathDetailScreen extends StatefulWidget {
   final int pathId;
@@ -88,22 +89,22 @@ class _PathDetailViewState extends State<_PathDetailView> {
     );
   }
 
-  void _showUpgradeDialog(String errorMessage) {
+  void _showUpgradeDialog(String errorMessage, AppLocalizations l10n) {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          title: const Text("Usage Limit Reached"),
+          title: Text(l10n.pathDetailScreen_usageLimitReached),
           content: Text(errorMessage.replaceFirst("Exception: ", "")),
           actions: <Widget>[
             TextButton(
-              child: const Text("Maybe Later"),
+              child: Text(l10n.pathDetailScreen_maybeLater),
               onPressed: () {
                 Navigator.of(dialogContext).pop();
               },
             ),
             ElevatedButton(
-              child: const Text("Upgrade"),
+              child: Text(l10n.pathDetailScreen_upgrade),
               onPressed: () {
                 Navigator.of(dialogContext).pop(); // Close the dialog
                 _showSubscriptionSheet(); // Open the subscription sheet
@@ -115,7 +116,7 @@ class _PathDetailViewState extends State<_PathDetailView> {
     );
   }
 
-  Future<void> _extendPath() async {
+  Future<void> _extendPath(AppLocalizations l10n) async {
     setState(() {
       _isExtending = true;
       // Clear previous highlights when extending again
@@ -131,9 +132,7 @@ class _PathDetailViewState extends State<_PathDetailView> {
         });
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Congratulations! You have completed this path.'),
-            ),
+            SnackBar(content: Text(l10n.pathDetailScreen_pathCompleted)),
           );
         }
       } else {
@@ -147,7 +146,7 @@ class _PathDetailViewState extends State<_PathDetailView> {
       // --- 3. Update the catch block to check the error message ---
       if (e.toString().toLowerCase().contains('limit')) {
         // If the user hit their usage limit, show the upgrade dialog
-        _showUpgradeDialog(e.toString());
+        _showUpgradeDialog(e.toString(), l10n);
       } else {
         // Otherwise, show the normal error snackbar
         if (mounted) {
@@ -223,7 +222,7 @@ class _PathDetailViewState extends State<_PathDetailView> {
     }
   }
 
-  void _openContent(ResourceDetail resource) {
+  void _openContent(ResourceDetail resource, AppLocalizations l10n) {
     if (resource.url.isNotEmpty) {
       Navigator.push(
         context,
@@ -234,29 +233,29 @@ class _PathDetailViewState extends State<_PathDetailView> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('This resource has no link available.')),
+        SnackBar(content: Text(l10n.pathDetailScreen_noLinkAvailable)),
       );
     }
   }
 
-  Future<void> _showDeleteConfirmation() async {
+  Future<void> _showDeleteConfirmation(AppLocalizations l10n) async {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Delete Path'),
-          content: const Text(
-            'Are you sure you want to permanently delete this learning path?',
+          title: Text(l10n.pathDetailScreen_deletePathTitle),
+          content: Text(
+            l10n.pathDetailScreen_deletePathConfirm,
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Cancel'),
+              child: Text(l10n.pathDetailScreen_cancel),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text('Delete', style: TextStyle(color: Colors.red)),
+              child: Text(l10n.pathDetailScreen_delete, style: TextStyle(color: Colors.red)),
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
                 _deletePath(); // Call the delete method
@@ -290,6 +289,11 @@ class _PathDetailViewState extends State<_PathDetailView> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    if (l10n == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -304,16 +308,16 @@ class _PathDetailViewState extends State<_PathDetailView> {
           PopupMenuButton<String>(
             onSelected: (value) {
               if (value == 'delete') {
-                _showDeleteConfirmation();
+                _showDeleteConfirmation(l10n);
               }
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              const PopupMenuItem<String>(
+              PopupMenuItem<String>(
                 value: 'delete',
                 child: ListTile(
                   leading: Icon(Icons.delete_outline, color: Colors.red),
                   title: Text(
-                    'Delete Path',
+                    l10n.pathDetailScreen_deletePathTitle,
                     style: TextStyle(color: Colors.red),
                   ),
                 ),
@@ -329,13 +333,13 @@ class _PathDetailViewState extends State<_PathDetailView> {
       floatingActionButton: _isPathComplete
           ? FloatingActionButton.extended(
               onPressed: null, // Disabled button
-              label: const Text('Path Complete!'),
+              label: Text(l10n.pathDetailScreen_pathIsComplete),
               icon: const Icon(Icons.check_circle),
               backgroundColor: Colors.green,
             )
           : FloatingActionButton.extended(
-              onPressed: _isExtending ? null : _extendPath,
-              label: Text(_isExtending ? 'Generating...' : 'Extend Path'),
+              onPressed: _isExtending ? null : () => _extendPath(l10n),
+              label: Text(_isExtending ? l10n.pathDetailScreen_generating : l10n.pathDetailScreen_extendPath),
               icon: _isExtending
                   ? const SizedBox(
                       width: 20,
@@ -478,7 +482,7 @@ class _PathDetailViewState extends State<_PathDetailView> {
                               resource.icon,
                               color: Colors.grey.shade700,
                             ),
-                            onTap: () => _openContent(resource),
+                            onTap: () => _openContent(resource, l10n),
                             contentPadding: EdgeInsets.zero,
                           );
                         }).toList(),

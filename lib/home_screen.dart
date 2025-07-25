@@ -10,6 +10,7 @@ import 'services/api_service.dart';
 import 'widgets/rotating_hint_text_field.dart';
 import 'subscription_screen.dart';
 import 'models/subscription_status_model.dart';
+import 'l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
   final List<MyPath> recentPaths;
@@ -193,6 +194,13 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     final userName = firstName;
 
+    final l10n = AppLocalizations.of(context);
+
+    if (l10n == null) {
+      // Return a temporary widget or an empty container while localizations load
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -241,7 +249,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: Colors.black,
                 ),
                 children: <TextSpan>[
-                  const TextSpan(text: 'Hi '),
+                  TextSpan(text: l10n.homeScreen_hi),
                   ...[
                     for (int i = 0; i < userName.length; i++)
                       TextSpan(
@@ -253,7 +261,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                   ],
-                  const TextSpan(text: ',\nwhat do you want to learn today?'),
+                  TextSpan(text: l10n.homeScreen_callToActionMsg),
                 ],
               ),
             ),
@@ -289,8 +297,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           strokeWidth: 2,
                         ),
                       )
-                    : const Text(
-                        'Create Learning Path',
+                    : Text(
+                        l10n.homeScreen_createLearningPath,
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -304,8 +312,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 40),
-                  const Text(
-                    'Recently Created Paths',
+                  Text(
+                    l10n.homeScreen_recentlyCreatedPaths,
                     style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
