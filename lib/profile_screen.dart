@@ -447,9 +447,7 @@ class _LanguageSwitcher extends StatelessWidget {
               style: const TextStyle(fontSize: 16),
             ),
             DropdownButton<Locale>(
-              value:
-                  localeProvider.locale ??
-                  AppLocalizations.supportedLocales.first,
+              value: localeProvider.locale ?? Localizations.localeOf(context),
               underline: const SizedBox.shrink(),
               items: AppLocalizations.supportedLocales.map((Locale locale) {
                 return DropdownMenuItem<Locale>(
