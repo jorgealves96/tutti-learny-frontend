@@ -387,4 +387,18 @@ class ApiService {
       throw Exception('Failed to delete account.');
     }
   }
+
+  Future<void> updateSubscription(int tier, bool isYearly) async {
+    final ioClient = _createIOClient();
+    final headers = await _getHeaders();
+    final response = await ioClient.post(
+      Uri.parse('$_baseUrl/subscriptions/update'),
+      headers: headers,
+      body: jsonEncode({'tier': tier, 'isYearly': isYearly}),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to update subscription.');
+    }
+  }
 }

@@ -12,7 +12,7 @@
    "homeScreen_createLearningPath":"Create Learning Path",
    "homeScreen_recentlyCreatedPaths":"Recently Created Paths",
 
-   "loginScreen_welcomePrimary":"Welcome to Tutti Learni",
+   "loginScreen_welcomePrimary":"Welcome to",
    "loginScreen_welcomeSecondary":"Your personal guide to learn anything.",
    "loginScreen_continueWithGoogle":"Continue with Google",
    "loginScreen_failedToSignInGoogle":"Failed to sign in with Google.",
@@ -162,6 +162,11 @@
    "profileScreen_manageNotifications":"Notifications",
    "profileScreen_manageAppearance":"Appearance",
    "profileScreen_manageLanguage": "Language",
+   "profileScreen_tierFree": "Free",
+   "profileScreen_daysLeft": "{count,plural, =1{1 day left}other{{count} days left}}",
+   "@profileScreen_daysLeft": {
+      "placeholders": { "count": { "type": "int" } }
+   },
 
    "subscriptionScreen_title":"Upgrade Your Learning",
    "subscriptionScreen_monthly":"Monthly",

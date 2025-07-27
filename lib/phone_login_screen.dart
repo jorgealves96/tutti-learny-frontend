@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'services/auth_service.dart';
 import 'l10n/app_localizations.dart';
+import 'package:country_codes/country_codes.dart';
 
 class PhoneLoginScreen extends StatefulWidget {
   final VoidCallback onLoginSuccess;
@@ -20,6 +21,7 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
   bool _isLoading = false;
   String? _verificationId;
   String _countryCode = '+1'; // Default to US
+  String? _initialCountryCode;
 
   @override
   void dispose() {
@@ -98,13 +100,36 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _initCountryCode();
+  }
+
+  Future<void> _initCountryCode() async {
+    // This must be called before accessing country details
+    await CountryCodes.init();
+
+    final CountryDetails? details = CountryCodes.detailsForLocale();
+    if (details != null && mounted) {
+      setState(() {
+        _initialCountryCode = details.alpha2Code; // e.g., 'US' or 'PT'
+        _countryCode = details.dialCode ?? '+1'; // Set the initial dial code
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final fullPhoneNumber = '$_countryCode${_phoneController.text}';
 
-    if (l10n == null) {
-      // Return a temporary widget or an empty container while localizations load
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+
+    final List<String> favoriteCodes = ['+1', 'US']; // Start with your defaults
+    if (_initialCountryCode != null &&
+        !favoriteCodes.contains(_initialCountryCode)) {
+      favoriteCodes.add(_initialCountryCode!);
     }
 
     return Scaffold(
@@ -138,8 +163,20 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
                         _countryCode = country.dialCode!;
                       });
                     },
-                    initialSelection: 'US',
-                    favorite: const ['+1', 'US'],
+                    initialSelection: _initialCountryCode ?? 'US',
+                    favorite: favoriteCodes,
+                    backgroundColor: Colors.transparent,
+                    dialogBackgroundColor: theme.scaffoldBackgroundColor,
+                    dialogTextStyle: TextStyle(
+                      color: isDarkMode ? Colors.white : Colors.black,
+                    ),
+                    searchStyle: TextStyle(
+                      color: isDarkMode ? Colors.white : Colors.black,
+                    ),
+                    closeIcon: Icon(
+                      Icons.close,
+                      color: isDarkMode ? Colors.white : Colors.black,
+                    ),
                     showCountryOnly: false,
                     showOnlyCountryWhenClosed: false,
                     alignLeft: false,
@@ -171,7 +208,9 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
               child: ElevatedButton(
                 onPressed: _isLoading
                     ? null
-                    : (_isOtpSent ? () => _verifyOtp(l10n) : () => _sendOtp(l10n)),
+                    : (_isOtpSent
+                          ? () => _verifyOtp(l10n)
+                          : () => _sendOtp(l10n)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.secondary,
                   foregroundColor: Colors.white,

@@ -11,6 +11,7 @@ import 'widgets/rotating_hint_text_field.dart';
 import 'subscription_screen.dart';
 import 'models/subscription_status_model.dart';
 import 'l10n/app_localizations.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class HomeScreen extends StatefulWidget {
   final List<MyPath> recentPaths;
@@ -48,12 +49,12 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  Future<void> _startPathCreationFlow() async {
+  Future<void> _startPathCreationFlow(AppLocalizations l10n) async {
     final prompt = _promptController.text;
     if (prompt.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter a topic to generate a path.'),
+        SnackBar(
+          content: Text(l10n.homeScreen_pleaseEnterATopic),
           backgroundColor: Colors.orange,
         ),
       );
@@ -194,12 +195,14 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     final userName = firstName;
 
-    final l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
-    if (l10n == null) {
-      // Return a temporary widget or an empty container while localizations load
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
+      final theme = Theme.of(context);
+  final isDarkMode = theme.brightness == Brightness.dark;
+
+  final tuttiColor = isDarkMode ? Colors.white : const Color(0xFF141443);
+  final learniColor = theme.colorScheme.secondary; // This works for both modes
+  final defaultTextColor = isDarkMode ? Colors.white : Colors.black;
 
     return Scaffold(
       appBar: AppBar(
@@ -208,23 +211,22 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             RichText(
-              text: const TextSpan(
-                style: TextStyle(
+              text: TextSpan(
+                style: GoogleFonts.lora(
                   fontWeight: FontWeight.bold,
-                  fontSize: 40,
-                  fontFamily: 'Inter',
+                  fontSize: 35,
                 ),
                 children: [
                   TextSpan(
                     text: 'Tutti',
                     style: TextStyle(
-                      color: Color(0xFF141443), // Hex color for #141443
+                      color: tuttiColor, // Hex color for #141443
                     ),
                   ),
                   TextSpan(
                     text: ' Learni',
                     style: TextStyle(
-                      color: Color(0xFF0067F9), // Hex color for #0067f9
+                      color: learniColor, // Hex color for #0067f9
                     ),
                   ),
                 ],
@@ -246,7 +248,7 @@ class _HomeScreenState extends State<HomeScreen> {
               text: TextSpan(
                 style: Theme.of(context).textTheme.displaySmall?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: defaultTextColor,
                 ),
                 children: <TextSpan>[
                   TextSpan(text: l10n.homeScreen_hi),
@@ -256,8 +258,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         text: userName[i],
                         style: TextStyle(
                           color: i < userName.length / 2
-                              ? const Color(0xFF141443) // First half
-                              : const Color(0xFF0067F9), // Second half
+                              ? tuttiColor // First half
+                              : learniColor, // Second half
                         ),
                       ),
                   ],
@@ -269,7 +271,7 @@ class _HomeScreenState extends State<HomeScreen> {
             RotatingHintTextField(
               controller: _promptController,
               focusNode: widget.homeFocusNode,
-              onSubmitted: _startPathCreationFlow,
+              onSubmitted: () => _startPathCreationFlow(l10n),
               subscriptionStatus: widget.subscriptionStatus,
             ),
             const SizedBox(height: 20),
@@ -278,7 +280,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: ElevatedButton(
                 onPressed: _isCheckingSuggestions
                     ? null
-                    : _startPathCreationFlow,
+                    : () => _startPathCreationFlow(l10n),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.secondary,
                   foregroundColor: Colors.white,

@@ -47,7 +47,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get homeScreen_recentlyCreatedPaths => 'Parcours Récemment Créés';
 
   @override
-  String get loginScreen_welcomePrimary => 'Bienvenue sur Tutti Learni';
+  String get loginScreen_welcomePrimary => 'Bienvenue sur';
 
   @override
   String get loginScreen_welcomeSecondary =>
@@ -290,13 +290,27 @@ class AppLocalizationsFr extends AppLocalizations {
   String get profileScreen_manageLanguage => 'Langue';
 
   @override
+  String get profileScreen_tierFree => 'Gratuit';
+
+  @override
+  String profileScreen_daysLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count jours restants',
+      one: '1 jour restant',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get subscriptionScreen_title => 'Améliorez Votre Apprentissage';
 
   @override
   String get subscriptionScreen_monthly => 'Mensuel';
 
   @override
-  String get subscriptionScreen_yearly => 'Annuel (Économisez ~15%)';
+  String get subscriptionScreen_yearly => 'Annuel (Économisez ~30%)';
 
   @override
   String get subscriptionScreen_upgradeNow => 'Mettre à niveau maintenant';

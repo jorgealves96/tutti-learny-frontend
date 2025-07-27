@@ -4,6 +4,8 @@ class SubscriptionStatus {
   final int pathsExtendedThisMonth;
   final int? pathGenerationLimit;
   final int? pathExtensionLimit;
+  final DateTime? subscriptionExpiryDate;
+  final int? daysLeftInSubscription;
 
   SubscriptionStatus({
     required this.tier,
@@ -11,6 +13,8 @@ class SubscriptionStatus {
     required this.pathsExtendedThisMonth,
     this.pathGenerationLimit,
     this.pathExtensionLimit,
+    this.subscriptionExpiryDate,
+    this.daysLeftInSubscription,
   });
 
   factory SubscriptionStatus.freeTier() {
@@ -32,6 +36,10 @@ class SubscriptionStatus {
       pathsExtendedThisMonth: json['pathsExtendedThisMonth'],
       pathGenerationLimit: json['pathGenerationLimit'],
       pathExtensionLimit: json['pathExtensionLimit'],
+      subscriptionExpiryDate: json['subscriptionExpiryDate'] != null
+          ? DateTime.parse(json['subscriptionExpiryDate'])
+          : null,
+      daysLeftInSubscription: json['daysLeftInSubscription'],
     );
   }
 }

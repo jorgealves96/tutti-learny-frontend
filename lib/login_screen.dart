@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'services/auth_service.dart';
 import 'phone_login_screen.dart';
 import 'l10n/app_localizations.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class LoginScreen extends StatefulWidget {
   // Changed to StatefulWidget
@@ -16,11 +17,14 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
-    if (l10n == null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+
+    // 2. Define theme-aware colors
+    final tuttiColor = isDarkMode ? Colors.white : const Color(0xFF141443);
+    final learniColor = theme.colorScheme.secondary;
 
     return Scaffold(
       body: Center(
@@ -31,9 +35,27 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               Image.asset('assets/images/logo_original_size.png', width: 150),
               const SizedBox(height: 20),
-              Text(
-                l10n.loginScreen_welcomePrimary,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                  // Default style for "Welcome to "
+                  style: GoogleFonts.lora(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: isDarkMode ? Colors.white : Colors.black,
+                  ),
+                  children: [
+                    TextSpan(text: "${l10n.loginScreen_welcomePrimary} "),
+                    TextSpan(
+                      text: 'Tutti',
+                      style: TextStyle(color: tuttiColor),
+                    ),
+                    TextSpan(
+                      text: ' Learni',
+                      style: TextStyle(color: learniColor),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 10),
               Text(

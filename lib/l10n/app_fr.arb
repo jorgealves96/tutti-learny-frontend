@@ -12,7 +12,7 @@
     "homeScreen_createLearningPath": "Créer un Parcours d'Apprentissage",
     "homeScreen_recentlyCreatedPaths": "Parcours Récemment Créés",
 
-    "loginScreen_welcomePrimary": "Bienvenue sur Tutti Learni",
+    "loginScreen_welcomePrimary": "Bienvenue sur",
     "loginScreen_welcomeSecondary": "Votre guide personnel pour tout apprendre.",
     "loginScreen_continueWithGoogle": "Continuer avec Google",
     "loginScreen_failedToSignInGoogle": "Échec de la connexion avec Google.",
@@ -86,10 +86,15 @@
     "profileScreen_manageNotifications": "Notifications",
     "profileScreen_manageAppearance": "Apparence",
     "profileScreen_manageLanguage": "Langue",
+    "profileScreen_tierFree": "Gratuit",
+    "profileScreen_daysLeft": "{count,plural, =1{1 jour restant}other{{count} jours restants}}",
+    "@profileScreen_daysLeft": {
+        "placeholders": { "count": { "type": "int" } }
+    },
 
     "subscriptionScreen_title": "Améliorez Votre Apprentissage",
     "subscriptionScreen_monthly": "Mensuel",
-    "subscriptionScreen_yearly": "Annuel (Économisez ~15%)",
+    "subscriptionScreen_yearly": "Annuel (Économisez ~30%)",
     "subscriptionScreen_upgradeNow": "Mettre à niveau maintenant",
     "subscriptionScreen_startingPurchase": "Début de l'achat pour {tierTitle} ({duration})",
     "subscriptionScreen_tierPro_title": "Pro",

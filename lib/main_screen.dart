@@ -118,18 +118,22 @@ class _MainScreenState extends State<MainScreen> {
 
           final List<Widget> widgetOptions = <Widget>[
             MyPathsScreen(
+              key: const PageStorageKey('MyPathsScreen'),
               myPaths: paths,
               onAddPath: _navigateAndFocusHome,
               onRefresh: _reloadData,
             ),
             HomeScreen(
+              key: const PageStorageKey('HomeScreen'),
               recentPaths: paths,
               onPathAction: _reloadData,
               homeFocusNode: _homeScreenFocusNode,
               subscriptionStatus: subscriptionStatus,
             ),
             ProfileScreen(
+              key: const PageStorageKey('ProfileScreen'),
               onLogout: widget.onLogout,
+              onRefresh: _reloadData,
               stats: stats,
               subscriptionStatus: subscriptionStatus,
             ),

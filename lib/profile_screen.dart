@@ -9,15 +9,18 @@ import 'subscription_screen.dart';
 import 'models/subscription_status_model.dart';
 import 'l10n/app_localizations.dart';
 import 'providers/locale_provider.dart';
+import '../providers/theme_provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   final VoidCallback onLogout;
+  final VoidCallback onRefresh;
   final ProfileStats? stats;
   final SubscriptionStatus? subscriptionStatus;
 
   const ProfileScreen({
     super.key,
     required this.onLogout,
+    required this.onRefresh,
     this.stats,
     this.subscriptionStatus,
   });
@@ -29,11 +32,19 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final ApiService _apiService = ApiService();
   late User? _user;
+  final _scrollController = ScrollController();
+
 
   @override
   void initState() {
     super.initState();
     _user = AuthService.currentUser;
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   Future<void> _showEditNameDialog(AppLocalizations l10n) async {
@@ -120,15 +131,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _showSubscriptionSheet() {
-    showModalBottomSheet(
+  void _showSubscriptionSheet() async {
+    final needsRefresh = await showModalBottomSheet<bool>(
       context: context,
-      isScrollControlled: true, // Allows the sheet to be taller
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) => const SubscriptionScreen(),
     );
+
+    // If the sheet popped with 'true', refresh the data
+    if (needsRefresh == true) {
+      widget.onRefresh();
+    }
   }
 
   Future<void> _deleteAccount() async {
@@ -190,6 +206,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       // Wrap the body with a SafeArea widget
       body: SafeArea(
         child: SingleChildScrollView(
+          controller: _scrollController,
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
           child: Column(
             children: [
@@ -218,8 +235,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 30),
               _SectionTitle(title: l10n.profileScreen_sectionAccountManagement),
               const SizedBox(height: 16),
-              const _LanguageSwitcher(),
-              const SizedBox(height: 30),
               const _AccountManagement(),
               const SizedBox(height: 8),
               TextButton.icon(
@@ -417,13 +432,12 @@ class _AccountManagement extends StatefulWidget {
   State<_AccountManagement> createState() => _AccountManagementState();
 }
 
-class _LanguageSwitcher extends StatelessWidget {
-  const _LanguageSwitcher();
-
+class _AccountManagementState extends State<_AccountManagement> {
   @override
   Widget build(BuildContext context) {
-    final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
     final l10n = AppLocalizations.of(context)!;
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
 
     // Create a map of language codes to display names
     final Map<String, String> languages = {
@@ -437,24 +451,19 @@ class _LanguageSwitcher extends StatelessWidget {
       elevation: 2,
       shadowColor: Colors.black.withOpacity(0.1),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              l10n.profileScreen_manageLanguage,
-              style: const TextStyle(fontSize: 16),
-            ),
-            DropdownButton<Locale>(
+      child: Column(
+        children: [
+          // --- Language Switcher is now the first item ---
+          ListTile(
+            leading: const Icon(Icons.language_outlined),
+            title: Text(l10n.profileScreen_manageLanguage),
+            trailing: DropdownButton<Locale>(
               value: localeProvider.locale ?? Localizations.localeOf(context),
               underline: const SizedBox.shrink(),
               items: AppLocalizations.supportedLocales.map((Locale locale) {
                 return DropdownMenuItem<Locale>(
                   value: locale,
-                  child: Text(
-                    languages[locale.languageCode] ?? locale.languageCode,
-                  ),
+                  child: Text(languages[locale.languageCode] ?? locale.languageCode),
                 );
               }).toList(),
               onChanged: (Locale? newLocale) {
@@ -463,34 +472,6 @@ class _LanguageSwitcher extends StatelessWidget {
                 }
               },
             ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _AccountManagementState extends State<_AccountManagement> {
-  bool _appearanceSwitch = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    if (l10n == null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
-
-    return Card(
-      elevation: 2,
-      shadowColor: Colors.black.withOpacity(0.1),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Column(
-        children: [
-          ListTile(
-            leading: const Icon(Icons.person_outline),
-            title: Text(l10n.profileScreen_manageEditProfile),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () {},
           ),
           const Divider(height: 1, indent: 16, endIndent: 16),
           ListTile(
@@ -504,11 +485,9 @@ class _AccountManagementState extends State<_AccountManagement> {
             leading: const Icon(Icons.brightness_6_outlined),
             title: Text(l10n.profileScreen_manageAppearance),
             trailing: Switch(
-              value: _appearanceSwitch,
+              value: themeProvider.themeMode == ThemeMode.dark,
               onChanged: (value) {
-                setState(() {
-                  _appearanceSwitch = value;
-                });
+                themeProvider.toggleTheme(value);
               },
               activeColor: Theme.of(context).colorScheme.secondary,
             ),
@@ -587,6 +566,14 @@ class _SubscriptionDetails extends StatelessWidget {
 
     final tier = status?.tier ?? 'Free';
 
+    String? daysLeftText;
+    if (status?.daysLeftInSubscription != null &&
+        status!.daysLeftInSubscription! > 0) {
+      daysLeftText = l10n.profileScreen_daysLeft(
+        status!.daysLeftInSubscription!,
+      );
+    }
+
     return Card(
       elevation: 2,
       shadowColor: Colors.black.withOpacity(0.1),
@@ -611,10 +598,28 @@ class _SubscriptionDetails extends StatelessWidget {
                     fontSize: 18,
                   ),
                 ),
+                if (daysLeftText != null) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    daysLeftText,
+                    style: const TextStyle(color: Colors.grey, fontSize: 12),
+                  ),
+                ],
               ],
             ),
-            TextButton(
+            OutlinedButton(
               onPressed: onUpgrade,
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Theme.of(context).colorScheme.secondary,
+                side: BorderSide(
+                  color: Theme.of(context).colorScheme.secondary,
+                  width: 1.5,
+                ),
+                textStyle: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
               child: Text(l10n.profileScreen_upgrade),
             ),
           ],

@@ -171,7 +171,7 @@ abstract class AppLocalizations {
   /// No description provided for @loginScreen_welcomePrimary.
   ///
   /// In en, this message translates to:
-  /// **'Welcome to Tutti Learni'**
+  /// **'Welcome to'**
   String get loginScreen_welcomePrimary;
 
   /// No description provided for @loginScreen_welcomeSecondary.
@@ -581,6 +581,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Language'**
   String get profileScreen_manageLanguage;
+
+  /// No description provided for @profileScreen_tierFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get profileScreen_tierFree;
+
+  /// No description provided for @profileScreen_daysLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{count,plural, =1{1 day left}other{{count} days left}}'**
+  String profileScreen_daysLeft(int count);
 
   /// No description provided for @subscriptionScreen_title.
   ///
