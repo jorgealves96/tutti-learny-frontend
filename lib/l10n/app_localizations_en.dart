@@ -46,6 +46,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeScreen_recentlyCreatedPaths => 'Recently Created Paths';
 
   @override
+  String get homeScreen_pathCreatedSuccess => 'Path created successfully!';
+
+  @override
   String get loginScreen_welcomePrimary => 'Welcome to';
 
   @override
@@ -147,6 +150,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pathDetailScreen_extendPath => 'Extend Path';
+
+  @override
+  String get pathDetailScreen_pathExtendedSuccess =>
+      'Path extended successfully!';
 
   @override
   String get phoneLoginScreen_enterPhoneNumberTitle =>
@@ -287,15 +294,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileScreen_tierFree => 'Free';
 
   @override
-  String profileScreen_daysLeft(int count) {
+  String profileScreen_daysLeft(String date, int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
       other: '$count days left',
       one: '1 day left',
     );
-    return '$_temp0';
+    return 'Your subscription ends on $date ($_temp0)';
   }
+
+  @override
+  String get profileScreen_manageSubscription => 'Manage';
 
   @override
   String get subscriptionScreen_title => 'Upgrade Your Learning';
@@ -362,6 +372,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Unlimited Path Extensions';
 
   @override
+  String get subscriptionScreen_upgradeSuccess =>
+      'Subscription updated successfully!';
+
+  @override
   String get suggestionsScreen_title => 'Suggestions';
 
   @override
@@ -423,4 +437,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String rotatingHintTextField_generationsLeft(int count) {
     return '$count Path Generations Left';
   }
+
+  @override
+  String get ratingScreen_title => 'Rating screen';
+
+  @override
+  String ratingScreen_congratulationsTitle(String pathTitle) {
+    return 'Congratulations on finishing the \'$pathTitle\' path!';
+  }
+
+  @override
+  String get ratingScreen_callToAction =>
+      'Your rating helps other users find the best learning paths.';
+
+  @override
+  String get ratingScreen_submitRating => 'Submit rating';
+
+  @override
+  String get ratingScreen_noThanks => 'No thanks';
+
+  @override
+  String get ratingScreen_thankYouTitle => 'Thank you for your feedback!';
 }

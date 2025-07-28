@@ -47,6 +47,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get homeScreen_recentlyCreatedPaths => 'Parcours Récemment Créés';
 
   @override
+  String get homeScreen_pathCreatedSuccess => 'Parcours créé avec succès !';
+
+  @override
   String get loginScreen_welcomePrimary => 'Bienvenue sur';
 
   @override
@@ -150,6 +153,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get pathDetailScreen_extendPath => 'Étendre le Parcours';
+
+  @override
+  String get pathDetailScreen_pathExtendedSuccess =>
+      'Parcours étendu avec succès !';
 
   @override
   String get phoneLoginScreen_enterPhoneNumberTitle =>
@@ -293,15 +300,18 @@ class AppLocalizationsFr extends AppLocalizations {
   String get profileScreen_tierFree => 'Gratuit';
 
   @override
-  String profileScreen_daysLeft(int count) {
+  String profileScreen_daysLeft(String date, int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
       other: '$count jours restants',
       one: '1 jour restant',
     );
-    return '$_temp0';
+    return 'Votre abonnement se termine le $date ($_temp0)';
   }
+
+  @override
+  String get profileScreen_manageSubscription => 'Gérer';
 
   @override
   String get subscriptionScreen_title => 'Améliorez Votre Apprentissage';
@@ -368,6 +378,10 @@ class AppLocalizationsFr extends AppLocalizations {
       'Extensions de parcours illimitées';
 
   @override
+  String get subscriptionScreen_upgradeSuccess =>
+      'Abonnement mis à jour avec succès !';
+
+  @override
   String get suggestionsScreen_title => 'Suggestions';
 
   @override
@@ -432,4 +446,25 @@ class AppLocalizationsFr extends AppLocalizations {
   String rotatingHintTextField_generationsLeft(int count) {
     return '$count Générations de parcours restantes';
   }
+
+  @override
+  String get ratingScreen_title => 'Évaluer le Parcours';
+
+  @override
+  String ratingScreen_congratulationsTitle(String pathTitle) {
+    return 'Félicitations pour avoir terminé le parcours \'$pathTitle\' !';
+  }
+
+  @override
+  String get ratingScreen_callToAction =>
+      'Votre évaluation aide les autres utilisateurs à trouver les meilleurs parcours d\'apprentissage.';
+
+  @override
+  String get ratingScreen_submitRating => 'Envoyer l\'évaluation';
+
+  @override
+  String get ratingScreen_noThanks => 'Non, merci';
+
+  @override
+  String get ratingScreen_thankYouTitle => 'Merci pour votre retour !';
 }

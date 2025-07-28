@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'l10n/app_localizations.dart';
 import 'services/api_service.dart';
+import 'models/subscription_status_model.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'dart:io' show Platform;
+import 'utils/snackbar_helper.dart';
 
-// Note: This local model is now just for structuring the data.
-// The actual text comes from the l10n object.
+// Model for displaying tier data in the UI
 class SubscriptionTier {
   final String title;
   final String monthlyPrice;
@@ -21,7 +24,8 @@ class SubscriptionTier {
 }
 
 class SubscriptionScreen extends StatefulWidget {
-  const SubscriptionScreen({super.key});
+  final SubscriptionStatus? currentStatus;
+  const SubscriptionScreen({super.key, this.currentStatus});
 
   @override
   State<SubscriptionScreen> createState() => _SubscriptionScreenState();
@@ -30,12 +34,17 @@ class SubscriptionScreen extends StatefulWidget {
 class _SubscriptionScreenState extends State<SubscriptionScreen> {
   int _selectedTierIndex = 0;
   bool _isYearly = false;
+  bool _isPurchasing = false;
 
   Future<void> _purchase(
     SubscriptionTier selectedTier,
     AppLocalizations l10n,
   ) async {
-    // 1. Determine the tier ID to send to the backend based on the title
+    setState(() {
+      _isPurchasing = true;
+    });
+
+    // 1. Determine the integer tier ID to send to the backend
     int tierId;
     if (selectedTier.title == l10n.subscriptionScreen_tierPro_title) {
       tierId = 1; // Pro
@@ -43,24 +52,57 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         l10n.subscriptionScreen_tierUnlimited_title) {
       tierId = 2; // Unlimited
     } else {
-      // Should not happen, but as a fallback:
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Unknown subscription tier selected.')),
-      );
+      // Fallback for an unknown tier
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Unknown subscription tier selected.')),
+        );
+      }
+      setState(() => _isPurchasing = false);
       return;
     }
 
-    // 2. Call the API and handle the result
+    // 2. Call your backend API
     try {
       await ApiService().updateSubscription(tierId, _isYearly);
       if (mounted) {
-        // Pop the sheet and pass 'true' to signal a refresh is needed
+      showSuccessSnackBar(context, l10n.subscriptionScreen_upgradeSuccess);
         Navigator.of(context).pop(true);
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(e.toString().replaceFirst("Exception: ", ""))),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isPurchasing = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _manageSubscription() async {
+    final String url;
+    if (Platform.isIOS) {
+      url = 'https://apps.apple.com/account/subscriptions';
+    } else if (Platform.isAndroid) {
+      url = 'https://play.google.com/store/account/subscriptions';
+    } else {
+      return; // Platform not supported
+    }
+
+    try {
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not open subscription page.')),
         );
       }
     }
@@ -70,16 +112,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     if (l10n == null) {
-      // Return a loading state if localizations are not yet available
       return const Center(child: CircularProgressIndicator());
     }
 
-    // Build the list of tiers dynamically using the translated strings
-    final List<SubscriptionTier> tiers = [
+    // --- Define all possible tiers using translations ---
+    final List<SubscriptionTier> allTiers = [
       SubscriptionTier(
         title: l10n.subscriptionScreen_tierPro_title,
         monthlyPrice: l10n.subscriptionScreen_tierPro_priceMonthly('5.99€'),
-        yearlyPrice: l10n.subscriptionScreen_tierPro_priceYearly('50€'),
+        yearlyPrice: l10n.subscriptionScreen_tierPro_priceYearly('49.99€'),
         features: [
           l10n.subscriptionScreen_tierPro_feature1(25),
           l10n.subscriptionScreen_tierPro_feature2(25),
@@ -91,13 +132,36 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         monthlyPrice: l10n.subscriptionScreen_tierUnlimited_priceMonthly(
           '10.99€',
         ),
-        yearlyPrice: l10n.subscriptionScreen_tierUnlimited_priceYearly('100€'),
+        yearlyPrice: l10n.subscriptionScreen_tierUnlimited_priceYearly(
+          '99.99€',
+        ),
         features: [
           l10n.subscriptionScreen_tierUnlimited_feature1,
           l10n.subscriptionScreen_tierUnlimited_feature2,
         ],
       ),
     ];
+
+    // --- Filter the list of tiers to show only relevant upgrades ---
+    final List<SubscriptionTier> visibleTiers;
+    final currentUserTier = widget.currentStatus?.tier;
+
+    if (currentUserTier == l10n.subscriptionScreen_tierPro_title) {
+      visibleTiers = allTiers
+          .where((t) => t.title == l10n.subscriptionScreen_tierUnlimited_title)
+          .toList();
+    } else if (currentUserTier == l10n.subscriptionScreen_tierUnlimited_title) {
+      visibleTiers = allTiers
+          .where((t) => t.title == l10n.subscriptionScreen_tierUnlimited_title)
+          .toList();
+    } else {
+      visibleTiers = allTiers;
+    }
+
+    // Ensure the selected index is valid for the visible tiers
+    if (_selectedTierIndex >= visibleTiers.length) {
+      _selectedTierIndex = 0;
+    }
 
     final bottomSafeArea = MediaQuery.of(context).viewPadding.bottom;
 
@@ -130,7 +194,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             ],
           ),
           const SizedBox(height: 16),
-          ...tiers.asMap().entries.map((entry) {
+          ...visibleTiers.asMap().entries.map((entry) {
             int index = entry.key;
             SubscriptionTier tier = entry.value;
             bool isSelected = _selectedTierIndex == index;
@@ -193,16 +257,38 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () => _purchase(tiers[_selectedTierIndex], l10n),
+              onPressed: _isPurchasing
+                  ? null
+                  : () {
+                      final selectedTier = visibleTiers[_selectedTierIndex];
+                      if (selectedTier.title == currentUserTier) {
+                        _manageSubscription();
+                      } else {
+                        _purchase(selectedTier, l10n);
+                      }
+                    },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 backgroundColor: Theme.of(context).colorScheme.secondary,
                 foregroundColor: Colors.white,
               ),
-              child: Text(
-                l10n.subscriptionScreen_upgradeNow,
-                style: const TextStyle(fontSize: 18),
-              ),
+              child: _isPurchasing
+                  ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
+                    )
+                  : Text(
+                      (visibleTiers.isNotEmpty &&
+                              visibleTiers[_selectedTierIndex].title ==
+                                  currentUserTier)
+                          ? l10n.profileScreen_manageSubscription
+                          : l10n.subscriptionScreen_upgradeNow,
+                      style: const TextStyle(fontSize: 18),
+                    ),
             ),
           ),
         ],

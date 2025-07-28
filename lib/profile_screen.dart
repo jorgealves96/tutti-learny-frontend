@@ -10,6 +10,8 @@ import 'models/subscription_status_model.dart';
 import 'l10n/app_localizations.dart';
 import 'providers/locale_provider.dart';
 import '../providers/theme_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'dart:io' show Platform;
 
 class ProfileScreen extends StatefulWidget {
   final VoidCallback onLogout;
@@ -33,7 +35,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final ApiService _apiService = ApiService();
   late User? _user;
   final _scrollController = ScrollController();
-
 
   @override
   void initState() {
@@ -131,19 +132,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _showSubscriptionSheet() async {
+  void _showSubscriptionSheet(
+    SubscriptionStatus? status,
+    VoidCallback onRefresh,
+  ) async {
     final needsRefresh = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) => const SubscriptionScreen(),
+      // Pass the status down to the SubscriptionScreen
+      builder: (context) => SubscriptionScreen(currentStatus: status),
     );
 
-    // If the sheet popped with 'true', refresh the data
     if (needsRefresh == true) {
-      widget.onRefresh();
+      onRefresh();
     }
   }
 
@@ -195,6 +199,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  void _manageSubscription() async {
+    final url = Platform.isIOS
+        ? 'https://apps.apple.com/account/subscriptions'
+        : 'https://play.google.com/store/account/subscriptions';
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -226,7 +240,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 16),
               _SubscriptionDetails(
                 status: widget.subscriptionStatus,
-                onUpgrade: _showSubscriptionSheet,
+                onUpgrade: () => _showSubscriptionSheet(
+                  widget.subscriptionStatus,
+                  widget.onRefresh,
+                ),
+                onManage: _manageSubscription,
               ),
               const SizedBox(height: 30),
               _SectionTitle(title: l10n.profileScreen_sectionMonthlyUsage),
@@ -463,7 +481,9 @@ class _AccountManagementState extends State<_AccountManagement> {
               items: AppLocalizations.supportedLocales.map((Locale locale) {
                 return DropdownMenuItem<Locale>(
                   value: locale,
-                  child: Text(languages[locale.languageCode] ?? locale.languageCode),
+                  child: Text(
+                    languages[locale.languageCode] ?? locale.languageCode,
+                  ),
                 );
               }).toList(),
               onChanged: (Locale? newLocale) {
@@ -555,21 +575,28 @@ class _MonthlyUsage extends StatelessWidget {
 class _SubscriptionDetails extends StatelessWidget {
   final SubscriptionStatus? status;
   final VoidCallback onUpgrade;
-  const _SubscriptionDetails({this.status, required this.onUpgrade});
+  final VoidCallback onManage;
+
+  const _SubscriptionDetails({
+    this.status,
+    required this.onUpgrade,
+    required this.onManage,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    if (l10n == null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
-
-    final tier = status?.tier ?? 'Free';
+    final l10n = AppLocalizations.of(context)!;
+    final tier = status?.tier ?? l10n.profileScreen_tierFree;
+    final bool isFreeTier = tier == l10n.profileScreen_tierFree;
 
     String? daysLeftText;
     if (status?.daysLeftInSubscription != null &&
-        status!.daysLeftInSubscription! > 0) {
+        status!.daysLeftInSubscription! >= 0) {
+      final formattedDate = DateFormat.yMMMMd(
+        l10n.localeName,
+      ).format(status!.subscriptionExpiryDate!);
       daysLeftText = l10n.profileScreen_daysLeft(
+        formattedDate,
         status!.daysLeftInSubscription!,
       );
     }
@@ -582,46 +609,80 @@ class _SubscriptionDetails extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  l10n.profileScreen_currentPlan,
-                  style: TextStyle(color: Colors.grey),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  tier,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.profileScreen_currentPlan,
+                    style: const TextStyle(color: Colors.grey),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    tier,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                  if (daysLeftText != null) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      daysLeftText,
+                      style: const TextStyle(color: Colors.grey, fontSize: 12),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            if (tier == l10n.profileScreen_tierFree)
+              OutlinedButton(
+                onPressed: onUpgrade,
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Theme.of(context).colorScheme.secondary,
+                  side: BorderSide(
+                    color: Theme.of(context).colorScheme.secondary,
                   ),
                 ),
-                if (daysLeftText != null) ...[
-                  const SizedBox(height: 2),
-                  Text(
-                    daysLeftText,
-                    style: const TextStyle(color: Colors.grey, fontSize: 12),
+                child: Text(l10n.profileScreen_upgrade),
+              )
+            else if (tier == l10n.subscriptionScreen_tierPro_title)
+              Row(
+                children: [
+                  TextButton(
+                    onPressed: onManage,
+                    style: TextButton.styleFrom(
+                      foregroundColor: Theme.of(context).colorScheme.secondary,
+                    ),
+                    child: Text(l10n.profileScreen_manageSubscription),
+                  ),
+                  const SizedBox(width: 8),
+                  OutlinedButton(
+                    onPressed: onUpgrade,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Theme.of(context).colorScheme.secondary,
+                      side: BorderSide(
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
+                    ),
+                    child: Text(l10n.profileScreen_upgrade),
                   ),
                 ],
-              ],
-            ),
-            OutlinedButton(
-              onPressed: onUpgrade,
-              style: OutlinedButton.styleFrom(
-                foregroundColor: Theme.of(context).colorScheme.secondary,
-                side: BorderSide(
-                  color: Theme.of(context).colorScheme.secondary,
-                  width: 1.5,
+              )
+            else // Unlimited Tier
+              OutlinedButton(
+                onPressed: onManage,
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Theme.of(context).colorScheme.secondary,
+                  side: BorderSide(
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
                 ),
-                textStyle: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.normal,
-                ),
+                child: Text(l10n.profileScreen_manageSubscription),
               ),
-              child: Text(l10n.profileScreen_upgrade),
-            ),
           ],
         ),
       ),

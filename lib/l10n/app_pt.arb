@@ -1,7 +1,6 @@
 {
     "generatingPathsScreen_craftingPersonalizedLearningPath": "A criar o seu percurso de aprendizagem personalizado",
     "generatingPathsScreen_loadingPathGenerationMessage": "A nossa IA está a trabalhar para criar um currículo à medida dos seus objetivos e estilo de aprendizagem. Isto pode demorar alguns momentos.",
-
     "homeScreen_pleaseEnterATopic": "Por favor, insira um tópico para gerar um percurso.",
     "homeScreen_usageLimitReached": "Limite de Utilização Atingido",
     "homeScreen_maybeLater": "Talvez Depois",
@@ -11,21 +10,18 @@
     "homeScreen_callToActionMsg": ",\no que quer aprender hoje?",
     "homeScreen_createLearningPath": "Criar Percurso de Aprendizagem",
     "homeScreen_recentlyCreatedPaths": "Percursos Criados Recentemente",
-
+    "homeScreen_pathCreatedSuccess": "Percurso criado com sucesso!",
     "loginScreen_welcomePrimary": "Bem-vindo ao",
     "loginScreen_welcomeSecondary": "O seu guia pessoal para aprender qualquer coisa.",
     "loginScreen_continueWithGoogle": "Continuar com o Google",
     "loginScreen_failedToSignInGoogle": "Falha ao iniciar sessão com o Google.",
     "loginScreen_continueWithPhoneNumber": "Continuar com Número de Telemóvel",
-
     "mainScreen_labelMyPaths": "Meus Percursos",
     "mainScreen_labelHome": "Início",
     "mainScreen_labelProfile": "Perfil",
     "mainScreen_tryAgain": "Tentar Novamente",
-
     "myPathsScreen_noPathsCreatedYet": "Ainda não foram criados percursos",
     "myPathsScreen_createANewPath": "Criar um Novo Percurso",
-
     "pathDetailScreen_error": "Erro: {error}",
     "pathDetailScreen_pathNotFound": "Percurso não encontrado.",
     "pathDetailScreen_usageLimitReached": "Limite de utilização atingido",
@@ -44,7 +40,7 @@
     "pathDetailScreen_pathIsComplete": "Percurso Completo!",
     "pathDetailScreen_generating": "A gerar...",
     "pathDetailScreen_extendPath": "Estender Percurso",
-
+    "pathDetailScreen_pathExtendedSuccess": "Percurso estendido com sucesso!",
     "phoneLoginScreen_enterPhoneNumberTitle": "Insira o seu número de telemóvel",
     "phoneLoginScreen_enterVerificationCodeTitle": "Insira o Código de Verificação",
     "phoneLoginScreen_enterPhoneNumberSubtitle": "Selecione o seu país e insira o seu número de telemóvel.",
@@ -57,7 +53,6 @@
     "phoneLoginScreen_failedToSendCode": "Falha ao enviar o código: {error}",
     "phoneLoginScreen_anErrorOccurred": "Ocorreu um erro: {error}",
     "phoneLoginScreen_invalidCode": "Código inválido. Por favor, tente novamente.",
-
     "profileScreen_editName": "Editar Nome",
     "profileScreen_enterYourName": "Insira o seu nome",
     "profileScreen_cancel": "Cancelar",
@@ -87,11 +82,18 @@
     "profileScreen_manageAppearance": "Aparência",
     "profileScreen_manageLanguage": "Idioma",
     "profileScreen_tierFree": "Grátis",
-    "profileScreen_daysLeft": "{count,plural, =1{1 dia restante}other{{count} dias restantes}}",
+    "profileScreen_daysLeft": "A sua subscrição termina em {date} ({count,plural, =1{1 dia restante}other{{count} dias restantes}})",
     "@profileScreen_daysLeft": {
-        "placeholders": { "count": { "type": "int" } }
+        "placeholders": {
+            "date": {
+                "type": "String"
+            },
+            "count": {
+                "type": "int"
+            }
+        }
     },
-
+    "profileScreen_manageSubscription": "Gerir",
     "subscriptionScreen_title": "Melhore a Sua Aprendizagem",
     "subscriptionScreen_monthly": "Mensal",
     "subscriptionScreen_yearly": "Anual (Poupe ~30%)",
@@ -107,12 +109,11 @@
     "subscriptionScreen_tierUnlimited_priceYearly": "{price}/ano",
     "subscriptionScreen_tierUnlimited_feature1": "Gerações de Percursos Ilimitadas",
     "subscriptionScreen_tierUnlimited_feature2": "Extensões de Percursos Ilimitadas",
-
+    "subscriptionScreen_upgradeSuccess": "Subscrição atualizada com sucesso!",
     "suggestionsScreen_title": "Sugestões",
     "suggestionsScreen_errorAssigningPath": "Erro ao atribuir o percurso: {error}",
     "suggestionsScreen_header": "Encontrámos alguns percursos existentes para \"{prompt}\". Comece com um destes ou crie o seu próprio.",
     "suggestionsScreen_generateMyOwnPath": "Gerar o Meu Próprio Percurso",
-
     "rotatingHintTextField_suggestion1": "ex. Aprender o básico de guitarra…",
     "rotatingHintTextField_suggestion2": "ex. Começar um curso de como falar em público…",
     "rotatingHintTextField_suggestion3": "ex. Dominar o Excel em 30 dias…",
@@ -124,5 +125,11 @@
     "rotatingHintTextField_suggestion9": "ex. Praticar técnicas de meditação…",
     "rotatingHintTextField_suggestion10": "ex. Aprender a programar em Python...",
     "rotatingHintTextField_unlimitedGenerations": "Gerações Ilimitadas",
-    "rotatingHintTextField_generationsLeft": "{count} Gerações de Percursos Restantes"
+    "rotatingHintTextField_generationsLeft": "{count} Gerações de Percursos Restantes",
+    "ratingScreen_title": "Avaliar Percurso",
+    "ratingScreen_congratulationsTitle": "Parabéns por terminar o percurso '{pathTitle}'!",
+    "ratingScreen_callToAction": "A sua avaliação ajuda outros utilizadores a encontrar os melhores percursos de aprendizagem.",
+    "ratingScreen_submitRating": "Enviar Avaliação",
+    "ratingScreen_noThanks": "Não, obrigado",
+    "ratingScreen_thankYouTitle": "Obrigado pelo seu feedback!"
 }

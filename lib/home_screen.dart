@@ -12,6 +12,7 @@ import 'subscription_screen.dart';
 import 'models/subscription_status_model.dart';
 import 'l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'utils/snackbar_helper.dart';
 
 class HomeScreen extends StatefulWidget {
   final List<MyPath> recentPaths;
@@ -142,6 +143,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _navigateToDetailAndRefresh(int pathId) {
+    final l10n = AppLocalizations.of(context)!;
+
+    showSuccessSnackBar(context, l10n.homeScreen_pathCreatedSuccess);
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => PathDetailScreen(pathId: pathId)),
@@ -197,12 +201,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
     final l10n = AppLocalizations.of(context)!;
 
-      final theme = Theme.of(context);
-  final isDarkMode = theme.brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
 
-  final tuttiColor = isDarkMode ? Colors.white : const Color(0xFF141443);
-  final learniColor = theme.colorScheme.secondary; // This works for both modes
-  final defaultTextColor = isDarkMode ? Colors.white : Colors.black;
+    final tuttiColor = isDarkMode ? Colors.white : const Color(0xFF141443);
+    final learniColor =
+        theme.colorScheme.secondary; // This works for both modes
+    final defaultTextColor = isDarkMode ? Colors.white : Colors.black;
 
     return Scaffold(
       appBar: AppBar(

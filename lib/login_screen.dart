@@ -33,7 +33,12 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('assets/images/logo_original_size.png', width: 150),
+              Image.asset(
+                isDarkMode
+                    ? 'assets/images/logo_original_size_dark.png'
+                    : 'assets/images/logo_original_size.png',
+                width: 150,
+              ),
               const SizedBox(height: 20),
               RichText(
                 textAlign: TextAlign.center,

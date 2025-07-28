@@ -11,6 +11,7 @@
     "homeScreen_callToActionMsg": ",\n¿qué quieres aprender hoy?",
     "homeScreen_createLearningPath": "Crear Ruta de Aprendizaje",
     "homeScreen_recentlyCreatedPaths": "Rutas Creadas Recientemente",
+    "homeScreen_pathCreatedSuccess": "¡Ruta creada con éxito!",
 
     "loginScreen_welcomePrimary": "Bienvenido a",
     "loginScreen_welcomeSecondary": "Tu guía personal para aprender cualquier cosa.",
@@ -44,6 +45,7 @@
     "pathDetailScreen_pathIsComplete": "¡Ruta Completada!",
     "pathDetailScreen_generating": "Generando...",
     "pathDetailScreen_extendPath": "Extender Ruta",
+    "pathDetailScreen_pathExtendedSuccess": "¡Ruta extendida con éxito!",
 
     "phoneLoginScreen_enterPhoneNumberTitle": "Introduce tu Número de Teléfono",
     "phoneLoginScreen_enterVerificationCodeTitle": "Introduce el Código de Verificación",
@@ -87,10 +89,14 @@
     "profileScreen_manageAppearance": "Apariencia",
     "profileScreen_manageLanguage": "Idioma",
     "profileScreen_tierFree": "Gratis",
-    "profileScreen_daysLeft": "{count,plural, =1{1 día restante}other{{count} días restantes}}",
+    "profileScreen_daysLeft": "Tu suscripción finaliza el {date} ({count,plural, =1{1 día restante}other{{count} días restantes}})",
     "@profileScreen_daysLeft": {
-        "placeholders": { "count": { "type": "int" } }
+        "placeholders": { 
+            "date": { "type": "String" },
+            "count": { "type": "int" }
+        }
     },
+    "profileScreen_manageSubscription": "Gestionar",
 
     "subscriptionScreen_title": "Mejora Tu Aprendizaje",
     "subscriptionScreen_monthly": "Mensual",
@@ -107,6 +113,7 @@
     "subscriptionScreen_tierUnlimited_priceYearly": "{price}/año",
     "subscriptionScreen_tierUnlimited_feature1": "Generaciones de Rutas Ilimitadas",
     "subscriptionScreen_tierUnlimited_feature2": "Extensiones de Rutas Ilimitadas",
+    "subscriptionScreen_upgradeSuccess": "¡Suscripción actualizada con éxito!",
 
     "suggestionsScreen_title": "Sugerencias",
     "suggestionsScreen_errorAssigningPath": "Error al asignar la ruta: {error}",
@@ -124,5 +131,11 @@
     "rotatingHintTextField_suggestion9": "ej. Practicar técnicas de meditación…",
     "rotatingHintTextField_suggestion10": "ej. Aprender a programar en Python...",
     "rotatingHintTextField_unlimitedGenerations": "Generaciones Ilimitadas",
-    "rotatingHintTextField_generationsLeft": "{count} Generaciones de Rutas Restantes"
+    "rotatingHintTextField_generationsLeft": "{count} Generaciones de Rutas Restantes",
+    "ratingScreen_title": "Calificar Ruta",
+    "ratingScreen_congratulationsTitle": "¡Felicidades por terminar la ruta '{pathTitle}'!",
+    "ratingScreen_callToAction": "Tu calificación ayuda a otros usuarios a encontrar las mejores rutas de aprendizaje.",
+    "ratingScreen_submitRating": "Enviar Calificación",
+    "ratingScreen_noThanks": "No, gracias",
+    "ratingScreen_thankYouTitle": "¡Gracias por tu comentario!"
 }

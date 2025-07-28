@@ -168,6 +168,12 @@ abstract class AppLocalizations {
   /// **'Recently Created Paths'**
   String get homeScreen_recentlyCreatedPaths;
 
+  /// No description provided for @homeScreen_pathCreatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Path created successfully!'**
+  String get homeScreen_pathCreatedSuccess;
+
   /// No description provided for @loginScreen_welcomePrimary.
   ///
   /// In en, this message translates to:
@@ -341,6 +347,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Extend Path'**
   String get pathDetailScreen_extendPath;
+
+  /// No description provided for @pathDetailScreen_pathExtendedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Path extended successfully!'**
+  String get pathDetailScreen_pathExtendedSuccess;
 
   /// No description provided for @phoneLoginScreen_enterPhoneNumberTitle.
   ///
@@ -591,8 +603,14 @@ abstract class AppLocalizations {
   /// No description provided for @profileScreen_daysLeft.
   ///
   /// In en, this message translates to:
-  /// **'{count,plural, =1{1 day left}other{{count} days left}}'**
-  String profileScreen_daysLeft(int count);
+  /// **'Your subscription ends on {date} ({count,plural, =1{1 day left}other{{count} days left}})'**
+  String profileScreen_daysLeft(String date, int count);
+
+  /// No description provided for @profileScreen_manageSubscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage'**
+  String get profileScreen_manageSubscription;
 
   /// No description provided for @subscriptionScreen_title.
   ///
@@ -683,6 +701,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unlimited Path Extensions'**
   String get subscriptionScreen_tierUnlimited_feature2;
+
+  /// No description provided for @subscriptionScreen_upgradeSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription updated successfully!'**
+  String get subscriptionScreen_upgradeSuccess;
 
   /// No description provided for @suggestionsScreen_title.
   ///
@@ -779,6 +803,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} Path Generations Left'**
   String rotatingHintTextField_generationsLeft(int count);
+
+  /// No description provided for @ratingScreen_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating screen'**
+  String get ratingScreen_title;
+
+  /// No description provided for @ratingScreen_congratulationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Congratulations on finishing the \'{pathTitle}\' path!'**
+  String ratingScreen_congratulationsTitle(String pathTitle);
+
+  /// No description provided for @ratingScreen_callToAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Your rating helps other users find the best learning paths.'**
+  String get ratingScreen_callToAction;
+
+  /// No description provided for @ratingScreen_submitRating.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit rating'**
+  String get ratingScreen_submitRating;
+
+  /// No description provided for @ratingScreen_noThanks.
+  ///
+  /// In en, this message translates to:
+  /// **'No thanks'**
+  String get ratingScreen_noThanks;
+
+  /// No description provided for @ratingScreen_thankYouTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you for your feedback!'**
+  String get ratingScreen_thankYouTitle;
 }
 
 class _AppLocalizationsDelegate

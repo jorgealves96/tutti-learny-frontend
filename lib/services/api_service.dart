@@ -74,7 +74,7 @@ class ApiService {
             Uri.parse('$_baseUrl/paths'),
             headers: headers, // Add headers here
           )
-          .timeout(const Duration(seconds: 10));
+          .timeout(const Duration(seconds: 20));
 
       if (response.statusCode == 200) {
         List<dynamic> body = jsonDecode(response.body);
@@ -120,7 +120,7 @@ class ApiService {
             Uri.parse('$_baseUrl/paths/items/$itemId/toggle-completion'),
             headers: headers, // Add headers here
           )
-          .timeout(const Duration(seconds: 15));
+          .timeout(const Duration(seconds: 20));
 
       if (response.statusCode == 200) {
         return PathItemDetail.fromJson(jsonDecode(response.body));
@@ -147,7 +147,7 @@ class ApiService {
             ),
             headers: headers, // Add headers here
           )
-          .timeout(const Duration(seconds: 15));
+          .timeout(const Duration(seconds: 20));
 
       if (response.statusCode == 200) {
         return ResourceDetail.fromJson(jsonDecode(response.body));
@@ -201,7 +201,7 @@ class ApiService {
             Uri.parse('$_baseUrl/paths/$pathId'),
             headers: headers, // Add headers here
           )
-          .timeout(const Duration(seconds: 15));
+          .timeout(const Duration(seconds: 20));
 
       if (response.statusCode != 204) {
         throw Exception(
@@ -266,7 +266,7 @@ class ApiService {
             headers: headers,
             body: jsonEncode({'prompt': prompt}),
           )
-          .timeout(const Duration(seconds: 15));
+          .timeout(const Duration(seconds: 20));
 
       if (response.statusCode == 200) {
         List<dynamic> body = jsonDecode(response.body);
@@ -292,7 +292,7 @@ class ApiService {
             Uri.parse('$_baseUrl/paths/templates/$templateId/assign'),
             headers: headers,
           )
-          .timeout(const Duration(seconds: 15));
+          .timeout(const Duration(seconds: 20));
 
       if (response.statusCode == 201) {
         // 201 Created
@@ -357,9 +357,7 @@ class ApiService {
 
       if (response.statusCode == 200) {
         return SubscriptionStatus.fromJson(jsonDecode(response.body));
-      }
-      // --- Add this block to handle the race condition ---
-      else if (response.statusCode == 404) {
+      } else if (response.statusCode == 404) {
         // If user is not found, it's a new account. Return default free status.
         return SubscriptionStatus.freeTier();
       } else {
@@ -399,6 +397,20 @@ class ApiService {
 
     if (response.statusCode != 200) {
       throw Exception('Failed to update subscription.');
+    }
+  }
+
+  Future<void> ratePath(int pathTemplateId, int rating) async {
+    final ioClient = _createIOClient();
+    final headers = await _getHeaders();
+    final response = await ioClient.post(
+      Uri.parse('$_baseUrl/paths/$pathTemplateId/rate'),
+      headers: headers,
+      body: jsonEncode({'Rating': rating}),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to submit rating.');
     }
   }
 }

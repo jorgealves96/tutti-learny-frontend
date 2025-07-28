@@ -5,6 +5,8 @@ import 'services/api_service.dart';
 import 'content_viewer_screen.dart';
 import 'subscription_screen.dart';
 import 'l10n/app_localizations.dart';
+import 'rating_screen.dart';
+import 'utils/snackbar_helper.dart';
 
 class PathDetailScreen extends StatefulWidget {
   final int pathId;
@@ -126,6 +128,9 @@ class _PathDetailViewState extends State<_PathDetailView> {
       final newItems = await _apiService.extendLearningPath(
         widget.pathDetail.userPathId,
       );
+
+      if (!mounted) return;
+      
       if (newItems.isEmpty) {
         setState(() {
           _isPathComplete = true;
@@ -141,6 +146,7 @@ class _PathDetailViewState extends State<_PathDetailView> {
           // --- 2. Store the new item IDs after extending the path ---
           _newlyAddedItemIds.addAll(newItems.map((item) => item.id));
         });
+        showSuccessSnackBar(context, l10n.pathDetailScreen_pathExtendedSuccess);
       }
     } catch (e) {
       // --- 3. Update the catch block to check the error message ---
@@ -178,6 +184,22 @@ class _PathDetailViewState extends State<_PathDetailView> {
 
     try {
       await _apiService.togglePathItemCompletion(item.id);
+
+      final allResources = _items.expand((item) => item.resources);
+      final bool isNowPathComplete = allResources.every(
+        (res) => res.isCompleted,
+      );
+
+      if (isNowPathComplete && !widget.pathDetail.hasBeenRated && mounted) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => RatingScreen(
+              pathTemplateId: widget.pathDetail.pathTemplateId,
+              pathTitle: widget.pathDetail.title,
+            ),
+          ),
+        );
+      }
     } catch (e) {
       setState(() {
         item.isCompleted = originalState;
@@ -206,6 +228,23 @@ class _PathDetailViewState extends State<_PathDetailView> {
 
     try {
       await _apiService.toggleResourceCompletion(resource.id);
+
+      final allResources = _items.expand((item) => item.resources);
+      // Check if every single resource is now complete
+      final bool isNowPathComplete = allResources.every(
+        (res) => res.isCompleted,
+      );
+
+      if (isNowPathComplete && !widget.pathDetail.hasBeenRated && mounted) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => RatingScreen(
+              pathTemplateId: widget.pathDetail.pathTemplateId,
+              pathTitle: widget.pathDetail.title,
+            ),
+          ),
+        );
+      }
     } catch (e) {
       setState(() {
         resource.isCompleted = originalResourceState;
@@ -244,9 +283,7 @@ class _PathDetailViewState extends State<_PathDetailView> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(l10n.pathDetailScreen_deletePathTitle),
-          content: Text(
-            l10n.pathDetailScreen_deletePathConfirm,
-          ),
+          content: Text(l10n.pathDetailScreen_deletePathConfirm),
           actions: <Widget>[
             TextButton(
               child: Text(l10n.pathDetailScreen_cancel),
@@ -255,7 +292,10 @@ class _PathDetailViewState extends State<_PathDetailView> {
               },
             ),
             TextButton(
-              child: Text(l10n.pathDetailScreen_delete, style: TextStyle(color: Colors.red)),
+              child: Text(
+                l10n.pathDetailScreen_delete,
+                style: TextStyle(color: Colors.red),
+              ),
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
                 _deletePath(); // Call the delete method
@@ -339,7 +379,11 @@ class _PathDetailViewState extends State<_PathDetailView> {
             )
           : FloatingActionButton.extended(
               onPressed: _isExtending ? null : () => _extendPath(l10n),
-              label: Text(_isExtending ? l10n.pathDetailScreen_generating : l10n.pathDetailScreen_extendPath),
+              label: Text(
+                _isExtending
+                    ? l10n.pathDetailScreen_generating
+                    : l10n.pathDetailScreen_extendPath,
+              ),
               icon: _isExtending
                   ? const SizedBox(
                       width: 20,

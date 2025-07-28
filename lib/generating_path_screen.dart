@@ -56,12 +56,10 @@ class _GeneratingPathScreenState extends State<GeneratingPathScreen>
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
-    if (l10n == null) {
-      // Return a temporary widget or an empty container while localizations load
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
 
     return Scaffold(
       body: Center(
@@ -74,10 +72,11 @@ class _GeneratingPathScreenState extends State<GeneratingPathScreen>
                 opacity: _animationController,
                 child: ClipOval(
                   child: Image.asset(
-                    'assets/images/logo.png',
-                    width: 120,
-                    height: 120,
-                  ),
+                isDarkMode
+                    ? 'assets/images/logo_original_size_dark.png'
+                    : 'assets/images/logo_original_size.png',
+                width: 150,
+              ),
                 ),
               ),
               const SizedBox(height: 40),
