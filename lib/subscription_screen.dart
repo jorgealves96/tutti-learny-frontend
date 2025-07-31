@@ -119,21 +119,21 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final List<SubscriptionTier> allTiers = [
       SubscriptionTier(
         title: l10n.subscriptionScreen_tierPro_title,
-        monthlyPrice: l10n.subscriptionScreen_tierPro_priceMonthly('5.99€'),
-        yearlyPrice: l10n.subscriptionScreen_tierPro_priceYearly('49.99€'),
+        monthlyPrice: l10n.subscriptionScreen_tierPro_priceMonthly('5.99\$'),
+        yearlyPrice: l10n.subscriptionScreen_tierPro_priceYearly('49.99\$'),
         features: [
-          l10n.subscriptionScreen_tierPro_feature1(25),
-          l10n.subscriptionScreen_tierPro_feature2(25),
+          l10n.subscriptionScreen_tierPro_feature1(15),
+          l10n.subscriptionScreen_tierPro_feature2(15),
         ],
         isRecommended: true,
       ),
       SubscriptionTier(
         title: l10n.subscriptionScreen_tierUnlimited_title,
         monthlyPrice: l10n.subscriptionScreen_tierUnlimited_priceMonthly(
-          '10.99€',
+          '10.99\$',
         ),
         yearlyPrice: l10n.subscriptionScreen_tierUnlimited_priceYearly(
-          '99.99€',
+          '99.99\$',
         ),
         features: [
           l10n.subscriptionScreen_tierUnlimited_feature1,

@@ -586,8 +586,6 @@ class _SubscriptionDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final tier = status?.tier ?? l10n.profileScreen_tierFree;
-    final bool isFreeTier = tier == l10n.profileScreen_tierFree;
 
     String? daysLeftText;
     if (status?.daysLeftInSubscription != null &&
@@ -599,6 +597,20 @@ class _SubscriptionDetails extends StatelessWidget {
         formattedDate,
         status!.daysLeftInSubscription!,
       );
+    }
+
+    final rawTier = status?.tier;
+
+    final String displayTier;
+    switch (rawTier) {
+      case 'Pro':
+        displayTier = l10n.subscriptionScreen_tierPro_title;
+        break;
+      case 'Unlimited':
+        displayTier = l10n.subscriptionScreen_tierUnlimited_title;
+        break;
+      default:
+        displayTier = l10n.profileScreen_tierFree;
     }
 
     return Card(
@@ -621,7 +633,7 @@ class _SubscriptionDetails extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    tier,
+                    displayTier,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
@@ -638,7 +650,7 @@ class _SubscriptionDetails extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            if (tier == l10n.profileScreen_tierFree)
+            if (rawTier == 'Free' || rawTier == null)
               OutlinedButton(
                 onPressed: onUpgrade,
                 style: OutlinedButton.styleFrom(
@@ -649,7 +661,7 @@ class _SubscriptionDetails extends StatelessWidget {
                 ),
                 child: Text(l10n.profileScreen_upgrade),
               )
-            else if (tier == l10n.subscriptionScreen_tierPro_title)
+            else if (rawTier == 'Pro')
               Row(
                 children: [
                   TextButton(

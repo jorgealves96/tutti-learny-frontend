@@ -22,8 +22,8 @@ class SubscriptionStatus {
       tier: 'Free',
       pathsGeneratedThisMonth: 0,
       pathsExtendedThisMonth: 0,
-      pathGenerationLimit: 5,
-      pathExtensionLimit: 5,
+      pathGenerationLimit: 3,
+      pathExtensionLimit: 1,
     );
   }
 
