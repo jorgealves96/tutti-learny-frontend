@@ -1,31 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/foundation.dart';
-import 'api_service.dart';
 
 class AuthService {
   static final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  static final ApiService _apiService = ApiService();
   static final ValueNotifier<User?> currentUserNotifier = ValueNotifier(currentUser);
-
-  // --- NEW: Private helper to handle sync and error rollback ---
-  static Future<bool> _syncAndFinalizeLogin() async {
-    try {
-      // Try to sync with your backend and reload the user profile
-      await _apiService.syncUser();
-      await _firebaseAuth.currentUser?.reload();
-      currentUserNotifier.value = _firebaseAuth.currentUser;
-      return true; // Success!
-    } catch (e) {
-      // If ANY error occurs (e.g., server is down), log it.
-      if (kDebugMode) {
-        print('Failed to sync or reload user. Logging out. Error: $e');
-      }
-      // CRITICAL: Log the user out of Firebase to roll back the login.
-      await logout(); 
-      return false; // Signal that the overall login failed.
-    }
-  }
 
   static Future<bool> signInWithGoogle() async {
     try {
@@ -39,8 +18,7 @@ class AuthService {
       );
 
       await _firebaseAuth.signInWithCredential(credential);
-      // Use the new helper method for sync and error handling
-      return await _syncAndFinalizeLogin();
+      return true;
     } catch (e) {
       if (kDebugMode) print('Error during Google Sign-In: $e');
       return false;
@@ -56,8 +34,6 @@ class AuthService {
       phoneNumber: phoneNumber,
       verificationCompleted: (PhoneAuthCredential credential) async {
         await _firebaseAuth.signInWithCredential(credential);
-        // Use the new helper method. We don't need the return value here.
-        await _syncAndFinalizeLogin();
       },
       verificationFailed: verificationFailed,
       codeSent: codeSent,
@@ -75,8 +51,7 @@ class AuthService {
         smsCode: otp,
       );
       await _firebaseAuth.signInWithCredential(credential);
-      // Use the new helper method for sync and error handling
-      return await _syncAndFinalizeLogin();
+      return true;
     } catch (e) {
       if (kDebugMode) print('Error verifying phone login: $e');
       return false;
@@ -93,7 +68,6 @@ class AuthService {
     }
   }
   
-  // --- Rest of your AuthService methods ---
   static Future<String?> getIdToken() async {
     return await _firebaseAuth.currentUser?.getIdToken();
   }

@@ -94,6 +94,7 @@
         }
     },
     "profileScreen_manageSubscription": "Gerir",
+    "profileScreen_nameUpdateSuccess": "Nome atualizado com sucesso!",
     "subscriptionScreen_title": "Melhore a Sua Aprendizagem",
     "subscriptionScreen_monthly": "Mensal",
     "subscriptionScreen_yearly": "Anual (Poupe ~30%)",
@@ -133,5 +134,7 @@
     "ratingScreen_callToAction": "A sua avaliação ajuda outros utilizadores a encontrar os melhores percursos de aprendizagem.",
     "ratingScreen_submitRating": "Enviar Avaliação",
     "ratingScreen_noThanks": "Não, obrigado",
-    "ratingScreen_thankYouTitle": "Obrigado pelo seu feedback!"
+    "ratingScreen_thankYouTitle": "Obrigado pelo seu feedback!",
+    "notificationsScreen_learningReminders": "Lembretes de Aprendizagem",
+    "notificationsScreen_learningRemindersDesc": "Receber notificações para percursos não terminados"
 }

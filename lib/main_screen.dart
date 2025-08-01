@@ -18,7 +18,7 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   int _selectedIndex = 1;
   final ApiService _apiService = ApiService();
   late Future<List<MyPath>> _pathsFuture;
@@ -33,6 +33,7 @@ class _MainScreenState extends State<MainScreen> {
 
     // Listen for any updates to the user's profile (like name changes).
     AuthService.currentUserNotifier.addListener(_onUserChanged);
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
@@ -41,7 +42,17 @@ class _MainScreenState extends State<MainScreen> {
 
     // Clean up the listener to prevent memory leaks.
     AuthService.currentUserNotifier.removeListener(_onUserChanged);
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    // If the app is resumed from the background, call syncUser
+    if (state == AppLifecycleState.resumed) {
+      ApiService().syncUser();
+    }
   }
 
   // This method is called when the user data changes, triggering a rebuild.

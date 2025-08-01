@@ -94,6 +94,7 @@
         }
     },
     "profileScreen_manageSubscription": "Gestionar",
+    "profileScreen_nameUpdateSuccess": "¡Nombre actualizado con éxito!",
     "subscriptionScreen_title": "Mejora Tu Aprendizaje",
     "subscriptionScreen_monthly": "Mensual",
     "subscriptionScreen_yearly": "Anual (Ahorra ~30%)",
@@ -133,5 +134,7 @@
     "ratingScreen_callToAction": "Tu calificación ayuda a otros usuarios a encontrar las mejores rutas de aprendizaje.",
     "ratingScreen_submitRating": "Enviar Calificación",
     "ratingScreen_noThanks": "No, gracias",
-    "ratingScreen_thankYouTitle": "¡Gracias por tu comentario!"
+    "ratingScreen_thankYouTitle": "¡Gracias por tu comentario!",
+    "notificationsScreen_learningReminders": "Recordatorios de Aprendizaje",
+    "notificationsScreen_learningRemindersDesc": "Recibir notificaciones de rutas no finalizadas"
 }

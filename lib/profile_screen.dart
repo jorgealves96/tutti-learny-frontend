@@ -12,6 +12,8 @@ import 'providers/locale_provider.dart';
 import '../providers/theme_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:io' show Platform;
+import 'notifications_screen.dart';
+import 'utils/snackbar_helper.dart';
 
 class ProfileScreen extends StatefulWidget {
   final VoidCallback onLogout;
@@ -85,6 +87,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         setState(() {
           _user = AuthService.currentUser;
         });
+
+        if (mounted) {
+          showSuccessSnackBar(context, l10n.profileScreen_nameUpdateSuccess);
+        }
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -498,7 +504,14 @@ class _AccountManagementState extends State<_AccountManagement> {
             leading: const Icon(Icons.notifications_outlined),
             title: Text(l10n.profileScreen_manageNotifications),
             trailing: const Icon(Icons.chevron_right),
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const NotificationsScreen(),
+                ),
+              );
+            },
           ),
           const Divider(height: 1, indent: 16, endIndent: 16),
           ListTile(

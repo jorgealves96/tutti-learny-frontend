@@ -171,6 +171,7 @@
       }
    },
    "profileScreen_manageSubscription": "Manage",
+   "profileScreen_nameUpdateSuccess": "Name updated successfully!",
    "subscriptionScreen_title": "Upgrade Your Learning",
    "subscriptionScreen_monthly": "Monthly",
    "subscriptionScreen_yearly": "Yearly (Save ~30%)",
@@ -303,5 +304,7 @@
    "ratingScreen_callToAction": "Your rating helps other users find the best learning paths.",
    "ratingScreen_submitRating": "Submit rating",
    "ratingScreen_noThanks": "No thanks",
-   "ratingScreen_thankYouTitle": "Thank you for your feedback!"
+   "ratingScreen_thankYouTitle": "Thank you for your feedback!",
+   "notificationsScreen_learningReminders": "Learning Reminders",
+   "notificationsScreen_learningRemindersDesc": "Receive notifications for unfinished paths"
 }

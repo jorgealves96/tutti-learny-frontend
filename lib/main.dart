@@ -13,10 +13,14 @@ import 'l10n/app_localizations.dart';
 import 'providers/locale_provider.dart';
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart';
+import 'services/notification_service.dart';
+import 'services/api_service.dart';
+import 'providers/notification_settings_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await NotificationService().initialize();
 
   // --- RevenueCat SDK Initialization ---
   // Enable debug logs
@@ -41,6 +45,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => LocaleProvider()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => NotificationSettingsProvider())
       ],
       child: const TuttiLearnyApp(),
     ),
@@ -125,6 +130,7 @@ class AuthWrapper extends StatelessWidget {
           );
         }
         if (snapshot.hasData) {
+          ApiService().syncUser();
           return MainScreen(
             onLogout: () async {
               await AuthService.logout();

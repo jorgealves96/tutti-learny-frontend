@@ -413,4 +413,19 @@ class ApiService {
       throw Exception('Failed to submit rating.');
     }
   }
+
+  Future<void> updateFcmToken(String token) async {
+    try {
+      final ioClient = _createIOClient();
+      final headers = await _getHeaders();
+      await ioClient.post(
+        Uri.parse('$_baseUrl/users/me/fcm-token'),
+        headers: headers,
+        body: jsonEncode({'fcmToken': token}),
+      );
+    } catch (e) {
+      // It's okay to fail silently here, as it can be retried on the next login
+      print("Failed to update FCM token: $e");
+    }
+  }
 }

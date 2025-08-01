@@ -612,6 +612,12 @@ abstract class AppLocalizations {
   /// **'Manage'**
   String get profileScreen_manageSubscription;
 
+  /// No description provided for @profileScreen_nameUpdateSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Name updated successfully!'**
+  String get profileScreen_nameUpdateSuccess;
+
   /// No description provided for @subscriptionScreen_title.
   ///
   /// In en, this message translates to:
@@ -851,6 +857,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Thank you for your feedback!'**
   String get ratingScreen_thankYouTitle;
+
+  /// No description provided for @notificationsScreen_learningReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Learning Reminders'**
+  String get notificationsScreen_learningReminders;
+
+  /// No description provided for @notificationsScreen_learningRemindersDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive notifications for unfinished paths'**
+  String get notificationsScreen_learningRemindersDesc;
 }
 
 class _AppLocalizationsDelegate

@@ -308,6 +308,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileScreen_manageSubscription => 'Manage';
 
   @override
+  String get profileScreen_nameUpdateSuccess => 'Name updated successfully!';
+
+  @override
   String get subscriptionScreen_title => 'Upgrade Your Learning';
 
   @override
@@ -466,4 +469,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ratingScreen_thankYouTitle => 'Thank you for your feedback!';
+
+  @override
+  String get notificationsScreen_learningReminders => 'Learning Reminders';
+
+  @override
+  String get notificationsScreen_learningRemindersDesc =>
+      'Receive notifications for unfinished paths';
 }
