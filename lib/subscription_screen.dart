@@ -1,27 +1,13 @@
 import 'package:flutter/material.dart';
-import 'l10n/app_localizations.dart';
-import 'services/api_service.dart';
-import 'models/subscription_status_model.dart';
+import 'package:flutter/services.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:io' show Platform;
+
+import 'l10n/app_localizations.dart';
+import 'models/subscription_status_model.dart';
+import 'services/api_service.dart';
 import 'utils/snackbar_helper.dart';
-
-// Model for displaying tier data in the UI
-class SubscriptionTier {
-  final String title;
-  final String monthlyPrice;
-  final String? yearlyPrice;
-  final List<String> features;
-  final bool isRecommended;
-
-  SubscriptionTier({
-    required this.title,
-    required this.monthlyPrice,
-    this.yearlyPrice,
-    required this.features,
-    this.isRecommended = false,
-  });
-}
 
 class SubscriptionScreen extends StatefulWidget {
   final SubscriptionStatus? currentStatus;
@@ -32,55 +18,102 @@ class SubscriptionScreen extends StatefulWidget {
 }
 
 class _SubscriptionScreenState extends State<SubscriptionScreen> {
-  int _selectedTierIndex = 0;
+  late Future<Offering?> _offeringsFuture;
   bool _isYearly = false;
   bool _isPurchasing = false;
+  Package? _selectedPackage;
 
-  Future<void> _purchase(
-    SubscriptionTier selectedTier,
-    AppLocalizations l10n,
-  ) async {
-    setState(() {
-      _isPurchasing = true;
-    });
+  @override
+  void initState() {
+    super.initState();
+    _offeringsFuture = _fetchOfferings();
+  }
 
-    // 1. Determine the integer tier ID to send to the backend
-    int tierId;
-    if (selectedTier.title == l10n.subscriptionScreen_tierPro_title) {
-      tierId = 1; // Pro
-    } else if (selectedTier.title ==
-        l10n.subscriptionScreen_tierUnlimited_title) {
-      tierId = 2; // Unlimited
-    } else {
-      // Fallback for an unknown tier
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Unknown subscription tier selected.')),
-        );
-      }
-      setState(() => _isPurchasing = false);
-      return;
-    }
-
-    // 2. Call your backend API
+  Future<Offering?> _fetchOfferings() async {
     try {
-      await ApiService().updateSubscription(tierId, _isYearly);
-      if (mounted) {
-      showSuccessSnackBar(context, l10n.subscriptionScreen_upgradeSuccess);
-        Navigator.of(context).pop(true);
+      final offerings = await Purchases.getOfferings();
+      if (offerings.current != null &&
+          offerings.current!.availablePackages.isNotEmpty) {
+        return offerings.current;
+      } else {
+        return null;
       }
-    } catch (e) {
+    } on PlatformException catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString().replaceFirst("Exception: ", ""))),
+          SnackBar(content: Text("Error fetching plans: ${e.message}")),
         );
+      }
+      return null;
+    }
+  }
+
+  Future<void> _purchase(Package package) async {
+    final l10n = AppLocalizations.of(context)!;
+    setState(() => _isPurchasing = true);
+    print(
+      "--- Attempting to purchase package: ${package.storeProduct.identifier} ---",
+    );
+    try {
+      final purchaseResult = await Purchases.purchaseStoreProduct(
+        package.storeProduct,
+      );
+
+      final isPro =
+          purchaseResult.customerInfo.entitlements.active['pro']?.isActive ??
+          false;
+      final isUnlimited =
+          purchaseResult
+              .customerInfo
+              .entitlements
+              .active['unlimited']
+              ?.isActive ??
+          false;
+
+      print(
+        "--- Purchase successful. Pro: $isPro, Unlimited: $isUnlimited ---",
+      );
+
+      if (isPro || isUnlimited) {
+        // --- 3. If successful, now call YOUR backend to update the user's tier ---
+        int tierId = isUnlimited ? 2 : 1; // 2 for Unlimited, 1 for Pro
+        bool isYearly = package.packageType == PackageType.annual;
+        await ApiService().updateSubscription(tierId, isYearly);
+
+        // 4. Show the success message and pop the screen to trigger a refresh
+        if (mounted) {
+          showSuccessSnackBar(context, l10n.subscriptionScreen_upgradeSuccess);
+          await Future.delayed(
+            const Duration(milliseconds: 500),
+          ); // Give snackbar time to show
+          Navigator.of(context).pop(true);
+        }
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(l10n.subscriptionScreen_purchaseVerificationError),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        }
+      }
+    } on PlatformException catch (e) {
+      print("--- ERROR during purchase: ${e.message} ---");
+      var errorCode = PurchasesErrorHelper.getErrorCode(e);
+      if (errorCode != PurchasesErrorCode.purchaseCancelledError) {
+        if (mounted)
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Error: ${e.message}')));
+      } else {
+        if (mounted)
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Purchase cancelled.')));
       }
     } finally {
-      if (mounted) {
-        setState(() {
-          _isPurchasing = false;
-        });
-      }
+      if (mounted) setState(() => _isPurchasing = false);
     }
   }
 
@@ -91,7 +124,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     } else if (Platform.isAndroid) {
       url = 'https://play.google.com/store/account/subscriptions';
     } else {
-      return; // Platform not supported
+      return;
     }
 
     try {
@@ -110,189 +143,220 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    if (l10n == null) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    // --- Define all possible tiers using translations ---
-    final List<SubscriptionTier> allTiers = [
-      SubscriptionTier(
-        title: l10n.subscriptionScreen_tierPro_title,
-        monthlyPrice: l10n.subscriptionScreen_tierPro_priceMonthly('5.99\$'),
-        yearlyPrice: l10n.subscriptionScreen_tierPro_priceYearly('49.99\$'),
-        features: [
-          l10n.subscriptionScreen_tierPro_feature1(15),
-          l10n.subscriptionScreen_tierPro_feature2(15),
-        ],
-        isRecommended: true,
-      ),
-      SubscriptionTier(
-        title: l10n.subscriptionScreen_tierUnlimited_title,
-        monthlyPrice: l10n.subscriptionScreen_tierUnlimited_priceMonthly(
-          '10.99\$',
-        ),
-        yearlyPrice: l10n.subscriptionScreen_tierUnlimited_priceYearly(
-          '99.99\$',
-        ),
-        features: [
-          l10n.subscriptionScreen_tierUnlimited_feature1,
-          l10n.subscriptionScreen_tierUnlimited_feature2,
-        ],
-      ),
-    ];
-
-    // --- Filter the list of tiers to show only relevant upgrades ---
-    final List<SubscriptionTier> visibleTiers;
-    final currentUserTier = widget.currentStatus?.tier;
-
-    if (currentUserTier == l10n.subscriptionScreen_tierPro_title) {
-      visibleTiers = allTiers
-          .where((t) => t.title == l10n.subscriptionScreen_tierUnlimited_title)
-          .toList();
-    } else if (currentUserTier == l10n.subscriptionScreen_tierUnlimited_title) {
-      visibleTiers = allTiers
-          .where((t) => t.title == l10n.subscriptionScreen_tierUnlimited_title)
-          .toList();
-    } else {
-      visibleTiers = allTiers;
-    }
-
-    // Ensure the selected index is valid for the visible tiers
-    if (_selectedTierIndex >= visibleTiers.length) {
-      _selectedTierIndex = 0;
-    }
-
+    final l10n = AppLocalizations.of(context)!;
     final bottomSafeArea = MediaQuery.of(context).viewPadding.bottom;
 
-    return Padding(
-      padding: EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 24.0 + bottomSafeArea),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            l10n.subscriptionScreen_title,
-            style: Theme.of(
-              context,
-            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 24),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+    return FutureBuilder<Offering?>(
+      future: _offeringsFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Padding(
+            padding: EdgeInsets.all(32.0),
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (!snapshot.hasData || snapshot.data == null) {
+          return Padding(
+            padding: const EdgeInsets.all(32.0),
+            child: Center(
+              child: Text(l10n.subscriptionScreen_noPlansAvailable),
+            ),
+          );
+        }
+
+        final offering = snapshot.data!;
+
+        var visiblePackages = offering.availablePackages
+            .where(
+              (pkg) => _isYearly
+                  ? pkg.storeProduct.identifier.contains('yearly')
+                  : pkg.storeProduct.identifier.contains('monthly'),
+            )
+            .toList();
+
+        final currentUserTier =
+            widget.currentStatus?.tier.toLowerCase() ?? 'free';
+        if (currentUserTier == 'pro') {
+          visiblePackages = visiblePackages
+              .where((p) => p.storeProduct.identifier.contains('unlimited'))
+              .toList();
+        } else if (currentUserTier == 'unlimited') {
+          visiblePackages = visiblePackages
+              .where((p) => p.storeProduct.identifier.contains('unlimited'))
+              .toList();
+        }
+
+        visiblePackages.sort(
+          (a, b) => a.storeProduct.price.compareTo(b.storeProduct.price),
+        );
+
+        if (_selectedPackage == null ||
+            !visiblePackages.contains(_selectedPackage)) {
+          _selectedPackage = visiblePackages.isNotEmpty
+              ? visiblePackages.first
+              : null;
+        }
+
+        return Padding(
+          padding: EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 24.0 + bottomSafeArea),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(l10n.subscriptionScreen_monthly),
-              Switch(
-                value: _isYearly,
-                onChanged: (value) {
-                  setState(() {
-                    _isYearly = value;
-                  });
-                },
-                activeColor: Theme.of(context).colorScheme.secondary,
+              Text(
+                l10n.subscriptionScreen_title,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              Text(l10n.subscriptionScreen_yearly),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(l10n.subscriptionScreen_monthly),
+                  Switch(
+                    value: _isYearly,
+                    onChanged: (value) {
+                      setState(() {
+                        _isYearly = value;
+                        // When the toggle changes, reset the selected package
+                        _selectedPackage = null;
+                      });
+                    },
+                    activeColor: Theme.of(context).colorScheme.secondary,
+                  ),
+                  Text(l10n.subscriptionScreen_yearly),
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              if (visiblePackages.isEmpty && currentUserTier != 'free')
+                const Padding(
+                  padding: EdgeInsets.all(32.0),
+                  child: Text(
+                    "You are on the highest tier!",
+                    textAlign: TextAlign.center,
+                  ),
+                )
+              else
+                ...visiblePackages.map((package) {
+                  final isSelected = _selectedPackage == package;
+                  final List<String> features;
+                  if (package.storeProduct.identifier.contains('pro')) {
+                    features = [
+                      l10n.subscriptionScreen_tierPro_feature1(15),
+                      l10n.subscriptionScreen_tierPro_feature2(15),
+                    ];
+                  } else if (package.storeProduct.identifier.contains(
+                    'unlimited',
+                  )) {
+                    features = [
+                      l10n.subscriptionScreen_tierUnlimited_feature1,
+                      l10n.subscriptionScreen_tierUnlimited_feature2,
+                    ];
+                  } else {
+                    features = [];
+                  }
+                  return GestureDetector(
+                    onTap: () => setState(() => _selectedPackage = package),
+                    child: Card(
+                      elevation: isSelected ? 8 : 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        side: BorderSide(
+                          color: isSelected
+                              ? Theme.of(context).colorScheme.secondary
+                              : Colors.transparent,
+                          width: 3,
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              package.storeProduct.title
+                                  .replaceFirst("(Tutti Learni)", "")
+                                  .trim(),
+                              style: Theme.of(context).textTheme.titleLarge,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              package.storeProduct.priceString,
+                              style: Theme.of(context).textTheme.headlineSmall
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 16),
+                            for (String feature in features)
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.check_circle,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.secondary,
+                                      size: 20,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(child: Text(feature)),
+                                  ],
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+
+              const SizedBox(height: 24),
+              if (visiblePackages.isNotEmpty)
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: (_isPurchasing || _selectedPackage == null)
+                        ? null
+                        : () {
+                            if (_selectedPackage!.storeProduct.identifier
+                                .contains(currentUserTier)) {
+                              _manageSubscription();
+                            } else {
+                              _purchase(_selectedPackage!);
+                            }
+                          },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                      foregroundColor: Colors.white,
+                    ),
+                    child: _isPurchasing
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : Text(
+                            (_selectedPackage != null &&
+                                    _selectedPackage!.storeProduct.identifier
+                                        .contains(currentUserTier))
+                                ? l10n.profileScreen_manageSubscription
+                                : l10n.subscriptionScreen_upgradeNow,
+                            style: const TextStyle(fontSize: 18),
+                          ),
+                  ),
+                ),
             ],
           ),
-          const SizedBox(height: 16),
-          ...visibleTiers.asMap().entries.map((entry) {
-            int index = entry.key;
-            SubscriptionTier tier = entry.value;
-            bool isSelected = _selectedTierIndex == index;
-
-            return GestureDetector(
-              onTap: () {
-                setState(() {
-                  _selectedTierIndex = index;
-                });
-              },
-              child: Card(
-                elevation: isSelected ? 8 : 2,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  side: BorderSide(
-                    color: isSelected
-                        ? Theme.of(context).colorScheme.secondary
-                        : Colors.transparent,
-                    width: 3,
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        tier.title,
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        _isYearly ? tier.yearlyPrice! : tier.monthlyPrice,
-                        style: Theme.of(context).textTheme.headlineSmall
-                            ?.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 16),
-                      for (String feature in tier.features)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 8.0),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.check_circle,
-                                color: Theme.of(context).colorScheme.secondary,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(feature),
-                            ],
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-          const SizedBox(height: 24),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: _isPurchasing
-                  ? null
-                  : () {
-                      final selectedTier = visibleTiers[_selectedTierIndex];
-                      if (selectedTier.title == currentUserTier) {
-                        _manageSubscription();
-                      } else {
-                        _purchase(selectedTier, l10n);
-                      }
-                    },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                backgroundColor: Theme.of(context).colorScheme.secondary,
-                foregroundColor: Colors.white,
-              ),
-              child: _isPurchasing
-                  ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 2,
-                      ),
-                    )
-                  : Text(
-                      (visibleTiers.isNotEmpty &&
-                              visibleTiers[_selectedTierIndex].title ==
-                                  currentUserTier)
-                          ? l10n.profileScreen_manageSubscription
-                          : l10n.subscriptionScreen_upgradeNow,
-                      style: const TextStyle(fontSize: 18),
-                    ),
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

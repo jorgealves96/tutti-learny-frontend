@@ -381,6 +381,14 @@ class AppLocalizationsPt extends AppLocalizations {
       'Subscrição atualizada com sucesso!';
 
   @override
+  String get subscriptionScreen_noPlansAvailable =>
+      'Não existem planos de subscrição disponíveis de momento.';
+
+  @override
+  String get subscriptionScreen_purchaseVerificationError =>
+      'Compra efetuada com sucesso, mas não foi possível verificá-la. Por favor, tente restaurar as compras no ecrã de perfil.';
+
+  @override
   String get suggestionsScreen_title => 'Sugestões';
 
   @override

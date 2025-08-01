@@ -376,6 +376,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'Subscription updated successfully!';
 
   @override
+  String get subscriptionScreen_noPlansAvailable =>
+      'No subscription plans are available right now.';
+
+  @override
+  String get subscriptionScreen_purchaseVerificationError =>
+      'Purchase successful, but we couldn\'t verify it. Please try restoring purchases from the profile screen.';
+
+  @override
   String get suggestionsScreen_title => 'Suggestions';
 
   @override

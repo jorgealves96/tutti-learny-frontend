@@ -382,6 +382,14 @@ class AppLocalizationsFr extends AppLocalizations {
       'Abonnement mis à jour avec succès !';
 
   @override
+  String get subscriptionScreen_noPlansAvailable =>
+      'Aucun plan d\'abonnement n\'est disponible pour le moment.';
+
+  @override
+  String get subscriptionScreen_purchaseVerificationError =>
+      'Achat réussi, mais nous n\'avons pas pu le vérifier. Veuillez essayer de restaurer les achats depuis l\'écran de profil.';
+
+  @override
   String get suggestionsScreen_title => 'Suggestions';
 
   @override

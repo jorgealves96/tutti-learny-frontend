@@ -248,6 +248,8 @@
    "subscriptionScreen_tierUnlimited_feature1": "Unlimited Path Generations",
    "subscriptionScreen_tierUnlimited_feature2": "Unlimited Path Extensions",
    "subscriptionScreen_upgradeSuccess": "Subscription updated successfully!",
+   "subscriptionScreen_noPlansAvailable": "No subscription plans are available right now.",
+   "subscriptionScreen_purchaseVerificationError": "Purchase successful, but we couldn't verify it. Please try restoring purchases from the profile screen.",
    "suggestionsScreen_title": "Suggestions",
    "suggestionsScreen_errorAssigningPath": "Error assigning path: {error}",
    "@suggestionsScreen_errorAssigningPath": {

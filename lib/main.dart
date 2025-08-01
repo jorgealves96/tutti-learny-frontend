@@ -11,18 +11,30 @@ import 'main_screen.dart';
 import 'firebase_options.dart';
 import 'l10n/app_localizations.dart';
 import 'providers/locale_provider.dart';
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  /* TODO: Add your RevenueCat keys
-  await Purchases.configure(
-    PurchasesConfiguration("your_apple_api_key")
-      ..appUserID = null
-      ..setGoogleApiKey("your_google_api_key")
-  );
-  */
+  // --- RevenueCat SDK Initialization ---
+  // Enable debug logs
+  if (kDebugMode) {
+    // Use verbose logs for development
+    await Purchases.setLogLevel(LogLevel.debug);
+  } else {
+    // Use less verbose logs for release builds
+    await Purchases.setLogLevel(LogLevel.info);
+  }
+  late PurchasesConfiguration configuration;
+  if (Platform.isAndroid) {
+    configuration = PurchasesConfiguration("goog_miazFZFONgYPqIurCcTBbdvCYvX");
+  } else if (Platform.isIOS) {
+    // TODO: Replace with your actual public Apple API key from RevenueCat
+    configuration = PurchasesConfiguration("your_apple_api_key");
+  }
+  await Purchases.configure(configuration);
 
   runApp(
     MultiProvider(

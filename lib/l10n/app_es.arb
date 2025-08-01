@@ -1,7 +1,6 @@
 {
     "generatingPathsScreen_craftingPersonalizedLearningPath": "Creando tu ruta de aprendizaje personalizada",
     "generatingPathsScreen_loadingPathGenerationMessage": "Nuestra IA está trabajando para crear un plan de estudios adaptado a tus objetivos y estilo de aprendizaje. Esto puede tardar unos momentos.",
-
     "homeScreen_pleaseEnterATopic": "Por favor, introduce un tema para generar una ruta.",
     "homeScreen_usageLimitReached": "Límite de Uso Alcanzado",
     "homeScreen_maybeLater": "Quizás Más Tarde",
@@ -12,21 +11,17 @@
     "homeScreen_createLearningPath": "Crear Ruta de Aprendizaje",
     "homeScreen_recentlyCreatedPaths": "Rutas Creadas Recientemente",
     "homeScreen_pathCreatedSuccess": "¡Ruta creada con éxito!",
-
     "loginScreen_welcomePrimary": "Bienvenido a",
     "loginScreen_welcomeSecondary": "Tu guía personal para aprender cualquier cosa.",
     "loginScreen_continueWithGoogle": "Continuar con Google",
     "loginScreen_failedToSignInGoogle": "Error al iniciar sesión con Google.",
     "loginScreen_continueWithPhoneNumber": "Continuar con Número de Teléfono",
-
     "mainScreen_labelMyPaths": "Mis Rutas",
     "mainScreen_labelHome": "Inicio",
     "mainScreen_labelProfile": "Perfil",
     "mainScreen_tryAgain": "Intentar de Nuevo",
-
     "myPathsScreen_noPathsCreatedYet": "Aún no has creado rutas.",
     "myPathsScreen_createANewPath": "Crear una Nueva Ruta",
-
     "pathDetailScreen_error": "Error: {error}",
     "pathDetailScreen_pathNotFound": "Ruta no encontrada.",
     "pathDetailScreen_usageLimitReached": "Límite de Uso Alcanzado",
@@ -46,7 +41,6 @@
     "pathDetailScreen_generating": "Generando...",
     "pathDetailScreen_extendPath": "Extender Ruta",
     "pathDetailScreen_pathExtendedSuccess": "¡Ruta extendida con éxito!",
-
     "phoneLoginScreen_enterPhoneNumberTitle": "Introduce tu Número de Teléfono",
     "phoneLoginScreen_enterVerificationCodeTitle": "Introduce el Código de Verificación",
     "phoneLoginScreen_enterPhoneNumberSubtitle": "Selecciona tu país e introduce tu número de teléfono.",
@@ -59,7 +53,6 @@
     "phoneLoginScreen_failedToSendCode": "Error al enviar el código: {error}",
     "phoneLoginScreen_anErrorOccurred": "Ocurrió un error: {error}",
     "phoneLoginScreen_invalidCode": "Código inválido. Por favor, inténtalo de nuevo.",
-
     "profileScreen_editName": "Editar Nombre",
     "profileScreen_enterYourName": "Introduce tu nombre",
     "profileScreen_cancel": "Cancelar",
@@ -91,13 +84,16 @@
     "profileScreen_tierFree": "Gratis",
     "profileScreen_daysLeft": "Tu suscripción finaliza el {date} ({count,plural, =1{1 día restante}other{{count} días restantes}})",
     "@profileScreen_daysLeft": {
-        "placeholders": { 
-            "date": { "type": "String" },
-            "count": { "type": "int" }
+        "placeholders": {
+            "date": {
+                "type": "String"
+            },
+            "count": {
+                "type": "int"
+            }
         }
     },
     "profileScreen_manageSubscription": "Gestionar",
-
     "subscriptionScreen_title": "Mejora Tu Aprendizaje",
     "subscriptionScreen_monthly": "Mensual",
     "subscriptionScreen_yearly": "Anual (Ahorra ~30%)",
@@ -114,12 +110,12 @@
     "subscriptionScreen_tierUnlimited_feature1": "Generaciones de Rutas Ilimitadas",
     "subscriptionScreen_tierUnlimited_feature2": "Extensiones de Rutas Ilimitadas",
     "subscriptionScreen_upgradeSuccess": "¡Suscripción actualizada con éxito!",
-
+    "subscriptionScreen_noPlansAvailable": "No hay planes de suscripción disponibles en este momento.",
+    "subscriptionScreen_purchaseVerificationError": "Compra realizada con éxito, pero no pudimos verificarla. Por favor, intenta restaurar las compras desde la pantalla de perfil.",
     "suggestionsScreen_title": "Sugerencias",
     "suggestionsScreen_errorAssigningPath": "Error al asignar la ruta: {error}",
     "suggestionsScreen_header": "Encontramos algunas rutas existentes para \"{prompt}\". Empieza con una de estas o genera la tuya propia.",
     "suggestionsScreen_generateMyOwnPath": "Generar Mi Propia Ruta",
-
     "rotatingHintTextField_suggestion1": "ej. Aprender lo básico de guitarra…",
     "rotatingHintTextField_suggestion2": "ej. Empezar un curso de hablar en público…",
     "rotatingHintTextField_suggestion3": "ej. Dominar Excel en 30 días…",

@@ -708,6 +708,18 @@ abstract class AppLocalizations {
   /// **'Subscription updated successfully!'**
   String get subscriptionScreen_upgradeSuccess;
 
+  /// No description provided for @subscriptionScreen_noPlansAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No subscription plans are available right now.'**
+  String get subscriptionScreen_noPlansAvailable;
+
+  /// No description provided for @subscriptionScreen_purchaseVerificationError.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase successful, but we couldn\'t verify it. Please try restoring purchases from the profile screen.'**
+  String get subscriptionScreen_purchaseVerificationError;
+
   /// No description provided for @suggestionsScreen_title.
   ///
   /// In en, this message translates to:

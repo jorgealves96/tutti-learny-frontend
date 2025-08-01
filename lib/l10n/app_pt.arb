@@ -110,6 +110,8 @@
     "subscriptionScreen_tierUnlimited_feature1": "Gerações de Percursos Ilimitadas",
     "subscriptionScreen_tierUnlimited_feature2": "Extensões de Percursos Ilimitadas",
     "subscriptionScreen_upgradeSuccess": "Subscrição atualizada com sucesso!",
+    "subscriptionScreen_noPlansAvailable": "Não existem planos de subscrição disponíveis de momento.",
+    "subscriptionScreen_purchaseVerificationError": "Compra efetuada com sucesso, mas não foi possível verificá-la. Por favor, tente restaurar as compras no ecrã de perfil.",
     "suggestionsScreen_title": "Sugestões",
     "suggestionsScreen_errorAssigningPath": "Erro ao atribuir o percurso: {error}",
     "suggestionsScreen_header": "Encontrámos alguns percursos existentes para \"{prompt}\". Comece com um destes ou crie o seu próprio.",
