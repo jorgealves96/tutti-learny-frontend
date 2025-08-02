@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../services/api_service.dart';
 
 class NotificationSettingsProvider with ChangeNotifier {
   bool _learningReminders = true; // Default to true
@@ -14,6 +15,8 @@ class NotificationSettingsProvider with ChangeNotifier {
     _learningReminders = value;
     _saveSettings();
     notifyListeners();
+
+    ApiService().updateNotificationPreference(value);
   }
 
   void _loadSettings() async {

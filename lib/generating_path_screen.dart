@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'services/api_service.dart';
 import 'l10n/app_localizations.dart';
+import 'models/subscription_status_model.dart';
 
 class GeneratingPathScreen extends StatefulWidget {
   final String prompt;
+  final SubscriptionStatus? subscriptionStatus;
 
-  const GeneratingPathScreen({super.key, required this.prompt});
+  const GeneratingPathScreen({super.key, required this.prompt, this.subscriptionStatus,});
 
   @override
   State<GeneratingPathScreen> createState() => _GeneratingPathScreenState();
@@ -70,13 +72,11 @@ class _GeneratingPathScreenState extends State<GeneratingPathScreen>
             children: [
               FadeTransition(
                 opacity: _animationController,
-                child: ClipOval(
-                  child: Image.asset(
-                isDarkMode
-                    ? 'assets/images/logo_original_size_dark.png'
-                    : 'assets/images/logo_original_size.png',
-                width: 150,
-              ),
+                child: Image.asset(
+                  isDarkMode
+                      ? 'assets/images/logo_original_size_dark.png'
+                      : 'assets/images/logo_original_size.png',
+                  width: 150,
                 ),
               ),
               const SizedBox(height: 40),

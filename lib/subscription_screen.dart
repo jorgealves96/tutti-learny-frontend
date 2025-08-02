@@ -177,6 +177,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
         final currentUserTier =
             widget.currentStatus?.tier.toLowerCase() ?? 'free';
+            
         if (currentUserTier == 'pro') {
           visiblePackages = visiblePackages
               .where((p) => p.storeProduct.identifier.contains('unlimited'))

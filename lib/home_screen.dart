@@ -114,7 +114,8 @@ class _HomeScreenState extends State<HomeScreen> {
       context,
       MaterialPageRoute(
         builder: (context) =>
-            GeneratingPathScreen(prompt: _promptController.text),
+            GeneratingPathScreen(prompt: _promptController.text,
+            subscriptionStatus: widget.subscriptionStatus),
       ),
     );
 
@@ -125,7 +126,7 @@ class _HomeScreenState extends State<HomeScreen> {
     } else if (result is Map) {
       if (result.containsKey('limit_error')) {
         // This is our usage limit signal
-        _showUpgradeDialog(result['limit_error']);
+        _showUpgradeDialog(result['limit_error'], widget.subscriptionStatus);
       } else if (result.containsKey('error')) {
         // Handle any other errors
         if (mounted) {
@@ -152,18 +153,18 @@ class _HomeScreenState extends State<HomeScreen> {
     ).then((_) => widget.onPathAction());
   }
 
-  void _showSubscriptionSheet() {
+  void _showSubscriptionSheet(SubscriptionStatus? status) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) => const SubscriptionScreen(),
+      builder: (context) => SubscriptionScreen(currentStatus: status),
     );
   }
 
-  void _showUpgradeDialog(String errorMessage) {
+  void _showUpgradeDialog(String errorMessage, SubscriptionStatus? status) {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -179,7 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: const Text("Upgrade"),
               onPressed: () {
                 Navigator.of(dialogContext).pop(); // Close the dialog
-                _showSubscriptionSheet(); // Open the subscription sheet
+                _showSubscriptionSheet(status); // Open the subscription sheet
               },
             ),
           ],

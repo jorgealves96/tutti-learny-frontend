@@ -9,6 +9,7 @@ import '../models/profile_stats_model.dart';
 import '../models/path_suggestion_model.dart';
 import 'package:flutter/foundation.dart';
 import '../models/subscription_status_model.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class ApiService {
   static String get _baseUrl {
@@ -426,6 +427,37 @@ class ApiService {
     } catch (e) {
       // It's okay to fail silently here, as it can be retried on the next login
       print("Failed to update FCM token: $e");
+    }
+  }
+
+  Future<void> updateNotificationPreference(bool isEnabled) async {
+    final ioClient = _createIOClient();
+    final headers = await _getHeaders();
+    final response = await ioClient.post(
+      Uri.parse('$_baseUrl/users/me/notification-preference'),
+      headers: headers,
+      body: jsonEncode({'isEnabled': isEnabled}),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to update notification preference.');
+    }
+  }
+
+  Future<void> postLoginSetup() async {
+    try {
+      // First, sync the user to create/update their record
+      await syncUser();
+
+      // NOW, get the FCM token and send it to the backend
+      final fcmToken = await FirebaseMessaging.instance.getToken();
+      if (fcmToken != null) {
+        await updateFcmToken(fcmToken);
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error during post-login setup: $e");
+      }
     }
   }
 }

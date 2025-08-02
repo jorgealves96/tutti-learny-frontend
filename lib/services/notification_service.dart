@@ -12,13 +12,6 @@ class NotificationService {
     // Request permission from the user
     await _firebaseMessaging.requestPermission();
 
-    // Get the unique device token and send it to your backend
-    final fcmToken = await _firebaseMessaging.getToken();
-    if (fcmToken != null) {
-      // Send the token to the backend
-      await ApiService().updateFcmToken(fcmToken);
-    }
-
     // Configure local notifications for Android
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');

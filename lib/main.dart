@@ -12,6 +12,7 @@ import 'firebase_options.dart';
 import 'l10n/app_localizations.dart';
 import 'providers/locale_provider.dart';
 import 'dart:io' show Platform;
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'services/notification_service.dart';
 import 'services/api_service.dart';
@@ -45,7 +46,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => LocaleProvider()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        ChangeNotifierProvider(create: (_) => NotificationSettingsProvider())
+        ChangeNotifierProvider(create: (_) => NotificationSettingsProvider()),
       ],
       child: const TuttiLearnyApp(),
     ),
@@ -124,22 +125,59 @@ class AuthWrapper extends StatelessWidget {
     return StreamBuilder<User?>(
       stream: AuthService.authStateChanges,
       builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.active) {
+          final User? user = snapshot.data;
+          if (user == null) {
+            return LoginScreen(onLoginSuccess: () {});
+          }
+          // If user is logged in, show the setup screen
+          return const PostAuthScreen();
+        }
+        // While waiting for the initial auth state, show a loading indicator
+        return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      },
+    );
+  }
+}
+
+class PostAuthScreen extends StatefulWidget {
+  const PostAuthScreen({super.key});
+
+  @override
+  State<PostAuthScreen> createState() => _PostAuthScreenState();
+}
+
+class _PostAuthScreenState extends State<PostAuthScreen> {
+  late Future<void> _setupFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    // Start the setup process which includes sync, reload, and FCM token update
+    _setupFuture = AuthService.postLoginSetup();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<void>(
+      future: _setupFuture,
+      builder: (context, snapshot) {
+        // While setup is running, show a loading spinner
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         }
-        if (snapshot.hasData) {
-          ApiService().syncUser();
-          return MainScreen(
-            onLogout: () async {
-              await AuthService.logout();
-            },
+        // If setup fails, show an error (postLoginSetup handles logout)
+        if (snapshot.hasError) {
+          return const Scaffold(
+            body: Center(child: Text('Failed to load user data.')),
           );
         }
-        return LoginScreen(
-          onLoginSuccess: () {
-            // The StreamBuilder will automatically rebuild
+        // Once the setup future is complete, show the main app
+        return MainScreen(
+          onLogout: () async {
+            await AuthService.logout();
           },
         );
       },

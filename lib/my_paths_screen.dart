@@ -2,17 +2,20 @@ import 'package:flutter/material.dart';
 import 'models/my_path_model.dart';
 import 'path_detail_screen.dart';
 import 'l10n/app_localizations.dart';
+import 'models/subscription_status_model.dart';
 
 class MyPathsScreen extends StatelessWidget {
   final List<MyPath> myPaths;
   final VoidCallback onRefresh;
   final VoidCallback onAddPath;
+  final SubscriptionStatus? subscriptionStatus;
 
   const MyPathsScreen({
     super.key,
     required this.myPaths,
     required this.onRefresh,
     required this.onAddPath,
+    this.subscriptionStatus,
   });
 
   Future<void> _navigateToDetail(BuildContext context, int userPathId) async {
@@ -20,7 +23,7 @@ class MyPathsScreen extends StatelessWidget {
       await Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => PathDetailScreen(pathId: userPathId),
+          builder: (context) => PathDetailScreen(pathId: userPathId, subscriptionStatus: subscriptionStatus),
         ),
       );
       onRefresh();

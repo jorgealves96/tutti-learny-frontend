@@ -7,11 +7,13 @@ import 'subscription_screen.dart';
 import 'l10n/app_localizations.dart';
 import 'rating_screen.dart';
 import 'utils/snackbar_helper.dart';
+import 'models/subscription_status_model.dart';
 
 class PathDetailScreen extends StatefulWidget {
   final int pathId;
+  final SubscriptionStatus? subscriptionStatus;
 
-  const PathDetailScreen({super.key, required this.pathId});
+  const PathDetailScreen({super.key, required this.pathId, this.subscriptionStatus,});
 
   @override
   State<PathDetailScreen> createState() => _PathDetailScreenState();
@@ -45,7 +47,7 @@ class _PathDetailScreenState extends State<PathDetailScreen> {
         }
 
         final pathDetail = snapshot.data!;
-        return _PathDetailView(pathDetail: pathDetail);
+        return _PathDetailView(pathDetail: pathDetail, subscriptionStatus: widget.subscriptionStatus);
       },
     );
   }
@@ -53,7 +55,9 @@ class _PathDetailScreenState extends State<PathDetailScreen> {
 
 class _PathDetailView extends StatefulWidget {
   final LearningPathDetail pathDetail;
-  const _PathDetailView({required this.pathDetail});
+  final SubscriptionStatus? subscriptionStatus;
+
+  const _PathDetailView({required this.pathDetail, this.subscriptionStatus});
 
   @override
   State<_PathDetailView> createState() => _PathDetailViewState();
@@ -80,18 +84,18 @@ class _PathDetailViewState extends State<_PathDetailView> {
     return completedCount / allResources.length;
   }
 
-  void _showSubscriptionSheet() {
+  void _showSubscriptionSheet(SubscriptionStatus? status) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) => const SubscriptionScreen(),
+      builder: (context) => SubscriptionScreen(currentStatus: status),
     );
   }
 
-  void _showUpgradeDialog(String errorMessage, AppLocalizations l10n) {
+  void _showUpgradeDialog(String errorMessage, AppLocalizations l10n, SubscriptionStatus? status) {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -109,7 +113,7 @@ class _PathDetailViewState extends State<_PathDetailView> {
               child: Text(l10n.pathDetailScreen_upgrade),
               onPressed: () {
                 Navigator.of(dialogContext).pop(); // Close the dialog
-                _showSubscriptionSheet(); // Open the subscription sheet
+                _showSubscriptionSheet(status); // Open the subscription sheet
               },
             ),
           ],
@@ -152,7 +156,7 @@ class _PathDetailViewState extends State<_PathDetailView> {
       // --- 3. Update the catch block to check the error message ---
       if (e.toString().toLowerCase().contains('limit')) {
         // If the user hit their usage limit, show the upgrade dialog
-        _showUpgradeDialog(e.toString(), l10n);
+        _showUpgradeDialog(e.toString(), l10n, widget.subscriptionStatus);
       } else {
         // Otherwise, show the normal error snackbar
         if (mounted) {
@@ -518,7 +522,7 @@ class _PathDetailViewState extends State<_PathDetailView> {
                                 context,
                               ).colorScheme.secondary,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
+                                borderRadius: BorderRadius.circular(10),
                               ),
                             ),
                             title: Text(resource.title),

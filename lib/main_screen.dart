@@ -133,6 +133,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
               myPaths: paths,
               onAddPath: _navigateAndFocusHome,
               onRefresh: _reloadData,
+              subscriptionStatus: subscriptionStatus
             ),
             HomeScreen(
               key: const PageStorageKey('HomeScreen'),
