@@ -23,8 +23,6 @@ class _RatingScreenState extends State<RatingScreen> {
   void _showThankYouSnackBar(AppLocalizations l10n) {
     if (!mounted) return;
 
-    final screenHeight = MediaQuery.of(context).size.height;
-
     final snackBar = SnackBar(
       content: Text(
         l10n.ratingScreen_thankYouTitle,

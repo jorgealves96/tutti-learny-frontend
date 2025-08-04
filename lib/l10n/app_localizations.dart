@@ -354,6 +354,18 @@ abstract class AppLocalizations {
   /// **'Path extended successfully!'**
   String get pathDetailScreen_pathExtendedSuccess;
 
+  /// No description provided for @pathDetailScreen_checkReportStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Check report status'**
+  String get pathDetailScreen_checkReportStatus;
+
+  /// No description provided for @pathDetailScreen_reportProblem.
+  ///
+  /// In en, this message translates to:
+  /// **'Report a problem'**
+  String get pathDetailScreen_reportProblem;
+
   /// No description provided for @phoneLoginScreen_enterPhoneNumberTitle.
   ///
   /// In en, this message translates to:
@@ -585,7 +597,7 @@ abstract class AppLocalizations {
   /// No description provided for @profileScreen_manageAppearance.
   ///
   /// In en, this message translates to:
-  /// **'Appearance'**
+  /// **'Theme'**
   String get profileScreen_manageAppearance;
 
   /// No description provided for @profileScreen_manageLanguage.
@@ -869,6 +881,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Receive notifications for unfinished paths'**
   String get notificationsScreen_learningRemindersDesc;
+
+  /// No description provided for @reportScreen_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Report a Problem'**
+  String get reportScreen_title;
+
+  /// No description provided for @reportScreen_question.
+  ///
+  /// In en, this message translates to:
+  /// **'What is the problem?'**
+  String get reportScreen_question;
+
+  /// No description provided for @reportScreen_optionalDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional Details'**
+  String get reportScreen_optionalDetails;
+
+  /// No description provided for @reportScreen_detailsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Provide more details about the issue...'**
+  String get reportScreen_detailsHint;
+
+  /// No description provided for @reportScreen_submitButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit Report'**
+  String get reportScreen_submitButton;
+
+  /// No description provided for @reportScreen_submitSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Report submitted successfully. Thank you!'**
+  String get reportScreen_submitSuccess;
+
+  /// No description provided for @reportScreen_typeInaccurate.
+  ///
+  /// In en, this message translates to:
+  /// **'Inaccurate Content'**
+  String get reportScreen_typeInaccurate;
+
+  /// No description provided for @reportScreen_typeBrokenLinks.
+  ///
+  /// In en, this message translates to:
+  /// **'Broken or Incorrect Links'**
+  String get reportScreen_typeBrokenLinks;
+
+  /// No description provided for @reportScreen_typeInappropriate.
+  ///
+  /// In en, this message translates to:
+  /// **'Inappropriate Content'**
+  String get reportScreen_typeInappropriate;
+
+  /// No description provided for @reportScreen_typeOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get reportScreen_typeOther;
+
+  /// No description provided for @reportStatusScreen_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Report Status'**
+  String get reportStatusScreen_title;
+
+  /// No description provided for @reportStatusScreen_noReportFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No report found for this path.'**
+  String get reportStatusScreen_noReportFound;
+
+  /// No description provided for @reportStatusScreen_statusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Status: {status}'**
+  String reportStatusScreen_statusLabel(String status);
+
+  /// No description provided for @reportStatusScreen_resolvedMessageDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'This issue has been reviewed and resolved. Thank you for your feedback!'**
+  String get reportStatusScreen_resolvedMessageDefault;
+
+  /// No description provided for @reportStatusScreen_submittedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your report has been submitted and will be reviewed soon. Thank you for helping us improve!'**
+  String get reportStatusScreen_submittedMessage;
+
+  /// No description provided for @reportStatusScreen_acknowledgeButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Acknowledge & Close'**
+  String get reportStatusScreen_acknowledgeButton;
+
+  /// No description provided for @reportStatus_submitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted'**
+  String get reportStatus_submitted;
+
+  /// No description provided for @reportStatus_inReview.
+  ///
+  /// In en, this message translates to:
+  /// **'In Review'**
+  String get reportStatus_inReview;
+
+  /// No description provided for @reportStatus_resolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved'**
+  String get reportStatus_resolved;
+
+  /// No description provided for @reportStatus_unknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get reportStatus_unknown;
 }
 
 class _AppLocalizationsDelegate

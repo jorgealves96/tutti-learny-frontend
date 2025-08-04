@@ -156,6 +156,12 @@ class AppLocalizationsEn extends AppLocalizations {
       'Path extended successfully!';
 
   @override
+  String get pathDetailScreen_checkReportStatus => 'Check report status';
+
+  @override
+  String get pathDetailScreen_reportProblem => 'Report a problem';
+
+  @override
   String get phoneLoginScreen_enterPhoneNumberTitle =>
       'Enter Your Phone Number';
 
@@ -285,7 +291,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileScreen_manageNotifications => 'Notifications';
 
   @override
-  String get profileScreen_manageAppearance => 'Appearance';
+  String get profileScreen_manageAppearance => 'Theme';
 
   @override
   String get profileScreen_manageLanguage => 'Language';
@@ -476,4 +482,71 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get notificationsScreen_learningRemindersDesc =>
       'Receive notifications for unfinished paths';
+
+  @override
+  String get reportScreen_title => 'Report a Problem';
+
+  @override
+  String get reportScreen_question => 'What is the problem?';
+
+  @override
+  String get reportScreen_optionalDetails => 'Optional Details';
+
+  @override
+  String get reportScreen_detailsHint =>
+      'Provide more details about the issue...';
+
+  @override
+  String get reportScreen_submitButton => 'Submit Report';
+
+  @override
+  String get reportScreen_submitSuccess =>
+      'Report submitted successfully. Thank you!';
+
+  @override
+  String get reportScreen_typeInaccurate => 'Inaccurate Content';
+
+  @override
+  String get reportScreen_typeBrokenLinks => 'Broken or Incorrect Links';
+
+  @override
+  String get reportScreen_typeInappropriate => 'Inappropriate Content';
+
+  @override
+  String get reportScreen_typeOther => 'Other';
+
+  @override
+  String get reportStatusScreen_title => 'Report Status';
+
+  @override
+  String get reportStatusScreen_noReportFound =>
+      'No report found for this path.';
+
+  @override
+  String reportStatusScreen_statusLabel(String status) {
+    return 'Status: $status';
+  }
+
+  @override
+  String get reportStatusScreen_resolvedMessageDefault =>
+      'This issue has been reviewed and resolved. Thank you for your feedback!';
+
+  @override
+  String get reportStatusScreen_submittedMessage =>
+      'Your report has been submitted and will be reviewed soon. Thank you for helping us improve!';
+
+  @override
+  String get reportStatusScreen_acknowledgeButton => 'Acknowledge & Close';
+
+  @override
+  String get reportStatus_submitted => 'Submitted';
+
+  @override
+  String get reportStatus_inReview => 'In Review';
+
+  @override
+  String get reportStatus_resolved => 'Resolved';
+
+  @override
+  String get reportStatus_unknown => 'Unknown';
 }

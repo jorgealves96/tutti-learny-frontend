@@ -8,12 +8,18 @@ import 'l10n/app_localizations.dart';
 import 'rating_screen.dart';
 import 'utils/snackbar_helper.dart';
 import 'models/subscription_status_model.dart';
+import 'report_problem_screen.dart';
+import 'report_status_screen.dart';
 
 class PathDetailScreen extends StatefulWidget {
   final int pathId;
   final SubscriptionStatus? subscriptionStatus;
 
-  const PathDetailScreen({super.key, required this.pathId, this.subscriptionStatus,});
+  const PathDetailScreen({
+    super.key,
+    required this.pathId,
+    this.subscriptionStatus,
+  });
 
   @override
   State<PathDetailScreen> createState() => _PathDetailScreenState();
@@ -27,6 +33,13 @@ class _PathDetailScreenState extends State<PathDetailScreen> {
   void initState() {
     super.initState();
     _pathDetailFuture = _apiService.fetchPathDetails(widget.pathId);
+  }
+
+  // --- Add this refresh method ---
+  void _refreshPathDetails() {
+    setState(() {
+      _pathDetailFuture = _apiService.fetchPathDetails(widget.pathId);
+    });
   }
 
   @override
@@ -47,7 +60,11 @@ class _PathDetailScreenState extends State<PathDetailScreen> {
         }
 
         final pathDetail = snapshot.data!;
-        return _PathDetailView(pathDetail: pathDetail, subscriptionStatus: widget.subscriptionStatus);
+        return _PathDetailView(
+          pathDetail: pathDetail,
+          subscriptionStatus: widget.subscriptionStatus,
+          onRefresh: _refreshPathDetails,
+        );
       },
     );
   }
@@ -56,8 +73,13 @@ class _PathDetailScreenState extends State<PathDetailScreen> {
 class _PathDetailView extends StatefulWidget {
   final LearningPathDetail pathDetail;
   final SubscriptionStatus? subscriptionStatus;
+  final VoidCallback onRefresh;
 
-  const _PathDetailView({required this.pathDetail, this.subscriptionStatus});
+  const _PathDetailView({
+    required this.pathDetail,
+    this.subscriptionStatus,
+    required this.onRefresh,
+  });
 
   @override
   State<_PathDetailView> createState() => _PathDetailViewState();
@@ -95,7 +117,11 @@ class _PathDetailViewState extends State<_PathDetailView> {
     );
   }
 
-  void _showUpgradeDialog(String errorMessage, AppLocalizations l10n, SubscriptionStatus? status) {
+  void _showUpgradeDialog(
+    String errorMessage,
+    AppLocalizations l10n,
+    SubscriptionStatus? status,
+  ) {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -134,7 +160,7 @@ class _PathDetailViewState extends State<_PathDetailView> {
       );
 
       if (!mounted) return;
-      
+
       if (newItems.isEmpty) {
         setState(() {
           _isPathComplete = true;
@@ -350,12 +376,56 @@ class _PathDetailViewState extends State<_PathDetailView> {
         ),
         actions: [
           PopupMenuButton<String>(
-            onSelected: (value) {
+            onSelected: (value) async {
               if (value == 'delete') {
                 _showDeleteConfirmation(l10n);
+              } else if (value == 'report') {
+                final bool? reportSubmitted = await Navigator.push<bool>(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ReportProblemScreen(
+                      pathTemplateId: widget.pathDetail.pathTemplateId,
+                    ),
+                  ),
+                );
+
+                // --- Call the refresh method from the parent ---
+                if (reportSubmitted == true && mounted) {
+                  widget.onRefresh();
+                }
+              } else if (value == 'check_status') {
+                final bool? acknowledged = await Navigator.push<bool>(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ReportStatusScreen(
+                      pathTemplateId: widget.pathDetail.pathTemplateId,
+                    ),
+                  ),
+                );
+                // If the report was acknowledged, refresh the data
+                if (acknowledged == true) {
+                  widget.onRefresh();
+                }
+                // -------------------------
               }
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              if (widget.pathDetail.hasOpenReport)
+                PopupMenuItem<String>(
+                  value: 'check_status',
+                  child: ListTile(
+                    leading: Icon(Icons.history),
+                    title: Text(l10n.pathDetailScreen_checkReportStatus),
+                  ),
+                )
+              else
+                PopupMenuItem<String>(
+                  value: 'report',
+                  child: ListTile(
+                    leading: Icon(Icons.report_problem_outlined),
+                    title: Text(l10n.pathDetailScreen_reportProblem),
+                  ),
+                ),
               PopupMenuItem<String>(
                 value: 'delete',
                 child: ListTile(

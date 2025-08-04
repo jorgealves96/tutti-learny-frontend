@@ -93,6 +93,7 @@ class LearningPathDetail {
   final List<PathItemDetail> pathItems;
   final int pathTemplateId;
   final bool hasBeenRated;
+  final bool hasOpenReport;
 
   LearningPathDetail({
     required this.userPathId,
@@ -102,6 +103,7 @@ class LearningPathDetail {
     required this.pathItems,
     required this.pathTemplateId,
     required this.hasBeenRated,
+    required this.hasOpenReport,
   });
 
   factory LearningPathDetail.fromJson(Map<String, dynamic> json) {
@@ -116,7 +118,8 @@ class LearningPathDetail {
       createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : DateTime.now(),
       pathItems: pathItems,
       pathTemplateId: json['pathTemplateId'],
-      hasBeenRated: json['hasBeenRated'] ?? false
+      hasBeenRated: json['hasBeenRated'] ?? false,
+      hasOpenReport: json['hasOpenReport'] ?? false
     );
   }
 }

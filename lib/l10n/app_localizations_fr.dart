@@ -152,11 +152,18 @@ class AppLocalizationsFr extends AppLocalizations {
   String get pathDetailScreen_generating => 'Génération...';
 
   @override
-  String get pathDetailScreen_extendPath => 'Étendre le Parcours';
+  String get pathDetailScreen_extendPath => 'Prolonger le Parcours';
 
   @override
   String get pathDetailScreen_pathExtendedSuccess =>
       'Parcours étendu avec succès !';
+
+  @override
+  String get pathDetailScreen_checkReportStatus =>
+      'Vérifier le statut du signalement';
+
+  @override
+  String get pathDetailScreen_reportProblem => 'Signaler un problème';
 
   @override
   String get phoneLoginScreen_enterPhoneNumberTitle =>
@@ -273,7 +280,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get profileScreen_usagePathsGenerated => 'Parcours Générés';
 
   @override
-  String get profileScreen_usagePathsExtended => 'Parcours Étendus';
+  String get profileScreen_usagePathsExtended => 'Parcours Prolongés';
 
   @override
   String get profileScreen_usageUnlimited => 'Illimité';
@@ -282,7 +289,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get profileScreen_currentPlan => 'Plan Actuel';
 
   @override
-  String get profileScreen_upgrade => 'Mettre à niveau';
+  String get profileScreen_upgrade => 'Améliorer';
 
   @override
   String get profileScreen_manageEditProfile => 'Modifier le Profil';
@@ -291,7 +298,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get profileScreen_manageNotifications => 'Notifications';
 
   @override
-  String get profileScreen_manageAppearance => 'Apparence';
+  String get profileScreen_manageAppearance => 'Thème';
 
   @override
   String get profileScreen_manageLanguage => 'Langue';
@@ -486,4 +493,71 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get notificationsScreen_learningRemindersDesc =>
       'Recevoir des notifications pour les parcours non terminés';
+
+  @override
+  String get reportScreen_title => 'Signaler un Problème';
+
+  @override
+  String get reportScreen_question => 'Quel est le problème ?';
+
+  @override
+  String get reportScreen_optionalDetails => 'Détails Optionnels';
+
+  @override
+  String get reportScreen_detailsHint =>
+      'Fournissez plus de détails sur le problème...';
+
+  @override
+  String get reportScreen_submitButton => 'Envoyer le Signalement';
+
+  @override
+  String get reportScreen_submitSuccess =>
+      'Signalement envoyé avec succès. Merci !';
+
+  @override
+  String get reportScreen_typeInaccurate => 'Contenu Inexact';
+
+  @override
+  String get reportScreen_typeBrokenLinks => 'Liens Cassés ou Incorrects';
+
+  @override
+  String get reportScreen_typeInappropriate => 'Contenu Inapproprié';
+
+  @override
+  String get reportScreen_typeOther => 'Autre';
+
+  @override
+  String get reportStatusScreen_title => 'Statut du Signalement';
+
+  @override
+  String get reportStatusScreen_noReportFound =>
+      'Aucun signalement trouvé pour ce parcours.';
+
+  @override
+  String reportStatusScreen_statusLabel(String status) {
+    return 'Statut : $status';
+  }
+
+  @override
+  String get reportStatusScreen_resolvedMessageDefault =>
+      'Ce problème a été examiné et résolu. Merci pour votre retour !';
+
+  @override
+  String get reportStatusScreen_submittedMessage =>
+      'Votre signalement a été soumis et sera examiné bientôt. Merci de nous aider à nous améliorer !';
+
+  @override
+  String get reportStatusScreen_acknowledgeButton => 'Confirmer et Fermer';
+
+  @override
+  String get reportStatus_submitted => 'Soumis';
+
+  @override
+  String get reportStatus_inReview => 'En cours d\'examen';
+
+  @override
+  String get reportStatus_resolved => 'Résolu';
+
+  @override
+  String get reportStatus_unknown => 'Inconnu';
 }

@@ -155,6 +155,12 @@ class AppLocalizationsEs extends AppLocalizations {
       '¡Ruta extendida con éxito!';
 
   @override
+  String get pathDetailScreen_checkReportStatus => 'Ver estado del reporte';
+
+  @override
+  String get pathDetailScreen_reportProblem => 'Reportar un problema';
+
+  @override
   String get phoneLoginScreen_enterPhoneNumberTitle =>
       'Introduce tu Número de Teléfono';
 
@@ -287,7 +293,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get profileScreen_manageNotifications => 'Notificaciones';
 
   @override
-  String get profileScreen_manageAppearance => 'Apariencia';
+  String get profileScreen_manageAppearance => 'Tema';
 
   @override
   String get profileScreen_manageLanguage => 'Idioma';
@@ -482,4 +488,71 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get notificationsScreen_learningRemindersDesc =>
       'Recibir notificaciones de rutas no finalizadas';
+
+  @override
+  String get reportScreen_title => 'Reportar un Problema';
+
+  @override
+  String get reportScreen_question => '¿Cuál es el problema?';
+
+  @override
+  String get reportScreen_optionalDetails => 'Detalles Opcionales';
+
+  @override
+  String get reportScreen_detailsHint =>
+      'Proporcione más detalles sobre el problema...';
+
+  @override
+  String get reportScreen_submitButton => 'Enviar Reporte';
+
+  @override
+  String get reportScreen_submitSuccess =>
+      '¡Reporte enviado con éxito. Gracias!';
+
+  @override
+  String get reportScreen_typeInaccurate => 'Contenido Inexacto';
+
+  @override
+  String get reportScreen_typeBrokenLinks => 'Enlaces Rotos o Incorrectos';
+
+  @override
+  String get reportScreen_typeInappropriate => 'Contenido Inapropiado';
+
+  @override
+  String get reportScreen_typeOther => 'Otro';
+
+  @override
+  String get reportStatusScreen_title => 'Estado del Reporte';
+
+  @override
+  String get reportStatusScreen_noReportFound =>
+      'No se encontró ningún reporte para esta ruta.';
+
+  @override
+  String reportStatusScreen_statusLabel(String status) {
+    return 'Estado: $status';
+  }
+
+  @override
+  String get reportStatusScreen_resolvedMessageDefault =>
+      'Este problema ha sido revisado y resuelto. ¡Gracias por tu comentario!';
+
+  @override
+  String get reportStatusScreen_submittedMessage =>
+      'Tu reporte ha sido enviado y será revisado pronto. ¡Gracias por ayudarnos a mejorar!';
+
+  @override
+  String get reportStatusScreen_acknowledgeButton => 'Confirmar y Cerrar';
+
+  @override
+  String get reportStatus_submitted => 'Enviado';
+
+  @override
+  String get reportStatus_inReview => 'En revisión';
+
+  @override
+  String get reportStatus_resolved => 'Resuelto';
+
+  @override
+  String get reportStatus_unknown => 'Desconocido';
 }

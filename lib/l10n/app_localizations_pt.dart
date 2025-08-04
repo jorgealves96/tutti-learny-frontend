@@ -158,6 +158,12 @@ class AppLocalizationsPt extends AppLocalizations {
       'Percurso estendido com sucesso!';
 
   @override
+  String get pathDetailScreen_checkReportStatus => 'Ver estado do relatório';
+
+  @override
+  String get pathDetailScreen_reportProblem => 'Reportar um problema';
+
+  @override
   String get phoneLoginScreen_enterPhoneNumberTitle =>
       'Insira o seu número de telemóvel';
 
@@ -281,7 +287,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get profileScreen_currentPlan => 'Plano Atual';
 
   @override
-  String get profileScreen_upgrade => 'Atualizar';
+  String get profileScreen_upgrade => 'Melhorar';
 
   @override
   String get profileScreen_manageEditProfile => 'Editar Perfil';
@@ -290,7 +296,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get profileScreen_manageNotifications => 'Notificações';
 
   @override
-  String get profileScreen_manageAppearance => 'Aparência';
+  String get profileScreen_manageAppearance => 'Tema';
 
   @override
   String get profileScreen_manageLanguage => 'Idioma';
@@ -485,4 +491,71 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get notificationsScreen_learningRemindersDesc =>
       'Receber notificações para percursos não terminados';
+
+  @override
+  String get reportScreen_title => 'Reportar um Problema';
+
+  @override
+  String get reportScreen_question => 'Qual é o problema?';
+
+  @override
+  String get reportScreen_optionalDetails => 'Detalhes Opcionais';
+
+  @override
+  String get reportScreen_detailsHint =>
+      'Forneça mais detalhes sobre o problema...';
+
+  @override
+  String get reportScreen_submitButton => 'Enviar Relatório';
+
+  @override
+  String get reportScreen_submitSuccess =>
+      'Relatório enviado com sucesso. Obrigado!';
+
+  @override
+  String get reportScreen_typeInaccurate => 'Conteúdo Incorreto';
+
+  @override
+  String get reportScreen_typeBrokenLinks => 'Links Quebrados ou Incorretos';
+
+  @override
+  String get reportScreen_typeInappropriate => 'Conteúdo Inapropriado';
+
+  @override
+  String get reportScreen_typeOther => 'Outro';
+
+  @override
+  String get reportStatusScreen_title => 'Estado do Relatório';
+
+  @override
+  String get reportStatusScreen_noReportFound =>
+      'Nenhum relatório encontrado para este percurso.';
+
+  @override
+  String reportStatusScreen_statusLabel(String status) {
+    return 'Estado: $status';
+  }
+
+  @override
+  String get reportStatusScreen_resolvedMessageDefault =>
+      'Este problema foi revisto e resolvido. Obrigado pelo seu feedback!';
+
+  @override
+  String get reportStatusScreen_submittedMessage =>
+      'O seu relatório foi submetido e será revisto em breve. Obrigado por nos ajudar a melhorar!';
+
+  @override
+  String get reportStatusScreen_acknowledgeButton => 'Confirmar e Fechar';
+
+  @override
+  String get reportStatus_submitted => 'Submetido';
+
+  @override
+  String get reportStatus_inReview => 'Em Revisão';
+
+  @override
+  String get reportStatus_resolved => 'Resolvido';
+
+  @override
+  String get reportStatus_unknown => 'Desconhecido';
 }

@@ -78,6 +78,8 @@
    "pathDetailScreen_generating": "Generating...",
    "pathDetailScreen_extendPath": "Extend Path",
    "pathDetailScreen_pathExtendedSuccess": "Path extended successfully!",
+   "pathDetailScreen_checkReportStatus": "Check report status",
+   "pathDetailScreen_reportProblem": "Report a problem",
    "phoneLoginScreen_enterPhoneNumberTitle": "Enter Your Phone Number",
    "phoneLoginScreen_enterVerificationCodeTitle": "Enter Verification Code",
    "phoneLoginScreen_enterPhoneNumberSubtitle": "Select your country and enter your phone number.",
@@ -155,7 +157,7 @@
    "profileScreen_upgrade": "Upgrade",
    "profileScreen_manageEditProfile": "Edit Profile",
    "profileScreen_manageNotifications": "Notifications",
-   "profileScreen_manageAppearance": "Appearance",
+   "profileScreen_manageAppearance": "Theme",
    "profileScreen_manageLanguage": "Language",
    "profileScreen_tierFree": "Free",
    "profileScreen_daysLeft": "Your subscription ends on {date} ({count,plural, =1{1 day left}other{{count} days left}})",
@@ -306,5 +308,32 @@
    "ratingScreen_noThanks": "No thanks",
    "ratingScreen_thankYouTitle": "Thank you for your feedback!",
    "notificationsScreen_learningReminders": "Learning Reminders",
-   "notificationsScreen_learningRemindersDesc": "Receive notifications for unfinished paths"
+   "notificationsScreen_learningRemindersDesc": "Receive notifications for unfinished paths",
+   "reportScreen_title": "Report a Problem",
+   "reportScreen_question": "What is the problem?",
+   "reportScreen_optionalDetails": "Optional Details",
+   "reportScreen_detailsHint": "Provide more details about the issue...",
+   "reportScreen_submitButton": "Submit Report",
+   "reportScreen_submitSuccess": "Report submitted successfully. Thank you!",
+   "reportScreen_typeInaccurate": "Inaccurate Content",
+   "reportScreen_typeBrokenLinks": "Broken or Incorrect Links",
+   "reportScreen_typeInappropriate": "Inappropriate Content",
+   "reportScreen_typeOther": "Other",
+   "reportStatusScreen_title": "Report Status",
+   "reportStatusScreen_noReportFound": "No report found for this path.",
+   "reportStatusScreen_statusLabel": "Status: {status}",
+   "@reportStatusScreen_statusLabel": {
+      "placeholders": {
+         "status": {
+            "type": "String"
+         }
+      }
+   },
+   "reportStatusScreen_resolvedMessageDefault": "This issue has been reviewed and resolved. Thank you for your feedback!",
+   "reportStatusScreen_submittedMessage": "Your report has been submitted and will be reviewed soon. Thank you for helping us improve!",
+   "reportStatusScreen_acknowledgeButton": "Acknowledge & Close",
+   "reportStatus_submitted": "Submitted",
+   "reportStatus_inReview": "In Review",
+   "reportStatus_resolved": "Resolved",
+   "reportStatus_unknown": "Unknown"
 }

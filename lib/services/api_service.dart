@@ -10,6 +10,7 @@ import '../models/path_suggestion_model.dart';
 import 'package:flutter/foundation.dart';
 import '../models/subscription_status_model.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import '../models/path_report_model.dart';
 
 class ApiService {
   static String get _baseUrl {
@@ -444,6 +445,28 @@ class ApiService {
     }
   }
 
+  Future<void> submitPathReport(
+    int pathTemplateId,
+    ReportType reportType,
+    String? description,
+  ) async {
+    final ioClient = _createIOClient();
+    final headers = await _getHeaders();
+    final response = await ioClient.post(
+      Uri.parse('$_baseUrl/reports'),
+      headers: headers,
+      body: jsonEncode({
+        'pathTemplateId': pathTemplateId,
+        'reportType': reportType.index, // Send the enum's integer value
+        'description': description,
+      }),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to submit report.');
+    }
+  }
+
   Future<void> postLoginSetup() async {
     try {
       // First, sync the user to create/update their record
@@ -460,4 +483,46 @@ class ApiService {
       }
     }
   }
+
+  Future<PathReport?> fetchPathReport(int pathTemplateId) async {
+    try {
+      final ioClient = _createIOClient();
+      final headers = await _getHeaders();
+      final response = await ioClient.get(
+        Uri.parse('$_baseUrl/reports/status/$pathTemplateId'),
+        headers: headers,
+      );
+
+      if (response.statusCode == 200) {
+        return PathReport.fromJson(jsonDecode(response.body));
+      } else if (response.statusCode == 404) {
+        return null;
+      } else {
+        throw Exception('Failed to fetch report status.');
+      }
+    } catch (e) {
+      print("Error fetching path report: $e");
+      rethrow;
+    }
+  }
+
+  Future<void> acknowledgeReport(int pathTemplateId) async {
+    try {
+      final ioClient = _createIOClient();
+      final headers = await _getHeaders();
+      final response = await ioClient.post(
+        Uri.parse('$_baseUrl/reports/$pathTemplateId/acknowledge'),
+        headers: headers,
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to acknowledge report.');
+      }
+    } catch (e) {
+      print("Error acknowledging report: $e");
+      rethrow;
+    }
+  }
 }
+
+enum ReportType { InaccurateContent, BrokenLinks, InappropriateContent, Other }
