@@ -10,6 +10,7 @@ import 'utils/snackbar_helper.dart';
 import 'models/subscription_status_model.dart';
 import 'report_problem_screen.dart';
 import 'report_status_screen.dart';
+import 'quiz_history_screen.dart';
 
 class PathDetailScreen extends StatefulWidget {
   final int pathId;
@@ -406,10 +407,28 @@ class _PathDetailViewState extends State<_PathDetailView> {
                 if (acknowledged == true) {
                   widget.onRefresh();
                 }
-                // -------------------------
+              } else if (value == 'quiz') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => QuizHistoryScreen(
+                      // Navigate to the new screen
+                      pathTemplateId: widget.pathDetail.pathTemplateId,
+                      pathTitle: widget.pathDetail.title,
+                      subscriptionStatus: widget.subscriptionStatus,
+                    ),
+                  ),
+                );
               }
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              PopupMenuItem<String>(
+                value: 'quiz',
+                child: ListTile(
+                  leading: const Icon(Icons.quiz_outlined),
+                  title: Text(l10n.pathDetailScreen_testYourKnowledge),
+                ),
+              ),
               if (widget.pathDetail.hasOpenReport)
                 PopupMenuItem<String>(
                   value: 'check_status',

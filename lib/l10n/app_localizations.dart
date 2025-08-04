@@ -363,8 +363,14 @@ abstract class AppLocalizations {
   /// No description provided for @pathDetailScreen_reportProblem.
   ///
   /// In en, this message translates to:
-  /// **'Report a problem'**
+  /// **'Report A Problem'**
   String get pathDetailScreen_reportProblem;
+
+  /// No description provided for @pathDetailScreen_testYourKnowledge.
+  ///
+  /// In en, this message translates to:
+  /// **'Test Your Knowledge'**
+  String get pathDetailScreen_testYourKnowledge;
 
   /// No description provided for @phoneLoginScreen_enterPhoneNumberTitle.
   ///
@@ -629,6 +635,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Name updated successfully!'**
   String get profileScreen_nameUpdateSuccess;
+
+  /// No description provided for @profileScreen_statQuizzesCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Quizzes Completed'**
+  String get profileScreen_statQuizzesCompleted;
+
+  /// No description provided for @profileScreen_usageQuizzesCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Quizzes Created'**
+  String get profileScreen_usageQuizzesCreated;
 
   /// No description provided for @subscriptionScreen_title.
   ///
@@ -1001,6 +1019,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unknown'**
   String get reportStatus_unknown;
+
+  /// No description provided for @quizHistoryScreen_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiz History'**
+  String get quizHistoryScreen_title;
+
+  /// No description provided for @quizHistoryScreen_noQuizzesTaken.
+  ///
+  /// In en, this message translates to:
+  /// **'No quizzes taken yet.'**
+  String get quizHistoryScreen_noQuizzesTaken;
+
+  /// No description provided for @quizHistoryScreen_cta.
+  ///
+  /// In en, this message translates to:
+  /// **'Test your knowledge by creating a new quiz!'**
+  String get quizHistoryScreen_cta;
+
+  /// No description provided for @quizHistoryScreen_createQuizButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a New Quiz'**
+  String get quizHistoryScreen_createQuizButton;
+
+  /// No description provided for @quizHistoryScreen_createAnotherQuizButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Take Another Quiz'**
+  String get quizHistoryScreen_createAnotherQuizButton;
+
+  /// No description provided for @quizHistoryScreen_score.
+  ///
+  /// In en, this message translates to:
+  /// **'Score: {score}/{total}'**
+  String quizHistoryScreen_score(int score, int total);
+
+  /// No description provided for @quizHistoryScreen_takenOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Taken on: {date}'**
+  String quizHistoryScreen_takenOn(String date);
+
+  /// No description provided for @quizHistoryScreen_quizInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiz in Progress'**
+  String get quizHistoryScreen_quizInProgress;
+
+  /// No description provided for @quizScreen_failedToLoad.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load quiz.'**
+  String get quizScreen_failedToLoad;
+
+  /// No description provided for @quizScreen_questionOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Question {current} of {total}'**
+  String quizScreen_questionOf(int current, int total);
+
+  /// No description provided for @quizScreen_nextQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Next Question'**
+  String get quizScreen_nextQuestion;
+
+  /// No description provided for @quizScreen_submit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get quizScreen_submit;
+
+  /// No description provided for @quizScreen_back.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get quizScreen_back;
+
+  /// No description provided for @quizScreen_quizComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiz Complete!'**
+  String get quizScreen_quizComplete;
+
+  /// No description provided for @quizScreen_yourScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Score:'**
+  String get quizScreen_yourScore;
+
+  /// No description provided for @quizScreen_backToPath.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Path'**
+  String get quizScreen_backToPath;
+
+  /// No description provided for @quizScreen_loadingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Generating your custom quiz...'**
+  String get quizScreen_loadingTitle;
+
+  /// No description provided for @quizScreen_resumingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Resuming your quiz...'**
+  String get quizScreen_resumingTitle;
+
+  /// No description provided for @quizReviewScreen_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Answers'**
+  String get quizReviewScreen_title;
+
+  /// No description provided for @quizReviewScreen_reviewAnswersButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Answers'**
+  String get quizReviewScreen_reviewAnswersButton;
 }
 
 class _AppLocalizationsDelegate

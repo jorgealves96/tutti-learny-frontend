@@ -3,6 +3,7 @@ class ProfileStats {
   final int pathsInProgress;
   final int pathsCompleted;
   final int itemsCompleted;
+  final int quizzesCompleted;
   final DateTime joinedDate;
 
   ProfileStats({
@@ -10,6 +11,7 @@ class ProfileStats {
     required this.pathsInProgress,
     required this.pathsCompleted,
     required this.itemsCompleted,
+    required this.quizzesCompleted,
     required this.joinedDate,
   });
 
@@ -19,6 +21,7 @@ class ProfileStats {
       pathsInProgress: json['pathsInProgress'] ?? 0,
       pathsCompleted: json['pathsCompleted'] ?? 0,
       itemsCompleted: json['itemsCompleted'] ?? 0,
+      quizzesCompleted: json['quizzesCompleted'] ?? 0,
       joinedDate: json['joinedDate'] != null
           ? DateTime.parse(json['joinedDate'])
           : DateTime.now(),

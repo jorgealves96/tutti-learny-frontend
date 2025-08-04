@@ -164,6 +164,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get pathDetailScreen_reportProblem => 'Reportar um problema';
 
   @override
+  String get pathDetailScreen_testYourKnowledge =>
+      'Teste os seus conhecimentos';
+
+  @override
   String get phoneLoginScreen_enterPhoneNumberTitle =>
       'Insira o seu número de telemóvel';
 
@@ -320,6 +324,12 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get profileScreen_nameUpdateSuccess => 'Nome atualizado com sucesso!';
+
+  @override
+  String get profileScreen_statQuizzesCompleted => 'Quizzes Concluídos';
+
+  @override
+  String get profileScreen_usageQuizzesCreated => 'Quizzes Criados';
 
   @override
   String get subscriptionScreen_title => 'Melhore a Sua Aprendizagem';
@@ -558,4 +568,71 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get reportStatus_unknown => 'Desconhecido';
+
+  @override
+  String get quizHistoryScreen_title => 'Histórico de Quizzes';
+
+  @override
+  String get quizHistoryScreen_noQuizzesTaken => 'Nenhum quiz realizado ainda.';
+
+  @override
+  String get quizHistoryScreen_cta =>
+      'Teste os seus conhecimentos criando um novo quiz!';
+
+  @override
+  String get quizHistoryScreen_createQuizButton => 'Criar um Novo Quiz';
+
+  @override
+  String get quizHistoryScreen_createAnotherQuizButton => 'Fazer Outro Quiz';
+
+  @override
+  String quizHistoryScreen_score(int score, int total) {
+    return 'Pontuação: $score/$total';
+  }
+
+  @override
+  String quizHistoryScreen_takenOn(String date) {
+    return 'Realizado em: $date';
+  }
+
+  @override
+  String get quizHistoryScreen_quizInProgress => 'Quiz em Progresso';
+
+  @override
+  String get quizScreen_failedToLoad => 'Falha ao carregar o quiz.';
+
+  @override
+  String quizScreen_questionOf(int current, int total) {
+    return 'Pergunta $current de $total';
+  }
+
+  @override
+  String get quizScreen_nextQuestion => 'Próxima Pergunta';
+
+  @override
+  String get quizScreen_submit => 'Submeter';
+
+  @override
+  String get quizScreen_back => 'Voltar';
+
+  @override
+  String get quizScreen_quizComplete => 'Quiz Concluído!';
+
+  @override
+  String get quizScreen_yourScore => 'A Sua Pontuação:';
+
+  @override
+  String get quizScreen_backToPath => 'Voltar ao Percurso';
+
+  @override
+  String get quizScreen_loadingTitle => 'A gerar o seu quiz personalizado...';
+
+  @override
+  String get quizScreen_resumingTitle => 'A retomar o seu quiz...';
+
+  @override
+  String get quizReviewScreen_title => 'Rever Respostas';
+
+  @override
+  String get quizReviewScreen_reviewAnswersButton => 'Rever Respostas';
 }

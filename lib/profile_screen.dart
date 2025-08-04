@@ -405,6 +405,10 @@ class _LearningStats extends StatelessWidget {
           value: stats?.itemsCompleted.toString() ?? '0',
           label: l10n.profileScreen_statResourcesCompleted,
         ),
+        _StatCard(
+          value: stats?.quizzesCompleted.toString() ?? '0',
+          label: l10n.profileScreen_statQuizzesCompleted,
+        ),
       ],
     );
   }
@@ -546,6 +550,8 @@ class _MonthlyUsage extends StatelessWidget {
     final generationLimit = stats!.pathGenerationLimit;
     final extensionsUsed = stats!.pathsExtendedThisMonth;
     final extensionLimit = stats!.pathExtensionLimit;
+    final quizzesUsed = stats!.quizzesCreatedThisMonth;
+    final quizLimit = stats!.quizCreationLimit;
 
     final l10n = AppLocalizations.of(context);
     if (l10n == null) {
@@ -576,6 +582,17 @@ class _MonthlyUsage extends StatelessWidget {
               extensionLimit == null
                   ? l10n.profileScreen_usageUnlimited
                   : '$extensionsUsed / $extensionLimit',
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+          ),
+          const Divider(height: 1, indent: 16, endIndent: 16),
+          ListTile(
+            leading: const Icon(Icons.quiz_outlined),
+            title: Text(l10n.profileScreen_usageQuizzesCreated),
+            trailing: Text(
+              quizLimit == null
+                  ? l10n.profileScreen_usageUnlimited
+                  : '$quizzesUsed / $quizLimit',
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
           ),

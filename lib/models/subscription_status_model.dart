@@ -4,6 +4,8 @@ class SubscriptionStatus {
   final int pathsExtendedThisMonth;
   final int? pathGenerationLimit;
   final int? pathExtensionLimit;
+  final int quizzesCreatedThisMonth;
+  final int? quizCreationLimit;
   final DateTime? subscriptionExpiryDate;
   final int? daysLeftInSubscription;
 
@@ -13,6 +15,8 @@ class SubscriptionStatus {
     required this.pathsExtendedThisMonth,
     this.pathGenerationLimit,
     this.pathExtensionLimit,
+    required this.quizzesCreatedThisMonth,
+    this.quizCreationLimit,
     this.subscriptionExpiryDate,
     this.daysLeftInSubscription,
   });
@@ -24,6 +28,8 @@ class SubscriptionStatus {
       pathsExtendedThisMonth: 0,
       pathGenerationLimit: 3,
       pathExtensionLimit: 1,
+      quizzesCreatedThisMonth: 0,
+      quizCreationLimit: 3
     );
   }
 
@@ -36,6 +42,8 @@ class SubscriptionStatus {
       pathsExtendedThisMonth: json['pathsExtendedThisMonth'],
       pathGenerationLimit: json['pathGenerationLimit'],
       pathExtensionLimit: json['pathExtensionLimit'],
+      quizzesCreatedThisMonth: json['quizzesCreatedThisMonth'] ?? 0,
+      quizCreationLimit: json['quizCreationLimit'],
       subscriptionExpiryDate: json['subscriptionExpiryDate'] != null
           ? DateTime.parse(json['subscriptionExpiryDate'])
           : null,

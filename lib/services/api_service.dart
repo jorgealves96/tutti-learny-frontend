@@ -11,10 +11,14 @@ import 'package:flutter/foundation.dart';
 import '../models/subscription_status_model.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import '../models/path_report_model.dart';
+import '../models/quiz_model.dart';
+import '../models/quiz_history_model.dart';
+import '../models/user_answer_model.dart';
+import '../models/quiz_review_model.dart';
 
 class ApiService {
   static String get _baseUrl {
-    // Use local URLs ONLY when in debug mode
+    // Use local URLs ONLY when in debug modeW
     if (kDebugMode) {
       if (Platform.isAndroid) {
         return 'https://10.0.2.2:7251/api'; // local API
@@ -521,6 +525,114 @@ class ApiService {
     } catch (e) {
       print("Error acknowledging report: $e");
       rethrow;
+    }
+  }
+
+  Future<List<QuizResultSummary>> fetchQuizHistory(int pathTemplateId) async {
+    final ioClient = _createIOClient();
+    final headers = await _getHeaders();
+    final response = await ioClient.get(
+      Uri.parse('$_baseUrl/quizzes/history/$pathTemplateId'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> body = jsonDecode(response.body);
+      return body
+          .map((dynamic item) => QuizResultSummary.fromJson(item))
+          .toList();
+    } else {
+      throw Exception('Failed to load quiz history.');
+    }
+  }
+
+  Future<Quiz> generateQuiz(int pathTemplateId) async {
+    final ioClient = _createIOClient();
+    final headers = await _getHeaders();
+    final response = await ioClient.post(
+      Uri.parse('$_baseUrl/quizzes/generate/$pathTemplateId'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      return Quiz.fromJson(jsonDecode(response.body));
+    } else {
+      final body = jsonDecode(response.body);
+      final errorMessage = body['message'] ?? 'Failed to generate quiz.';
+      throw Exception(errorMessage);
+    }
+  }
+
+  Future<Map<String, int>> submitQuizResult(
+    int quizId,
+    List<UserAnswer> answers, {
+    bool isFinalSubmission = true, // Default to true
+  }) async {
+    final ioClient = _createIOClient();
+    final headers = await _getHeaders();
+    // Append the query parameter to the URL
+    final url =
+        '$_baseUrl/quizzes/$quizId/submit?isFinalSubmission=$isFinalSubmission';
+
+    final response = await ioClient.post(
+      Uri.parse(url),
+      headers: headers,
+      body: jsonEncode({'answers': answers.map((a) => a.toJson()).toList()}),
+    );
+
+    if (response.statusCode == 200) {
+      final body = jsonDecode(response.body);
+      return {
+        'score': body['score'],
+        'total': body['totalQuestions'],
+        'quizResultId': body['quizResultId'],
+      };
+    } else {
+      throw Exception('Failed to submit quiz result.');
+    }
+  }
+
+  Future<QuizReview> fetchQuizResultDetails(int quizResultId) async {
+    final ioClient = _createIOClient();
+    final headers = await _getHeaders();
+    final response = await ioClient.get(
+      Uri.parse('$_baseUrl/quizzes/results/$quizResultId'),
+      headers: headers,
+    );
+    if (response.statusCode == 200) {
+      return QuizReview.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to load quiz details.');
+    }
+  }
+
+  Future<Quiz> fetchQuizDetails(int quizResultId) async {
+    final ioClient = _createIOClient();
+    final headers = await _getHeaders();
+    final response = await ioClient.get(
+      Uri.parse('$_baseUrl/quizzes/$quizResultId/details'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      return Quiz.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to fetch quiz details.');
+    }
+  }
+
+  Future<Quiz> resumeQuiz(int quizResultId) async {
+    final ioClient = _createIOClient();
+    final headers = await _getHeaders();
+    final response = await ioClient.get(
+      Uri.parse('$_baseUrl/quizzes/$quizResultId/resume'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      return Quiz.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to resume quiz.');
     }
   }
 }

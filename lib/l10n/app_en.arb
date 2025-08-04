@@ -79,7 +79,8 @@
    "pathDetailScreen_extendPath": "Extend Path",
    "pathDetailScreen_pathExtendedSuccess": "Path extended successfully!",
    "pathDetailScreen_checkReportStatus": "Check report status",
-   "pathDetailScreen_reportProblem": "Report a problem",
+   "pathDetailScreen_reportProblem": "Report A Problem",
+   "pathDetailScreen_testYourKnowledge": "Test Your Knowledge",
    "phoneLoginScreen_enterPhoneNumberTitle": "Enter Your Phone Number",
    "phoneLoginScreen_enterVerificationCodeTitle": "Enter Verification Code",
    "phoneLoginScreen_enterPhoneNumberSubtitle": "Select your country and enter your phone number.",
@@ -174,6 +175,8 @@
    },
    "profileScreen_manageSubscription": "Manage",
    "profileScreen_nameUpdateSuccess": "Name updated successfully!",
+   "profileScreen_statQuizzesCompleted": "Quizzes Completed",
+   "profileScreen_usageQuizzesCreated": "Quizzes Created",
    "subscriptionScreen_title": "Upgrade Your Learning",
    "subscriptionScreen_monthly": "Monthly",
    "subscriptionScreen_yearly": "Yearly (Save ~30%)",
@@ -335,5 +338,52 @@
    "reportStatus_submitted": "Submitted",
    "reportStatus_inReview": "In Review",
    "reportStatus_resolved": "Resolved",
-   "reportStatus_unknown": "Unknown"
+   "reportStatus_unknown": "Unknown",
+   "quizHistoryScreen_title": "Quiz History",
+   "quizHistoryScreen_noQuizzesTaken": "No quizzes taken yet.",
+   "quizHistoryScreen_cta": "Test your knowledge by creating a new quiz!",
+   "quizHistoryScreen_createQuizButton": "Create a New Quiz",
+   "quizHistoryScreen_createAnotherQuizButton": "Take Another Quiz",
+   "quizHistoryScreen_score": "Score: {score}/{total}",
+   "@quizHistoryScreen_score": {
+      "placeholders": {
+         "score": {
+            "type": "int"
+         },
+         "total": {
+            "type": "int"
+         }
+      }
+   },
+   "quizHistoryScreen_takenOn": "Taken on: {date}",
+   "@quizHistoryScreen_takenOn": {
+      "placeholders": {
+         "date": {
+            "type": "String"
+         }
+      }
+   },
+   "quizHistoryScreen_quizInProgress": "Quiz in Progress",
+   "quizScreen_failedToLoad": "Failed to load quiz.",
+   "quizScreen_questionOf": "Question {current} of {total}",
+   "@quizScreen_questionOf": {
+      "placeholders": {
+         "current": {
+            "type": "int"
+         },
+         "total": {
+            "type": "int"
+         }
+      }
+   },
+   "quizScreen_nextQuestion": "Next Question",
+   "quizScreen_submit": "Submit",
+   "quizScreen_back": "Back",
+   "quizScreen_quizComplete": "Quiz Complete!",
+   "quizScreen_yourScore": "Your Score:",
+   "quizScreen_backToPath": "Back to Path",
+   "quizScreen_loadingTitle": "Generating your custom quiz...",
+   "quizScreen_resumingTitle": "Resuming your quiz...",
+   "quizReviewScreen_title": "Review Answers",
+   "quizReviewScreen_reviewAnswersButton": "Review Answers"
 }

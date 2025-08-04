@@ -159,7 +159,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pathDetailScreen_checkReportStatus => 'Check report status';
 
   @override
-  String get pathDetailScreen_reportProblem => 'Report a problem';
+  String get pathDetailScreen_reportProblem => 'Report A Problem';
+
+  @override
+  String get pathDetailScreen_testYourKnowledge => 'Test Your Knowledge';
 
   @override
   String get phoneLoginScreen_enterPhoneNumberTitle =>
@@ -315,6 +318,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileScreen_nameUpdateSuccess => 'Name updated successfully!';
+
+  @override
+  String get profileScreen_statQuizzesCompleted => 'Quizzes Completed';
+
+  @override
+  String get profileScreen_usageQuizzesCreated => 'Quizzes Created';
 
   @override
   String get subscriptionScreen_title => 'Upgrade Your Learning';
@@ -549,4 +558,71 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reportStatus_unknown => 'Unknown';
+
+  @override
+  String get quizHistoryScreen_title => 'Quiz History';
+
+  @override
+  String get quizHistoryScreen_noQuizzesTaken => 'No quizzes taken yet.';
+
+  @override
+  String get quizHistoryScreen_cta =>
+      'Test your knowledge by creating a new quiz!';
+
+  @override
+  String get quizHistoryScreen_createQuizButton => 'Create a New Quiz';
+
+  @override
+  String get quizHistoryScreen_createAnotherQuizButton => 'Take Another Quiz';
+
+  @override
+  String quizHistoryScreen_score(int score, int total) {
+    return 'Score: $score/$total';
+  }
+
+  @override
+  String quizHistoryScreen_takenOn(String date) {
+    return 'Taken on: $date';
+  }
+
+  @override
+  String get quizHistoryScreen_quizInProgress => 'Quiz in Progress';
+
+  @override
+  String get quizScreen_failedToLoad => 'Failed to load quiz.';
+
+  @override
+  String quizScreen_questionOf(int current, int total) {
+    return 'Question $current of $total';
+  }
+
+  @override
+  String get quizScreen_nextQuestion => 'Next Question';
+
+  @override
+  String get quizScreen_submit => 'Submit';
+
+  @override
+  String get quizScreen_back => 'Back';
+
+  @override
+  String get quizScreen_quizComplete => 'Quiz Complete!';
+
+  @override
+  String get quizScreen_yourScore => 'Your Score:';
+
+  @override
+  String get quizScreen_backToPath => 'Back to Path';
+
+  @override
+  String get quizScreen_loadingTitle => 'Generating your custom quiz...';
+
+  @override
+  String get quizScreen_resumingTitle => 'Resuming your quiz...';
+
+  @override
+  String get quizReviewScreen_title => 'Review Answers';
+
+  @override
+  String get quizReviewScreen_reviewAnswersButton => 'Review Answers';
 }
