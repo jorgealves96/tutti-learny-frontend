@@ -527,7 +527,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get reportScreen_typeInaccurate => 'Contenu Inexact';
 
   @override
-  String get reportScreen_typeBrokenLinks => 'Liens Cassés ou Incorrects';
+  String get reportScreen_typeBrokenLinks => 'Liens Incorrects ou Inactifs';
 
   @override
   String get reportScreen_typeInappropriate => 'Contenu Inapproprié';

@@ -149,7 +149,7 @@
     "reportScreen_submitButton": "Enviar Reporte",
     "reportScreen_submitSuccess": "¡Reporte enviado con éxito. Gracias!",
     "reportScreen_typeInaccurate": "Contenido Inexacto",
-    "reportScreen_typeBrokenLinks": "Enlaces Rotos o Incorrectos",
+    "reportScreen_typeBrokenLinks": "Enlaces Inactivos o Incorrectos",
     "reportScreen_typeInappropriate": "Contenido Inapropiado",
     "reportScreen_typeOther": "Otro",
     "reportStatusScreen_title": "Estado del Reporte",

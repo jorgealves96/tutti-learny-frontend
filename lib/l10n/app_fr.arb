@@ -149,7 +149,7 @@
     "reportScreen_submitButton": "Envoyer le Signalement",
     "reportScreen_submitSuccess": "Signalement envoyé avec succès. Merci !",
     "reportScreen_typeInaccurate": "Contenu Inexact",
-    "reportScreen_typeBrokenLinks": "Liens Cassés ou Incorrects",
+    "reportScreen_typeBrokenLinks": "Liens Incorrects ou Inactifs",
     "reportScreen_typeInappropriate": "Contenu Inapproprié",
     "reportScreen_typeOther": "Autre",
     "reportStatusScreen_title": "Statut du Signalement",

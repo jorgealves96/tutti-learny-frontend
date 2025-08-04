@@ -526,7 +526,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get reportScreen_typeInaccurate => 'Conteúdo Incorreto';
 
   @override
-  String get reportScreen_typeBrokenLinks => 'Links Quebrados ou Incorretos';
+  String get reportScreen_typeBrokenLinks => 'Links Inativos ou Incorretos';
 
   @override
   String get reportScreen_typeInappropriate => 'Conteúdo Inapropriado';
