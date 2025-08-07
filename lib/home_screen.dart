@@ -13,12 +13,13 @@ import 'models/subscription_status_model.dart';
 import 'l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'utils/snackbar_helper.dart';
+import 'package:shimmer/shimmer.dart';
 
 class HomeScreen extends StatefulWidget {
-  final List<MyPath> recentPaths;
+  final List<MyPath>? recentPaths;
   final VoidCallback onPathAction;
   final FocusNode homeFocusNode;
-  final SubscriptionStatus subscriptionStatus; // Add this
+  final SubscriptionStatus? subscriptionStatus;
 
   const HomeScreen({
     super.key,
@@ -51,6 +52,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _startPathCreationFlow(AppLocalizations l10n) async {
+    if (widget.subscriptionStatus == null) return;
+
     final prompt = _promptController.text;
     if (prompt.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -133,6 +136,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _generateNewPath() async {
+    if (widget.subscriptionStatus == null) return;
+
     final result = await Navigator.push<dynamic>(
       context,
       MaterialPageRoute(
@@ -198,7 +203,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final displayedPaths = widget.recentPaths.take(3).toList();
     var firstName = _user?.displayName?.split(' ').first;
 
     // If it's null OR empty, fall back to 'there'
@@ -329,67 +333,118 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                 ),
               ),
-              if (displayedPaths.isNotEmpty)
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 40),
-                    Text(
-                      l10n.homeScreen_recentlyCreatedPaths,
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: displayedPaths.length,
-                      itemBuilder: (context, index) {
-                        final path = displayedPaths[index];
-                        return Card(
-                          margin: const EdgeInsets.only(bottom: 12.0),
-                          elevation: 2,
-                          shadowColor: Colors.black.withValues(alpha: 0.1),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.0),
-                          ),
-                          child: ListTile(
-                            title: Text(
-                              path.title,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            trailing: CircularPercentIndicator(
-                              radius: 15.0,
-                              lineWidth: 3.5,
-                              percent: path.progress,
-                              progressColor: Theme.of(
-                                context,
-                              ).colorScheme.secondary,
-                              backgroundColor: Colors.grey.shade300,
-                              circularStrokeCap: CircularStrokeCap.round,
-                            ),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      PathDetailScreen(pathId: path.userPathId),
-                                ),
-                              ).then((_) => widget.onPathAction());
-                            },
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
+              _buildRecentPathsSection(context, l10n),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+ Widget _buildRecentPathsSection(BuildContext context, AppLocalizations l10n) {
+    // Case 1: Data is loading, show skeleton
+    if (widget.recentPaths == null) {
+      return const _RecentPathsSkeleton();
+    }
+
+    // Case 2: Data loaded, but no paths exist, show nothing
+    if (widget.recentPaths!.isEmpty) {
+      return const SizedBox.shrink(); // Takes up no space
+    }
+
+    // Case 3: Data loaded and paths exist
+    final displayedPaths = widget.recentPaths!.take(3).toList();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 40),
+        Text(
+          l10n.homeScreen_recentlyCreatedPaths,
+          style: const TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 16),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: displayedPaths.length,
+          itemBuilder: (context, index) {
+            final path = displayedPaths[index];
+            return Card(
+              margin: const EdgeInsets.only(bottom: 12.0),
+              child: ListTile(
+                title: Text(
+                  path.title,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+                trailing: CircularPercentIndicator(
+                  radius: 15.0,
+                  lineWidth: 3.5,
+                  percent: path.progress,
+                  progressColor: Theme.of(context).colorScheme.secondary,
+                  backgroundColor: Colors.grey.shade300,
+                  circularStrokeCap: CircularStrokeCap.round,
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            PathDetailScreen(pathId: path.userPathId)),
+                  ).then((_) => widget.onPathAction());
+                },
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
+
+// --- NEW: Skeleton widget for the recent paths section ---
+class _RecentPathsSkeleton extends StatelessWidget {
+  const _RecentPathsSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade300,
+      highlightColor: Colors.grey.shade100,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 40),
+          // Title placeholder
+          Container(
+            height: 24,
+            width: 200,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+          const SizedBox(height: 16),
+          // List item placeholders
+          _buildSkeletonListItem(),
+          const SizedBox(height: 12),
+          _buildSkeletonListItem(),
+          const SizedBox(height: 12),
+          _buildSkeletonListItem(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSkeletonListItem() {
+    return Container(
+      height: 56, // Approx height of a ListTile in a Card
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
       ),
     );
   }

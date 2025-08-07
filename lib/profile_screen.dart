@@ -14,6 +14,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'dart:io' show Platform;
 import 'notifications_screen.dart';
 import 'utils/snackbar_helper.dart';
+import 'package:shimmer/shimmer.dart';
 
 class ProfileScreen extends StatefulWidget {
   final VoidCallback onLogout;
@@ -321,6 +322,10 @@ class _ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (user == null || joinedDate == null) {
+      return const _ProfileHeaderSkeleton(); // NEW
+    }
+
     // First, get the l10n object from the context
     final l10n = AppLocalizations.of(context)!;
 
@@ -385,6 +390,10 @@ class _LearningStats extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+  if (stats == null) {
+    return const _LearningStatsSkeleton(); // NEW
+  }
+
     final l10n = AppLocalizations.of(context);
     if (l10n == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
@@ -541,10 +550,10 @@ class _MonthlyUsage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (stats == null) {
-      // Don't show anything if stats aren't loaded
-      return const SizedBox.shrink();
-    }
+  if (stats == null) {
+    // This can share the same skeleton as the subscription details.
+    return const _SubscriptionSkeleton(); // NEW
+  }
 
     final generationsUsed = stats!.pathsGeneratedThisMonth;
     final generationLimit = stats!.pathGenerationLimit;
@@ -615,6 +624,10 @@ class _SubscriptionDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+      if (status == null) {
+    return const _SubscriptionSkeleton(); // NEW
+  }
+
     final l10n = AppLocalizations.of(context)!;
 
     String? daysLeftText;
@@ -726,6 +739,98 @@ class _SubscriptionDetails extends StatelessWidget {
                 child: Text(l10n.profileScreen_manageSubscription),
               ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ProfileHeaderSkeleton extends StatelessWidget {
+  const _ProfileHeaderSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade300,
+      highlightColor: Colors.grey.shade100,
+      child: Column(
+        children: [
+          const CircleAvatar(radius: 50, backgroundColor: Colors.white),
+          const SizedBox(height: 16),
+          Container(
+            height: 28,
+            width: 180,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Container(
+            height: 16,
+            width: 120,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LearningStatsSkeleton extends StatelessWidget {
+  const _LearningStatsSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade300,
+      highlightColor: Colors.grey.shade100,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: List.generate(4, (_) => const Expanded(child: _SkeletonStatCard())),
+      ),
+    );
+  }
+}
+
+class _SkeletonStatCard extends StatelessWidget {
+  const _SkeletonStatCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16.0),
+        child: Column(
+          children: [
+            Container(height: 28, width: 30, color: Colors.white),
+            const SizedBox(height: 4),
+            Container(height: 12, width: 50, color: Colors.white),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SubscriptionSkeleton extends StatelessWidget {
+  const _SubscriptionSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade300,
+      highlightColor: Colors.grey.shade100,
+      child: Container(
+        height: 80, // Approximate height of the Card
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
         ),
       ),
     );
