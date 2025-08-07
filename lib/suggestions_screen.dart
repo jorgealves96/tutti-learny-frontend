@@ -36,7 +36,7 @@ class SuggestionsScreen extends StatelessWidget {
   }
 
   Future<void> _generateNewPath(BuildContext context) async {
-    final newPathId = await Navigator.push<int>(
+    final newPathId = await Navigator.push<dynamic>(
       context,
       MaterialPageRoute(
         builder: (context) => GeneratingPathScreen(prompt: prompt),
