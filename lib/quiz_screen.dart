@@ -143,119 +143,129 @@ class _QuizScreenState extends State<QuizScreen>
     }
   }
 
+  void _handleBackNavigation() {
+    if (_showResults) {
+      // If results are showing, just pop
+      Navigator.of(context).pop(true);
+    } else {
+      // Otherwise, save the progress
+      _saveProgressAndExit();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
 
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () {
-            if (_showResults) {
-              // If results are showing, just pop
-              Navigator.of(context).pop(true);
-            } else {
-              // Otherwise, save the progress
-              _saveProgressAndExit();
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, dynamic result) {
+        if (didPop) return;
+        _handleBackNavigation();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () {
+              if (_showResults) {
+                Navigator.of(context).pop(true);
+              } else {
+                _saveProgressAndExit();
+              }
+            },
+          ),
+          title: Text(
+            'Quiz - ${widget.pathTitle}',
+            style: GoogleFonts.lora(
+              fontWeight: FontWeight.bold,
+              color: isDarkMode ? Colors.white : Colors.black,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+          centerTitle: true,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+        ),
+        body: FutureBuilder<Quiz?>(
+          future: _quizFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      FadeTransition(
+                        opacity: _animationController,
+                        child: Image.asset(
+                          isDarkMode
+                              ? 'assets/images/logo_original_size_dark.png'
+                              : 'assets/images/logo_original_size.png',
+                          width: 150,
+                        ),
+                      ),
+                      const SizedBox(height: 40),
+                      Text(
+                        widget.quizResultIdToResume != null
+                            ? l10n.quizScreen_resumingTitle
+                            : l10n.quizScreen_loadingTitle,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        l10n.quizScreen_loadingSubtitle,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey.shade600,
+                          height: 1.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
             }
+            if (snapshot.hasError) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) {
+                  Navigator.of(
+                    context,
+                  ).pop({'error': snapshot.error.toString()});
+                }
+              });
+              return const SizedBox.shrink();
+            }
+            if (!snapshot.hasData || snapshot.data == null) {
+              return Center(child: Text('Failed to load quiz.'));
+            }
+
+            _quiz = snapshot.data!;
+            if (_userAnswers.isEmpty && _quiz!.savedAnswers.isNotEmpty) {
+              _userAnswers.addAll(_quiz!.savedAnswers);
+            }
+            if (_showResults) {
+              return _buildResultsView(l10n);
+            }
+            return PageView.builder(
+              controller: _pageController,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: _quiz!.questions.length,
+              itemBuilder: (context, index) {
+                final question = _quiz!.questions[index];
+                return _buildQuestionView(question, index, l10n);
+              },
+            );
           },
         ),
-        title: Text(
-          'Quiz - ${widget.pathTitle}',
-          style: GoogleFonts.lora( // Using Lora font
-            fontWeight: FontWeight.bold,
-            color: isDarkMode ? Colors.white : Colors.black,
-          ),
-          overflow: TextOverflow.ellipsis,
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      body: FutureBuilder<Quiz>(
-        future: _quizFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 40.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    FadeTransition(
-                      opacity: _animationController,
-                      child: Image.asset(
-                        isDarkMode
-                            ? 'assets/images/logo_original_size_dark.png'
-                            : 'assets/images/logo_original_size.png',
-                        width: 150,
-                      ),
-                    ),
-                    const SizedBox(height: 40),
-                    Text(
-                      widget.quizResultIdToResume != null
-                          ? l10n.quizScreen_resumingTitle
-                          : l10n.quizScreen_loadingTitle,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      l10n.quizScreen_loadingSubtitle,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey.shade600,
-                        height: 1.5,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
-          if (snapshot.hasError) {
-            // Use a post-frame callback to safely show the dialog after the build
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (mounted) {
-                Navigator.of(context).pop({'error': snapshot.error.toString()});
-              }
-            });
-            // Show an empty container while the dialog is being prepared
-            return const SizedBox.shrink();
-          }
-
-          if (!snapshot.hasData || snapshot.data == null) {
-            return Center(child: Text('Failed to load quiz.'));
-          }
-
-          // Store the loaded quiz in the state variable
-          _quiz = snapshot.data!;
-
-          if (_userAnswers.isEmpty && _quiz!.savedAnswers.isNotEmpty) {
-            _userAnswers.addAll(_quiz!.savedAnswers);
-          }
-
-          if (_showResults) {
-            return _buildResultsView(l10n);
-          }
-
-          return PageView.builder(
-            controller: _pageController,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: _quiz!.questions.length,
-            itemBuilder: (context, index) {
-              final question = _quiz!.questions[index];
-              return _buildQuestionView(question, index, l10n);
-            },
-          );
-        },
       ),
     );
   }
@@ -271,7 +281,7 @@ class _QuizScreenState extends State<QuizScreen>
     final bottomSafeArea = MediaQuery.of(context).viewPadding.bottom;
 
     return Padding(
-    padding: EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 24.0 + bottomSafeArea),
+      padding: EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 24.0 + bottomSafeArea),
       child: Column(
         children: [
           LinearProgressIndicator(
