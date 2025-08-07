@@ -59,8 +59,6 @@ class SuggestionsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        // Use translated string
-        title: Text(l10n.suggestionsScreen_title),
       ),
       body: SafeArea(
         child: Column(

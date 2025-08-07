@@ -232,6 +232,15 @@
          }
       }
    },
+   "subscriptionScreen_tierPro_feature3": "{count} Quizzes/month",
+   "@subscriptionScreen_tierPro_feature3": {
+      "placeholders": {
+         "count": {
+            "type": "int",
+            "example": "25"
+         }
+      }
+   },
    "subscriptionScreen_tierUnlimited_title": "Unlimited",
    "subscriptionScreen_tierUnlimited_priceMonthly": "{price}/month",
    "@subscriptionScreen_tierUnlimited_priceMonthly": {
@@ -253,6 +262,7 @@
    },
    "subscriptionScreen_tierUnlimited_feature1": "Unlimited Path Generations",
    "subscriptionScreen_tierUnlimited_feature2": "Unlimited Path Extensions",
+   "subscriptionScreen_tierUnlimited_feature3": "Unlimited Quizzes",
    "subscriptionScreen_upgradeSuccess": "Subscription updated successfully!",
    "subscriptionScreen_noPlansAvailable": "No subscription plans are available right now.",
    "subscriptionScreen_purchaseVerificationError": "Purchase successful, but we couldn't verify it. Please try restoring purchases from the profile screen.",
@@ -265,7 +275,7 @@
          }
       }
    },
-   "suggestionsScreen_header": "We found some existing paths for \"{prompt}\". Start with one of these or generate your own.",
+   "suggestionsScreen_header": "We've found some existing paths have been proven helpful to other users for \"{prompt}\". You can pick one of these or generate your own.",
    "@suggestionsScreen_header": {
       "description": "Header text on the suggestions page.",
       "placeholders": {
@@ -385,5 +395,6 @@
    "quizScreen_loadingTitle": "Generating your custom quiz...",
    "quizScreen_resumingTitle": "Resuming your quiz...",
    "quizReviewScreen_title": "Review Answers",
-   "quizReviewScreen_reviewAnswersButton": "Review Answers"
+   "quizReviewScreen_reviewAnswersButton": "Review Answers",
+   "quizScreen_loadingSubtitle": "Our AI is preparing a set of questions to test your knowledge. This may take a few moments."
 }

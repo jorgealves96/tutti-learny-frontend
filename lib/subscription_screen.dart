@@ -249,6 +249,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     features = [
                       l10n.subscriptionScreen_tierPro_feature1(15),
                       l10n.subscriptionScreen_tierPro_feature2(15),
+                      l10n.subscriptionScreen_tierPro_feature3(30)
                     ];
                   } else if (package.storeProduct.identifier.contains(
                     'unlimited',
@@ -256,6 +257,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     features = [
                       l10n.subscriptionScreen_tierUnlimited_feature1,
                       l10n.subscriptionScreen_tierUnlimited_feature2,
+                      l10n.subscriptionScreen_tierUnlimited_feature3
                     ];
                   } else {
                     features = [];

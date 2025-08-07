@@ -110,17 +110,19 @@
     "subscriptionScreen_tierPro_priceYearly": "{price}/ano",
     "subscriptionScreen_tierPro_feature1": "{count} Gerações de Percursos/mês",
     "subscriptionScreen_tierPro_feature2": "{count} Extensões de Percursos/mês",
+    "subscriptionScreen_tierPro_feature3": "{count} Quizzes/mês",
     "subscriptionScreen_tierUnlimited_title": "Ilimitado",
     "subscriptionScreen_tierUnlimited_priceMonthly": "{price}/mês",
     "subscriptionScreen_tierUnlimited_priceYearly": "{price}/ano",
     "subscriptionScreen_tierUnlimited_feature1": "Gerações de Percursos Ilimitadas",
     "subscriptionScreen_tierUnlimited_feature2": "Extensões de Percursos Ilimitadas",
+    "subscriptionScreen_tierUnlimited_feature3": "Quizzes Ilimitados",
     "subscriptionScreen_upgradeSuccess": "Subscrição atualizada com sucesso!",
     "subscriptionScreen_noPlansAvailable": "Não existem planos de subscrição disponíveis de momento.",
     "subscriptionScreen_purchaseVerificationError": "Compra efetuada com sucesso, mas não foi possível verificá-la. Por favor, tente restaurar as compras no ecrã de perfil.",
     "suggestionsScreen_title": "Sugestões",
     "suggestionsScreen_errorAssigningPath": "Erro ao atribuir o percurso: {error}",
-    "suggestionsScreen_header": "Encontrámos alguns percursos existentes para \"{prompt}\". Comece com um destes ou crie o seu próprio.",
+    "suggestionsScreen_header": "Encontrámos alguns percursos existentes que se revelaram úteis para outros utilizadores para \"{prompt}\". Pode escolher um destes ou gerar o seu próprio.",
     "suggestionsScreen_generateMyOwnPath": "Gerar o Meu Próprio Percurso",
     "rotatingHintTextField_suggestion1": "ex. Aprender o básico de guitarra…",
     "rotatingHintTextField_suggestion2": "ex. Começar um curso de como falar em público…",
@@ -181,5 +183,6 @@
     "quizScreen_loadingTitle": "A gerar o seu quiz personalizado...",
     "quizScreen_resumingTitle": "A retomar o seu quiz...",
     "quizReviewScreen_title": "Rever Respostas",
-    "quizReviewScreen_reviewAnswersButton": "Rever Respostas"
+    "quizReviewScreen_reviewAnswersButton": "Rever Respostas",
+    "quizScreen_loadingSubtitle": "A nossa IA está a preparar um conjunto de perguntas para testar os seus conhecimentos. Isto pode demorar alguns momentos."
 }

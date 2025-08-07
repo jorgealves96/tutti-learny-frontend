@@ -7,6 +7,7 @@ import 'quiz_review_screen.dart';
 import 'l10n/app_localizations.dart';
 import 'models/subscription_status_model.dart';
 import 'subscription_screen.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class QuizHistoryScreen extends StatefulWidget {
   final int pathTemplateId;
@@ -45,7 +46,11 @@ class _QuizHistoryScreenState extends State<QuizHistoryScreen> {
       isScrollControlled: true,
       builder: (context) =>
           SubscriptionScreen(currentStatus: widget.subscriptionStatus),
-    ).then((_) => _refreshHistory());
+    ).then((needsRefresh) {
+      if (needsRefresh == true) {
+        _refreshHistory();
+      }
+    });
   }
 
   void _showUpgradeDialog(String errorMessage) {
@@ -101,7 +106,20 @@ class _QuizHistoryScreenState extends State<QuizHistoryScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.quizHistoryScreen_title)),
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(
+          l10n.quizHistoryScreen_title,
+          style: GoogleFonts.lora(
+            // Use the Lora font
+            fontWeight: FontWeight.bold,
+            // Set color based on light/dark mode
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black,
+          ),
+        ),
+      ),
       body: FutureBuilder<List<QuizResultSummary>>(
         future: _historyFuture,
         builder: (context, snapshot) {
@@ -126,10 +144,28 @@ class _QuizHistoryScreenState extends State<QuizHistoryScreen> {
                   const SizedBox(height: 16),
                   Text(l10n.quizHistoryScreen_cta, textAlign: TextAlign.center),
                   const SizedBox(height: 24),
-                  ElevatedButton.icon(
+                  OutlinedButton.icon(
                     onPressed: _navigateToNewQuiz,
                     icon: const Icon(Icons.quiz),
                     label: Text(l10n.quizHistoryScreen_createQuizButton),
+                    style: OutlinedButton.styleFrom(
+                      // Add padding to make the button bigger
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 16,
+                        horizontal: 32,
+                      ),
+                      // Set the color for the text and icon
+                      foregroundColor: Theme.of(context).colorScheme.secondary,
+                      // Set the color and thickness of the border
+                      side: BorderSide(
+                        color: Theme.of(context).colorScheme.secondary,
+                        width: 2,
+                      ),
+                      textStyle: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -201,14 +237,25 @@ class _QuizHistoryScreenState extends State<QuizHistoryScreen> {
                   const SizedBox(height: 16),
                   SizedBox(
                     width: double.infinity,
-                    child: ElevatedButton.icon(
+                    child: OutlinedButton.icon(
                       onPressed: _navigateToNewQuiz,
                       icon: const Icon(Icons.add),
                       label: Text(
                         l10n.quizHistoryScreen_createAnotherQuizButton,
                       ),
-                      style: ElevatedButton.styleFrom(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Theme.of(
+                          context,
+                        ).colorScheme.secondary,
+                        side: BorderSide(
+                          color: Theme.of(context).colorScheme.secondary,
+                          width: 2,
+                        ),
                         padding: const EdgeInsets.symmetric(vertical: 16),
+                        textStyle: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),

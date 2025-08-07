@@ -67,13 +67,13 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     try {
+      // This API call is now protected by the backend limit check
       final suggestions = await _apiService.fetchSuggestions(prompt);
-
       if (!mounted) return;
 
       if (suggestions.isNotEmpty) {
-        // Navigate to suggestions and wait for an ID to be returned
-        final newPathId = await Navigator.push<int>(
+        // If there are suggestions, show the suggestions screen and await a result
+        final result = await Navigator.push<dynamic>(
           context,
           MaterialPageRoute(
             builder: (context) => SuggestionsScreen(
@@ -83,21 +83,26 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         );
-        if (newPathId != null) {
-          _navigateToDetailAndRefresh(newPathId);
-        }
+        _handlePathCreationResult(result);
       } else {
-        // If no suggestions, go directly to generation
+        // If no suggestions are returned (or if the limit was reached on the backend),
+        // go directly to generation. This will correctly trigger the 429 error
+        // if the limit was the reason for the empty list.
         _generateNewPath();
       }
     } catch (e) {
+      // This will now catch the "limit reached" error from fetchSuggestions
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error finding suggestions: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        if (e.toString().toLowerCase().contains('limit')) {
+          _showUpgradeDialog(e.toString(), widget.subscriptionStatus);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error finding suggestions: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       }
     } finally {
       if (mounted) {
@@ -108,39 +113,37 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void _handlePathCreationResult(dynamic result) {
+    if (result is int) {
+      _navigateToDetailAndRefresh(result);
+    } else if (result is Map && result.containsKey('limit_error')) {
+      _showUpgradeDialog(result['limit_error'], widget.subscriptionStatus);
+    } else if (result is Map && result.containsKey('error')) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              result['error'].toString().replaceFirst("Exception: ", ""),
+            ),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
+    }
+  }
+
   Future<void> _generateNewPath() async {
-    // Await the result from the GeneratingPathScreen
     final result = await Navigator.push<dynamic>(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            GeneratingPathScreen(prompt: _promptController.text,
-            subscriptionStatus: widget.subscriptionStatus),
+        builder: (context) => GeneratingPathScreen(
+          prompt: _promptController.text,
+          subscriptionStatus: widget.subscriptionStatus,
+        ),
       ),
     );
-
-    // After returning, check the result
-    if (result is int) {
-      // This means a path was created successfully (it returned an ID)
-      _navigateToDetailAndRefresh(result);
-    } else if (result is Map) {
-      if (result.containsKey('limit_error')) {
-        // This is our usage limit signal
-        _showUpgradeDialog(result['limit_error'], widget.subscriptionStatus);
-      } else if (result.containsKey('error')) {
-        // Handle any other errors
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                result['error'].toString().replaceFirst("Exception: ", ""),
-              ),
-              backgroundColor: Colors.orange,
-            ),
-          );
-        }
-      }
-    }
+    // Use the new helper to handle the result
+    _handlePathCreationResult(result);
   }
 
   void _navigateToDetailAndRefresh(int pathId) {
@@ -154,14 +157,18 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _showSubscriptionSheet(SubscriptionStatus? status) {
-    showModalBottomSheet(
+    showModalBottomSheet<bool>(
+      // Specify the return type
       context: context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => SubscriptionScreen(currentStatus: status),
-    );
+      builder: (context) =>
+          SubscriptionScreen(currentStatus: widget.subscriptionStatus),
+    ).then((needsRefresh) {
+      // This code runs AFTER the sheet is closed.
+      if (needsRefresh == true) {
+        widget.onPathAction(); // This is the refresh callback from MainScreen
+      }
+    });
   }
 
   void _showUpgradeDialog(String errorMessage, SubscriptionStatus? status) {
@@ -244,138 +251,144 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 20),
-            RichText(
-              text: TextSpan(
-                style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: defaultTextColor,
-                ),
-                children: <TextSpan>[
-                  TextSpan(text: l10n.homeScreen_hi),
-                  ...[
-                    for (int i = 0; i < userName.length; i++)
-                      TextSpan(
-                        text: userName[i],
-                        style: TextStyle(
-                          color: i < userName.length / 2
-                              ? tuttiColor // First half
-                              : learniColor, // Second half
-                        ),
-                      ),
-                  ],
-                  TextSpan(text: l10n.homeScreen_callToActionMsg),
-                ],
-              ),
-            ),
-            const SizedBox(height: 30),
-            RotatingHintTextField(
-              controller: _promptController,
-              focusNode: widget.homeFocusNode,
-              onSubmitted: () => _startPathCreationFlow(l10n),
-              subscriptionStatus: widget.subscriptionStatus,
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _isCheckingSuggestions
-                    ? null
-                    : () => _startPathCreationFlow(l10n),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.secondary,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0),
+      body: GestureDetector(
+        onTap: () {
+          // This line removes focus from the text field and hides the keyboard.
+          FocusScope.of(context).unfocus();
+        },
+        // This ensures the GestureDetector captures taps even on empty space.
+        behavior: HitTestBehavior.opaque,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 20),
+              RichText(
+                text: TextSpan(
+                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: defaultTextColor,
                   ),
-                  elevation: 5,
-                ),
-                child: _isCheckingSuggestions
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
-                        ),
-                      )
-                    : Text(
-                        l10n.homeScreen_createLearningPath,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-              ),
-            ),
-            if (displayedPaths.isNotEmpty)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 40),
-                  Text(
-                    l10n.homeScreen_recentlyCreatedPaths,
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 16),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: displayedPaths.length,
-                    itemBuilder: (context, index) {
-                      final path = displayedPaths[index];
-                      return Card(
-                        margin: const EdgeInsets.only(bottom: 12.0),
-                        elevation: 2,
-                        shadowColor: Colors.black.withOpacity(0.1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
-                        child: ListTile(
-                          title: Text(
-                            path.title,
-                            style: const TextStyle(fontWeight: FontWeight.w600),
+                  children: <TextSpan>[
+                    TextSpan(text: l10n.homeScreen_hi),
+                    ...[
+                      for (int i = 0; i < userName.length; i++)
+                        TextSpan(
+                          text: userName[i],
+                          style: TextStyle(
+                            color: i < userName.length / 2
+                                ? tuttiColor // First half
+                                : learniColor, // Second half
                           ),
-                          trailing: CircularPercentIndicator(
-                            radius: 22.0,
-                            lineWidth: 5.0,
-                            percent: path.progress,
-                            center: Text(
-                              "${(path.progress * 100).toInt()}%",
+                        ),
+                    ],
+                    TextSpan(text: l10n.homeScreen_callToActionMsg),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 30),
+              RotatingHintTextField(
+                controller: _promptController,
+                focusNode: widget.homeFocusNode,
+                onSubmitted: () => _startPathCreationFlow(l10n),
+                subscriptionStatus: widget.subscriptionStatus,
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _isCheckingSuggestions
+                      ? null
+                      : () => _startPathCreationFlow(l10n),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.secondary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    elevation: 5,
+                  ),
+                  child: _isCheckingSuggestions
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : Text(
+                          l10n.homeScreen_createLearningPath,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                ),
+              ),
+              if (displayedPaths.isNotEmpty)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 40),
+                    Text(
+                      l10n.homeScreen_recentlyCreatedPaths,
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: displayedPaths.length,
+                      itemBuilder: (context, index) {
+                        final path = displayedPaths[index];
+                        return Card(
+                          margin: const EdgeInsets.only(bottom: 12.0),
+                          elevation: 2,
+                          shadowColor: Colors.black.withValues(alpha: 0.1),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          child: ListTile(
+                            title: Text(
+                              path.title,
                               style: const TextStyle(
-                                fontSize: 10.0,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
-                            progressColor: Theme.of(
-                              context,
-                            ).colorScheme.secondary,
-                            backgroundColor: Colors.grey.shade300,
-                            circularStrokeCap: CircularStrokeCap.round,
+                            trailing: CircularPercentIndicator(
+                              radius: 15.0,
+                              lineWidth: 3.5,
+                              percent: path.progress,
+                              progressColor: Theme.of(
+                                context,
+                              ).colorScheme.secondary,
+                              backgroundColor: Colors.grey.shade300,
+                              circularStrokeCap: CircularStrokeCap.round,
+                            ),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      PathDetailScreen(pathId: path.userPathId),
+                                ),
+                              ).then((_) => widget.onPathAction());
+                            },
                           ),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    PathDetailScreen(pathId: path.userPathId),
-                              ),
-                            ).then((_) => widget.onPathAction());
-                          },
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-          ],
+                        );
+                      },
+                    ),
+                  ],
+                ),
+            ],
+          ),
         ),
       ),
     );

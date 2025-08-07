@@ -115,7 +115,11 @@ class _PathDetailViewState extends State<_PathDetailView> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) => SubscriptionScreen(currentStatus: status),
-    );
+    ).then((needsRefresh) {
+      if (needsRefresh == true) {
+        widget.onRefresh(); // Call the refresh callback passed to this screen
+      }
+    });
   }
 
   void _showUpgradeDialog(
@@ -371,12 +375,10 @@ class _PathDetailViewState extends State<_PathDetailView> {
           icon: const Icon(Icons.arrow_back_ios_new),
           onPressed: () => Navigator.of(context).pop(_completionPercent),
         ),
-        title: Text(
-          widget.pathDetail.title,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
         actions: [
           PopupMenuButton<String>(
+            icon: const Icon(Icons.more_horiz),
+            iconSize: 35.0,
             onSelected: (value) async {
               if (value == 'delete') {
                 _showDeleteConfirmation(l10n);
@@ -456,7 +458,6 @@ class _PathDetailViewState extends State<_PathDetailView> {
                 ),
               ),
             ],
-            icon: const Icon(Icons.more_horiz),
           ),
         ],
         backgroundColor: Colors.transparent,

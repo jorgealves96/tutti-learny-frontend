@@ -708,6 +708,12 @@ abstract class AppLocalizations {
   /// **'{count} Path Extensions/month'**
   String subscriptionScreen_tierPro_feature2(int count);
 
+  /// No description provided for @subscriptionScreen_tierPro_feature3.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Quizzes/month'**
+  String subscriptionScreen_tierPro_feature3(int count);
+
   /// No description provided for @subscriptionScreen_tierUnlimited_title.
   ///
   /// In en, this message translates to:
@@ -737,6 +743,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unlimited Path Extensions'**
   String get subscriptionScreen_tierUnlimited_feature2;
+
+  /// No description provided for @subscriptionScreen_tierUnlimited_feature3.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited Quizzes'**
+  String get subscriptionScreen_tierUnlimited_feature3;
 
   /// No description provided for @subscriptionScreen_upgradeSuccess.
   ///
@@ -771,7 +783,7 @@ abstract class AppLocalizations {
   /// Header text on the suggestions page.
   ///
   /// In en, this message translates to:
-  /// **'We found some existing paths for \"{prompt}\". Start with one of these or generate your own.'**
+  /// **'We\'ve found some existing paths have been proven helpful to other users for \"{prompt}\". You can pick one of these or generate your own.'**
   String suggestionsScreen_header(String prompt);
 
   /// No description provided for @suggestionsScreen_generateMyOwnPath.
@@ -1139,6 +1151,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Review Answers'**
   String get quizReviewScreen_reviewAnswersButton;
+
+  /// No description provided for @quizScreen_loadingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Our AI is preparing a set of questions to test your knowledge. This may take a few moments.'**
+  String get quizScreen_loadingSubtitle;
 }
 
 class _AppLocalizationsDelegate

@@ -135,13 +135,33 @@ class _RotatingHintTextFieldState extends State<RotatingHintTextField> {
                 hintText: '',
                 filled: false,
                 counterText: "",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                  borderSide: BorderSide.none,
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(40.0),
+                  borderSide: BorderSide(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.secondary.withValues(alpha: 0.5),
+                    width: 2,
+                  ),
+                ),
+                // Define the border for when the text field is focused
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(40.0),
+                  borderSide: BorderSide(
+                    color: Theme.of(context).colorScheme.secondary,
+                    width: 2,
+                  ),
                 ),
                 contentPadding: const EdgeInsets.symmetric(
                   vertical: 16.0,
                   horizontal: 20.0,
+                ),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    Icons.search,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                  onPressed: widget.onSubmitted,
                 ),
               ),
               onSubmitted: (_) => widget.onSubmitted?.call(),

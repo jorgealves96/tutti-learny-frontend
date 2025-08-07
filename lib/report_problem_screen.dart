@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'services/api_service.dart';
 import 'l10n/app_localizations.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ReportProblemScreen extends StatefulWidget {
   final int pathTemplateId;
@@ -33,7 +34,7 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
   Future<void> _submitReport() async {
     setState(() => _isLoading = true);
     final l10n = AppLocalizations.of(context)!;
-    
+
     try {
       await ApiService().submitPathReport(
         widget.pathTemplateId,
@@ -62,7 +63,7 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     // Define the report types using the l10n object
     final reportTypes = {
       ReportType.InaccurateContent: l10n.reportScreen_typeInaccurate,
@@ -71,11 +72,24 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
       ReportType.Other: l10n.reportScreen_typeOther,
     };
 
-    final bool isOtherAndEmpty = _selectedType == ReportType.Other && _descriptionController.text.trim().isEmpty;
+    final bool isOtherAndEmpty =
+        _selectedType == ReportType.Other &&
+        _descriptionController.text.trim().isEmpty;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.reportScreen_title),
+        centerTitle: true,
+        title: Text(
+          l10n.reportScreen_title,
+          style: GoogleFonts.lora(
+            // Use the Lora font
+            fontWeight: FontWeight.bold,
+            // Set color based on light/dark mode
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black,
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
@@ -120,7 +134,9 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: (_isLoading || isOtherAndEmpty) ? null : _submitReport,
+                onPressed: (_isLoading || isOtherAndEmpty)
+                    ? null
+                    : _submitReport,
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),

@@ -110,17 +110,19 @@
     "subscriptionScreen_tierPro_priceYearly": "{price}/año",
     "subscriptionScreen_tierPro_feature1": "{count} Generaciones de Rutas/mes",
     "subscriptionScreen_tierPro_feature2": "{count} Extensiones de Rutas/mes",
+    "subscriptionScreen_tierPro_feature3": "{count} Cuestionarios/mes",
     "subscriptionScreen_tierUnlimited_title": "Ilimitado",
     "subscriptionScreen_tierUnlimited_priceMonthly": "{price}/mes",
     "subscriptionScreen_tierUnlimited_priceYearly": "{price}/año",
     "subscriptionScreen_tierUnlimited_feature1": "Generaciones de Rutas Ilimitadas",
     "subscriptionScreen_tierUnlimited_feature2": "Extensiones de Rutas Ilimitadas",
+    "subscriptionScreen_tierUnlimited_feature3": "Cuestionarios Ilimitados",
     "subscriptionScreen_upgradeSuccess": "¡Suscripción actualizada con éxito!",
     "subscriptionScreen_noPlansAvailable": "No hay planes de suscripción disponibles en este momento.",
     "subscriptionScreen_purchaseVerificationError": "Compra realizada con éxito, pero no pudimos verificarla. Por favor, intenta restaurar las compras desde la pantalla de perfil.",
     "suggestionsScreen_title": "Sugerencias",
     "suggestionsScreen_errorAssigningPath": "Error al asignar la ruta: {error}",
-    "suggestionsScreen_header": "Encontramos algunas rutas existentes para \"{prompt}\". Empieza con una de estas o genera la tuya propia.",
+    "suggestionsScreen_header": "Hemos encontrado algunas rutas existentes que han resultado útiles para otros usuarios para \"{prompt}\". Puedes elegir una de estas o generar la tuya propia.",
     "suggestionsScreen_generateMyOwnPath": "Generar Mi Propia Ruta",
     "rotatingHintTextField_suggestion1": "ej. Aprender lo básico de guitarra…",
     "rotatingHintTextField_suggestion2": "ej. Empezar un curso de hablar en público…",
@@ -181,5 +183,6 @@
     "quizScreen_loadingTitle": "Generando tu cuestionario personalizado...",
     "quizScreen_resumingTitle": "Reanudando tu cuestionario...",
     "quizReviewScreen_title": "Revisar Respuestas",
-    "quizReviewScreen_reviewAnswersButton": "Revisar Respuestas"
+    "quizReviewScreen_reviewAnswersButton": "Revisar Respuestas",
+    "quizScreen_loadingSubtitle": "Nuestra IA está preparando una serie de preguntas para poner a prueba tus conocimientos. Esto puede tardar unos momentos."
 }

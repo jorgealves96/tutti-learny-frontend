@@ -6,7 +6,7 @@ import 'l10n/app_localizations.dart';
 import 'quiz_review_screen.dart';
 import 'models/user_answer_model.dart';
 import 'models/subscription_status_model.dart';
-import 'subscription_screen.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class QuizScreen extends StatefulWidget {
   final int pathTemplateId;
@@ -163,8 +163,17 @@ class _QuizScreenState extends State<QuizScreen>
             }
           },
         ),
-        title: Text(widget.pathTitle),
+        title: Text(
+          'Quiz - ${widget.pathTitle}',
+          style: GoogleFonts.lora( // Using Lora font
+            fontWeight: FontWeight.bold,
+            color: isDarkMode ? Colors.white : Colors.black,
+          ),
+          overflow: TextOverflow.ellipsis,
+        ),
         centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
       body: FutureBuilder<Quiz>(
         future: _quizFuture,
@@ -180,22 +189,30 @@ class _QuizScreenState extends State<QuizScreen>
                       opacity: _animationController,
                       child: Image.asset(
                         isDarkMode
-                            ? 'assets/images/logo_original_size_dark.png'
+                            ? 'assets/images/logo_dark.png'
                             : 'assets/images/logo_original_size.png',
                         width: 150,
                       ),
                     ),
                     const SizedBox(height: 40),
                     Text(
-                      // Check if you are resuming a quiz and show different text
                       widget.quizResultIdToResume != null
-                          ? l10n
-                                .quizScreen_resumingTitle // New string for resuming
-                          : l10n.quizScreen_loadingTitle, // Original string for generating
+                          ? l10n.quizScreen_resumingTitle
+                          : l10n.quizScreen_loadingTitle,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      l10n.quizScreen_loadingSubtitle,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey.shade600,
+                        height: 1.5,
                       ),
                     ),
                   ],
@@ -250,15 +267,28 @@ class _QuizScreenState extends State<QuizScreen>
   ) {
     final total = _quiz!.questions.length;
     final isLastQuestion = index == total - 1;
+    final progress = (index + 1) / total;
 
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          LinearProgressIndicator(
+            value: progress,
+            backgroundColor: Colors.grey.shade300,
+            valueColor: AlwaysStoppedAnimation<Color>(
+              Theme.of(context).colorScheme.secondary,
+            ),
+            minHeight: 8,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          const SizedBox(height: 24),
           Text(
             l10n.quizScreen_questionOf(index + 1, total),
-            style: const TextStyle(color: Colors.grey),
+            style: const TextStyle(
+              color: Colors.grey,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
@@ -274,9 +304,19 @@ class _QuizScreenState extends State<QuizScreen>
             return Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
               child: Card(
+                elevation: 0,
                 color: isSelected
-                    ? Theme.of(context).colorScheme.secondary.withValues(alpha: 0.25)
-                    : null,
+                    ? Theme.of(context).colorScheme.secondary.withOpacity(0.15)
+                    : Theme.of(context).cardColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  side: BorderSide(
+                    color: isSelected
+                        ? Theme.of(context).colorScheme.secondary
+                        : Colors.grey.shade300,
+                    width: isSelected ? 2 : 1,
+                  ),
+                ),
                 child: ListTile(
                   title: Text(optionText),
                   onTap: () =>
@@ -300,7 +340,7 @@ class _QuizScreenState extends State<QuizScreen>
                   child: Text(l10n.quizScreen_back),
                 ),
               const Spacer(),
-              ElevatedButton(
+              ElevatedButton.icon(
                 onPressed:
                     (_userAnswers.containsKey(question.id) && !_isSubmitting)
                     ? () {
@@ -314,17 +354,31 @@ class _QuizScreenState extends State<QuizScreen>
                         }
                       }
                     : null,
-                child: _isSubmitting && isLastQuestion
+                icon: _isSubmitting && isLastQuestion
                     ? const SizedBox(
                         height: 20,
                         width: 20,
-                        child: CircularProgressIndicator(color: Colors.black),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
                       )
-                    : Text(
+                    : Icon(
                         isLastQuestion
-                            ? l10n.quizScreen_submit
-                            : l10n.quizScreen_nextQuestion,
+                            ? Icons.check_circle
+                            : Icons.arrow_forward,
                       ),
+                label: Text(
+                  isLastQuestion
+                      ? l10n.quizScreen_submit
+                      : l10n.quizScreen_nextQuestion,
+                ),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                ),
               ),
             ],
           ),
@@ -334,53 +388,68 @@ class _QuizScreenState extends State<QuizScreen>
   }
 
   Widget _buildResultsView(AppLocalizations l10n) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            l10n.quizScreen_quizComplete,
-            style: Theme.of(context).textTheme.headlineMedium,
-          ),
-          const SizedBox(height: 20),
-          Text(
-            l10n.quizScreen_yourScore,
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          Text(
-            '$_score / ${_quiz!.questions.length}',
-            style: Theme.of(context).textTheme.displayMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.secondary,
-            ),
-          ),
-          const SizedBox(height: 40),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Card(
+        elevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: Text(l10n.quizScreen_backToPath),
+              Icon(
+                Icons.emoji_events_outlined,
+                size: 80,
+                color: Theme.of(context).colorScheme.secondary,
               ),
-              const SizedBox(width: 16),
-              ElevatedButton(
-                onPressed: () {
-                  if (_quizResultId != null) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        // You only need to pass the quizResultId
-                        builder: (context) =>
-                            QuizReviewScreen(quizResultId: _quizResultId!),
-                      ),
-                    );
-                  }
-                },
-                child: Text(l10n.quizReviewScreen_reviewAnswersButton),
+              const SizedBox(height: 16),
+              Text(
+                l10n.quizScreen_quizComplete,
+                style: Theme.of(context).textTheme.headlineMedium,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                l10n.quizScreen_yourScore,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '$_score / ${_quiz!.questions.length}',
+                style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+              ),
+              const SizedBox(height: 32),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    child: Text(l10n.quizScreen_backToPath),
+                  ),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      if (_quizResultId != null) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                QuizReviewScreen(quizResultId: _quizResultId!),
+                          ),
+                        );
+                      }
+                    },
+                    icon: const Icon(Icons.rate_review_outlined),
+                    label: Text(l10n.quizReviewScreen_reviewAnswersButton),
+                  ),
+                ],
               ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }

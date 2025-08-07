@@ -110,17 +110,19 @@
     "subscriptionScreen_tierPro_priceYearly": "{price}/an",
     "subscriptionScreen_tierPro_feature1": "{count} Générations de parcours/mois",
     "subscriptionScreen_tierPro_feature2": "{count} Extensions de parcours/mois",
+    "subscriptionScreen_tierPro_feature3": "{count} Quiz/mois",
     "subscriptionScreen_tierUnlimited_title": "Illimité",
     "subscriptionScreen_tierUnlimited_priceMonthly": "{price}/mois",
     "subscriptionScreen_tierUnlimited_priceYearly": "{price}/an",
     "subscriptionScreen_tierUnlimited_feature1": "Générations de parcours illimitées",
     "subscriptionScreen_tierUnlimited_feature2": "Extensions de parcours illimitées",
+    "subscriptionScreen_tierUnlimited_feature3": "Quiz illimités",
     "subscriptionScreen_upgradeSuccess": "Abonnement mis à jour avec succès !",
     "subscriptionScreen_noPlansAvailable": "Aucun plan d'abonnement n'est disponible pour le moment.",
     "subscriptionScreen_purchaseVerificationError": "Achat réussi, mais nous n'avons pas pu le vérifier. Veuillez essayer de restaurer les achats depuis l'écran de profil.",
     "suggestionsScreen_title": "Suggestions",
     "suggestionsScreen_errorAssigningPath": "Erreur lors de l'assignation du parcours : {error}",
-    "suggestionsScreen_header": "Nous avons trouvé des parcours existants pour \"{prompt}\". Commencez avec l'un d'eux ou créez le vôtre.",
+    "suggestionsScreen_header": "Nous avons trouvé des parcours existants qui se sont avérés utiles pour d'autres utilisateurs pour \"{prompt}\". Vous pouvez en choisir un ou générer le vôtre.",
     "suggestionsScreen_generateMyOwnPath": "Générer mon propre parcours",
     "rotatingHintTextField_suggestion1": "ex. Apprendre les bases de la guitare…",
     "rotatingHintTextField_suggestion2": "ex. Commencer un cours d'art oratoire…",
@@ -181,5 +183,6 @@
     "quizScreen_loadingTitle": "Génération de votre quiz personnalisé...",
     "quizScreen_resumingTitle": "Reprise de votre quiz...",
     "quizReviewScreen_title": "Vérifier les Réponses",
-    "quizReviewScreen_reviewAnswersButton": "Vérifier les Réponses"
+    "quizReviewScreen_reviewAnswersButton": "Vérifier les Réponses",
+    "quizScreen_loadingSubtitle": "Notre IA prépare une série de questions pour tester vos connaissances. Cela peut prendre quelques instants."
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'services/api_service.dart';
 import 'models/quiz_review_model.dart';
 import 'l10n/app_localizations.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class QuizReviewScreen extends StatefulWidget {
   final int quizResultId;
@@ -23,10 +24,21 @@ class _QuizReviewScreenState extends State<QuizReviewScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.quizReviewScreen_title),
+        centerTitle: true,
+        title: Text(
+          l10n.quizReviewScreen_title,
+          style: GoogleFonts.lora(
+            // Use the Lora font
+            fontWeight: FontWeight.bold,
+            // Set color based on light/dark mode
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black,
+          ),
+        ),
       ),
       body: FutureBuilder<QuizReview>(
         future: _reviewFuture,
@@ -45,7 +57,7 @@ class _QuizReviewScreenState extends State<QuizReviewScreen> {
             itemCount: review.answers.length,
             itemBuilder: (context, index) {
               final answer = review.answers[index];
-              
+
               return Card(
                 margin: const EdgeInsets.only(bottom: 16.0),
                 child: Padding(
@@ -54,11 +66,17 @@ class _QuizReviewScreenState extends State<QuizReviewScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        l10n.quizScreen_questionOf(index + 1, review.totalQuestions),
+                        l10n.quizScreen_questionOf(
+                          index + 1,
+                          review.totalQuestions,
+                        ),
                         style: const TextStyle(color: Colors.grey),
                       ),
                       const SizedBox(height: 8),
-                      Text(answer.questionText, style: Theme.of(context).textTheme.titleLarge),
+                      Text(
+                        answer.questionText,
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
                       const SizedBox(height: 16),
                       ...answer.options.asMap().entries.map((entry) {
                         int optionIndex = entry.key;
@@ -84,13 +102,13 @@ class _QuizReviewScreenState extends State<QuizReviewScreen> {
                           decoration: BoxDecoration(
                             color: tileColor,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.grey.shade300)
+                            border: Border.all(color: Colors.grey.shade300),
                           ),
                           child: ListTile(
                             title: Text(optionText),
-                            trailing: iconData != null 
-                              ? Icon(iconData, color: iconColor) 
-                              : null,
+                            trailing: iconData != null
+                                ? Icon(iconData, color: iconColor)
+                                : null,
                           ),
                         );
                       }).toList(),

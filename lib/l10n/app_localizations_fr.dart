@@ -376,6 +376,11 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String subscriptionScreen_tierPro_feature3(int count) {
+    return '$count Quiz/mois';
+  }
+
+  @override
   String get subscriptionScreen_tierUnlimited_title => 'Illimité';
 
   @override
@@ -395,6 +400,9 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get subscriptionScreen_tierUnlimited_feature2 =>
       'Extensions de parcours illimitées';
+
+  @override
+  String get subscriptionScreen_tierUnlimited_feature3 => 'Quiz illimités';
 
   @override
   String get subscriptionScreen_upgradeSuccess =>
@@ -418,7 +426,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String suggestionsScreen_header(String prompt) {
-    return 'Nous avons trouvé des parcours existants pour \"$prompt\". Commencez avec l\'un d\'eux ou créez le vôtre.';
+    return 'Nous avons trouvé des parcours existants qui se sont avérés utiles pour d\'autres utilisateurs pour \"$prompt\". Vous pouvez en choisir un ou générer le vôtre.';
   }
 
   @override
@@ -638,4 +646,8 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get quizReviewScreen_reviewAnswersButton => 'Vérifier les Réponses';
+
+  @override
+  String get quizScreen_loadingSubtitle =>
+      'Notre IA prépare une série de questions pour tester vos connaissances. Cela peut prendre quelques instants.';
 }

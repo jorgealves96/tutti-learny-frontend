@@ -169,34 +169,38 @@ class ApiService {
     }
   }
 
-  Future<LearningPathDetail> createLearningPath(String prompt) async {
-    try {
-      final ioClient = _createIOClient();
-      final headers = await _getHeaders();
-      final response = await ioClient
-          .post(
-            Uri.parse('$_baseUrl/paths/generate'),
-            headers: headers,
-            body: jsonEncode({'prompt': prompt}),
-          )
-          .timeout(const Duration(seconds: 120));
+Future<LearningPathDetail> createLearningPath(String prompt) async {
+  try {
+    final ioClient = _createIOClient();
+    final headers = await _getHeaders();
+    final response = await ioClient
+        .post(
+          Uri.parse('$_baseUrl/paths/generate'),
+          headers: headers,
+          body: jsonEncode({'prompt': prompt}),
+        )
+        .timeout(const Duration(seconds: 120));
 
-      if (response.statusCode == 201) {
-        return LearningPathDetail.fromJson(jsonDecode(response.body));
-      } else if (response.statusCode == 400 || response.statusCode == 429) {
-        final errorBody = jsonDecode(response.body);
-        throw Exception(errorBody['message'] ?? 'An error occurred.');
-      } else {
-        throw Exception(
-          'Failed to create path. Status code: ${response.statusCode}',
-        );
+    if (response.statusCode == 201) {
+      return LearningPathDetail.fromJson(jsonDecode(response.body));
+    } else {
+      String errorMessage;
+      try {
+        final body = jsonDecode(response.body);
+        errorMessage = body['message'] ?? 'An unknown error occurred. Status code: ${response.statusCode}';
+      } catch (_) {
+        // If the response body isn't valid JSON, use a generic error.
+        errorMessage = 'Failed to create path. Status code: ${response.statusCode}';
       }
-    } on TimeoutException {
-      throw Exception('The request timed out. Please try again.');
-    } catch (e) {
-      rethrow;
+      throw Exception(errorMessage);
     }
+  } on TimeoutException {
+    throw Exception('The request timed out. Please try again.');
+  } catch (e) {
+    // Re-throw the exception to pass it to the UI.
+    rethrow;
   }
+}
 
   Future<void> deletePath(int pathId) async {
     try {
@@ -303,6 +307,10 @@ class ApiService {
       if (response.statusCode == 201) {
         // 201 Created
         return LearningPathDetail.fromJson(jsonDecode(response.body));
+      } else if (response.statusCode == 429) {
+        final body = jsonDecode(response.body);
+        final errorMessage = body['message'] ?? 'Usage limit reached.';
+        throw Exception(errorMessage);
       } else {
         throw Exception(
           'Failed to assign path. Status code: ${response.statusCode}',
