@@ -189,7 +189,7 @@ class _QuizScreenState extends State<QuizScreen>
                       opacity: _animationController,
                       child: Image.asset(
                         isDarkMode
-                            ? 'assets/images/logo_dark.png'
+                            ? 'assets/images/logo_original_size_dark.png'
                             : 'assets/images/logo_original_size.png',
                         width: 150,
                       ),
@@ -268,9 +268,10 @@ class _QuizScreenState extends State<QuizScreen>
     final total = _quiz!.questions.length;
     final isLastQuestion = index == total - 1;
     final progress = (index + 1) / total;
+    final bottomSafeArea = MediaQuery.of(context).viewPadding.bottom;
 
     return Padding(
-      padding: const EdgeInsets.all(24.0),
+    padding: EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 24.0 + bottomSafeArea),
       child: Column(
         children: [
           LinearProgressIndicator(
