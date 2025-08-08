@@ -21,18 +21,6 @@ class SubscriptionStatus {
     this.daysLeftInSubscription,
   });
 
-  factory SubscriptionStatus.freeTier() {
-    return SubscriptionStatus(
-      tier: 'Free',
-      pathsGeneratedThisMonth: 0,
-      pathsExtendedThisMonth: 0,
-      pathGenerationLimit: 3,
-      pathExtensionLimit: 1,
-      quizzesCreatedThisMonth: 0,
-      quizCreationLimit: 3
-    );
-  }
-
   factory SubscriptionStatus.fromJson(Map<String, dynamic> json) {
     return SubscriptionStatus(
       tier: json['tier'] == 0

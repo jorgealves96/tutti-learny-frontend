@@ -175,6 +175,7 @@ class _PostAuthScreenState extends State<PostAuthScreen> {
         }
         // Once the setup future is complete, show the main app
         return MainScreen(
+          setupFuture: _setupFuture,
           onLogout: () async {
             await AuthService.logout();
           },

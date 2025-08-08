@@ -11,8 +11,13 @@ import 'l10n/app_localizations.dart';
 
 class MainScreen extends StatefulWidget {
   final VoidCallback onLogout;
+  final Future<void> setupFuture;
 
-  const MainScreen({super.key, required this.onLogout});
+  const MainScreen({
+    super.key,
+    required this.onLogout,
+    required this.setupFuture,
+  });
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -31,7 +36,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    _reloadData();
+    _initializeData();
     AuthService.updateFcmTokenInBackground();
 
     AuthService.currentUserNotifier.addListener(_onUserChanged);
@@ -58,6 +63,15 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     if (mounted) {
       setState(() {});
     }
+  }
+
+  Future<void> _initializeData() async {
+    // 1. Wait for the setup future from the parent screen to complete.
+    await widget.setupFuture;
+
+    // 2. Now that setup is guaranteed to be done, load the data.
+    _reloadData();
+    AuthService.updateFcmTokenInBackground();
   }
 
   void _reloadData() {
