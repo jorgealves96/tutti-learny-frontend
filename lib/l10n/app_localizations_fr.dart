@@ -459,7 +459,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get rotatingHintTextField_suggestion7 =>
-      'ex. Apprendre le français pour voyager…';
+      'ex. Apprendre le anglais pour voyager…';
 
   @override
   String get rotatingHintTextField_suggestion8 =>
