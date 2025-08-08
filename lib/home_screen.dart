@@ -86,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         );
-        _handlePathCreationResult(result);
+        _handlePathCreationResult(l10n, result);
       } else {
         // If no suggestions are returned (or if the limit was reached on the backend),
         // go directly to generation. This will correctly trigger the 429 error
@@ -97,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
       // This will now catch the "limit reached" error from fetchSuggestions
       if (mounted) {
         if (e.toString().toLowerCase().contains('limit')) {
-          _showUpgradeDialog(e.toString(), widget.subscriptionStatus);
+          _showUpgradeDialog(l10n, e.toString(), widget.subscriptionStatus);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -116,11 +116,15 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void _handlePathCreationResult(dynamic result) {
+  void _handlePathCreationResult(AppLocalizations l10n, result) {
     if (result is int) {
       _navigateToDetailAndRefresh(result);
     } else if (result is Map && result.containsKey('limit_error')) {
-      _showUpgradeDialog(result['limit_error'], widget.subscriptionStatus);
+      _showUpgradeDialog(
+        l10n,
+        result['limit_error'],
+        widget.subscriptionStatus,
+      );
     } else if (result is Map && result.containsKey('error')) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -136,6 +140,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _generateNewPath() async {
+    final l10n = AppLocalizations.of(context)!;
+
     if (widget.subscriptionStatus == null) return;
 
     final result = await Navigator.push<dynamic>(
@@ -148,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
     // Use the new helper to handle the result
-    _handlePathCreationResult(result);
+    _handlePathCreationResult(l10n, result);
   }
 
   void _navigateToDetailAndRefresh(int pathId) {
@@ -176,20 +182,24 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void _showUpgradeDialog(String errorMessage, SubscriptionStatus? status) {
+  void _showUpgradeDialog(
+    AppLocalizations l10n,
+    errorMessage,
+    SubscriptionStatus? status,
+  ) {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          title: const Text("Usage Limit Reached"),
+          title: Text(l10n.homeScreen_usageLimitReached),
           content: Text(errorMessage.replaceFirst("Exception: ", "")),
           actions: <Widget>[
             TextButton(
-              child: const Text("Maybe Later"),
+              child: Text(l10n.homeScreen_maybeLater),
               onPressed: () => Navigator.of(dialogContext).pop(),
             ),
             ElevatedButton(
-              child: const Text("Upgrade"),
+              child: Text(l10n.homeScreen_upgrade),
               onPressed: () {
                 Navigator.of(dialogContext).pop(); // Close the dialog
                 _showSubscriptionSheet(status); // Open the subscription sheet
@@ -341,7 +351,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
- Widget _buildRecentPathsSection(BuildContext context, AppLocalizations l10n) {
+  Widget _buildRecentPathsSection(BuildContext context, AppLocalizations l10n) {
     // Case 1: Data is loading, show skeleton
     if (widget.recentPaths == null) {
       return const _RecentPathsSkeleton();
@@ -360,10 +370,7 @@ class _HomeScreenState extends State<HomeScreen> {
         const SizedBox(height: 40),
         Text(
           l10n.homeScreen_recentlyCreatedPaths,
-          style: const TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
         ListView.builder(
@@ -391,8 +398,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            PathDetailScreen(pathId: path.userPathId)),
+                      builder: (context) =>
+                          PathDetailScreen(pathId: path.userPathId),
+                    ),
                   ).then((_) => widget.onPathAction());
                 },
               ),

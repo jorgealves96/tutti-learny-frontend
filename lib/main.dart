@@ -15,7 +15,6 @@ import 'dart:io' show Platform;
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'services/notification_service.dart';
-import 'services/api_service.dart';
 import 'providers/notification_settings_provider.dart';
 
 void main() async {

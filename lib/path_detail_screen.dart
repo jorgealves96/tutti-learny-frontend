@@ -487,7 +487,7 @@ class _PathDetailViewState extends State<_PathDetailView> {
                         strokeWidth: 2,
                       ),
                     )
-                  : const Icon(Icons.auto_awesome),
+                  : const Icon(Icons.add_road),
               backgroundColor: Theme.of(context).colorScheme.secondary,
               foregroundColor: Colors.white,
             ),
