@@ -13,21 +13,33 @@ class AuthService {
   static Future<void> postLoginSetup() async {
     try {
       await ApiService().syncUser();
-      // CRITICAL: Reload the user from Firebase to get the updated displayName
       await _firebaseAuth.currentUser?.reload();
-      
-      final fcmToken = await FirebaseMessaging.instance.getToken();
-      if (fcmToken != null) {
-        await ApiService().updateFcmToken(fcmToken);
-      }
 
-      // Notify the UI that the user object has new data
       currentUserNotifier.value = _firebaseAuth.currentUser;
     } catch (e) {
       if (kDebugMode) {
-        print("Error during post-login setup: $e");
+        print("Error during critical post-login setup: $e");
       }
-      await logout(); // Log out on failure to prevent a broken state
+      // Logout on failure to prevent a broken state.
+      await logout();
+      // Rethrow to let the UI know something went wrong.
+      rethrow;
+    }
+  }
+
+  static Future<void> updateFcmTokenInBackground() async {
+    try {
+      final fcmToken = await FirebaseMessaging.instance.getToken();
+      if (fcmToken != null) {
+        // This runs quietly in the background.
+        await ApiService().updateFcmToken(fcmToken);
+      }
+    } catch (e) {
+      // A failure here shouldn't crash the app or log the user out.
+      // Just log it for debugging purposes.
+      if (kDebugMode) {
+        print("Failed to update FCM token in background: $e");
+      }
     }
   }
 

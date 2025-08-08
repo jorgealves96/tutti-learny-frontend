@@ -23,7 +23,6 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   final ApiService _apiService = ApiService();
   final FocusNode _homeScreenFocusNode = FocusNode();
 
-  // --- NEW: Nullable state variables ---
   List<MyPath>? _myPaths;
   ProfileStats? _profileStats;
   SubscriptionStatus? _subscriptionStatus;
@@ -33,6 +32,8 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     _reloadData();
+    AuthService.updateFcmTokenInBackground();
+
     AuthService.currentUserNotifier.addListener(_onUserChanged);
     WidgetsBinding.instance.addObserver(this);
   }
@@ -59,7 +60,6 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     }
   }
 
-  // --- REFACTORED: Data fetching logic ---
   void _reloadData() {
     if (_isLoading) return;
 
@@ -112,7 +112,6 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
       if (mounted) setState(() => _subscriptionStatus = null);
     }
   }
-  // --- END REFACTORED SECTION ---
 
   void _onItemTapped(int index) {
     if (_selectedIndex == index) return;
@@ -138,7 +137,6 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    // --- NEW: No more FutureBuilder wrapping the Scaffold ---
     return Scaffold(
       body: IndexedStack(
         index: _selectedIndex,
