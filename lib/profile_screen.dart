@@ -497,6 +497,7 @@ class _AccountManagementState extends State<_AccountManagement> {
             trailing: DropdownButton<Locale>(
               value: localeProvider.locale ?? Localizations.localeOf(context),
               underline: const SizedBox.shrink(),
+              borderRadius: BorderRadius.circular(24.0),
               items: AppLocalizations.supportedLocales.map((Locale locale) {
                 return DropdownMenuItem<Locale>(
                   value: locale,
