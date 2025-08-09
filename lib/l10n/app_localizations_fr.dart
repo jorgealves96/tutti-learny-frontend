@@ -216,6 +216,10 @@ class AppLocalizationsFr extends AppLocalizations {
       'Code invalide. Veuillez réessayer.';
 
   @override
+  String get phoneLoginScreen_verifyingAutomatically =>
+      'Vérification automatique...';
+
+  @override
   String get profileScreen_editName => 'Modifier le nom';
 
   @override

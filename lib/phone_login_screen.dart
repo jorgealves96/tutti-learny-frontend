@@ -3,6 +3,7 @@ import 'package:country_code_picker/country_code_picker.dart';
 import 'services/auth_service.dart';
 import 'l10n/app_localizations.dart';
 import 'package:country_codes/country_codes.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class PhoneLoginScreen extends StatefulWidget {
   final VoidCallback onLoginSuccess;
@@ -19,6 +20,7 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
 
   bool _isOtpSent = false;
   bool _isLoading = false;
+  bool _isAutoVerifying = false;
   String? _verificationId;
   String _countryCode = '+1'; // Default to US
   String? _initialCountryCode;
@@ -30,59 +32,60 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
     super.dispose();
   }
 
-  Future<void> _sendOtp(l10n) async {
-    if (_phoneController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.phoneLoginScreen_pleaseEnterPhoneNumber)),
-      );
-      return;
-    }
+  Future<void> _sendOtp(AppLocalizations l10n) async {
+    setState(() => _isLoading = true);
 
-    setState(() {
-      _isLoading = true;
-    });
-    try {
-      final fullPhoneNumber = '$_countryCode${_phoneController.text.trim()}';
-      await AuthService.startPhoneLogin(
-        phoneNumber: fullPhoneNumber,
-        codeSent: (verificationId, forceResendingToken) {
+    await AuthService.startPhoneLogin(
+      phoneNumber: '$_countryCode${_phoneController.text.trim()}',
+      onAutoVerificationStarted: () {
+        if (mounted) {
+          setState(() {
+            _isAutoVerifying = true;
+            _isLoading = true; // Ensure the loader shows
+          });
+        }
+      },
+      onVerificationCompleted: (PhoneAuthCredential credential) {
+        _otpController.text = credential.smsCode ?? '';
+        _verifyOtp(l10n, credential: credential);
+      },
+      codeSent: (verificationId, resendToken) {
+        if (mounted) {
           setState(() {
             _verificationId = verificationId;
             _isOtpSent = true;
             _isLoading = false;
           });
-        },
-        verificationFailed: (e) {
-          if (!mounted) return;
-          setState(() {
-            _isLoading = false;
-          });
+        }
+      },
+      verificationFailed: (e) {
+        if (mounted) {
+          setState(() => _isLoading = false);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Failed to send code: ${e.message}')),
           );
-        },
-      );
-    } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _isLoading = false;
-      });
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('An error occurred: $e')));
-    }
+        }
+      },
+    );
   }
 
-  Future<void> _verifyOtp(AppLocalizations l10n) async {
-    if (_verificationId == null) return;
-    setState(() {
-      _isLoading = true;
-    });
+  Future<void> _verifyOtp(
+    AppLocalizations l10n, {
+    PhoneAuthCredential? credential,
+  }) async {
+    // If a credential is not passed (manual flow), create it.
+    // If it is passed (auto flow), use it directly.
+    final authCredential =
+        credential ??
+        PhoneAuthProvider.credential(
+          verificationId: _verificationId!,
+          smsCode: _otpController.text.trim(),
+        );
 
-    final success = await AuthService.verifyPhoneLogin(
-      verificationId: _verificationId!,
-      otp: _otpController.text.trim(),
-    );
+    setState(() => _isLoading = true);
+
+    // Use the central sign-in method
+    final success = await AuthService.signInWithPhoneCredential(authCredential);
 
     if (!mounted) return;
 
@@ -90,9 +93,7 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
       Navigator.of(context).pop();
       widget.onLoginSuccess();
     } else {
-      setState(() {
-        _isLoading = false;
-      });
+      setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.phoneLoginScreen_invalidCode)),
       );
@@ -154,6 +155,8 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
               style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
             ),
             const SizedBox(height: 32),
+
+            // --- Phone Number Input ---
             if (!_isOtpSent)
               Row(
                 children: [
@@ -187,26 +190,35 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
                       keyboardType: TextInputType.phone,
                       decoration: InputDecoration(
                         labelText: l10n.phoneLoginScreen_phoneNumberLabel,
-                        border: OutlineInputBorder(),
+                        border: const OutlineInputBorder(),
                       ),
                     ),
                   ),
                 ],
               )
+            // --- OTP Code Input (with new logic) ---
             else
               TextField(
                 controller: _otpController,
                 keyboardType: TextInputType.number,
+                // Disable the field when auto-verification is happening
+                enabled: !_isAutoVerifying,
                 decoration: InputDecoration(
-                  labelText: l10n.phoneLoginScreen_otpLabel,
-                  border: OutlineInputBorder(),
+                  // Change the label to give user feedback
+                  labelText: _isAutoVerifying
+                      ? l10n.phoneLoginScreen_verifyingAutomatically
+                      : l10n.phoneLoginScreen_otpLabel,
+                  border: const OutlineInputBorder(),
                 ),
               ),
             const SizedBox(height: 24),
+
+            // --- Main Button (with new logic) ---
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _isLoading
+                // Disable the button if loading or auto-verifying
+                onPressed: _isLoading || _isAutoVerifying
                     ? null
                     : (_isOtpSent
                           ? () => _verifyOtp(l10n)
@@ -217,7 +229,14 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
                 child: _isLoading
-                    ? const CircularProgressIndicator(color: Colors.white)
+                    ? const SizedBox(
+                        height: 24,
+                        width: 24,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 3,
+                        ),
+                      )
                     : Text(
                         _isOtpSent
                             ? l10n.phoneLoginScreen_verifyCode

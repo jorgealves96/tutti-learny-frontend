@@ -444,6 +444,12 @@ abstract class AppLocalizations {
   /// **'Invalid code. Please try again.'**
   String get phoneLoginScreen_invalidCode;
 
+  /// No description provided for @phoneLoginScreen_verifyingAutomatically.
+  ///
+  /// In en, this message translates to:
+  /// **'Verifying automatically...'**
+  String get phoneLoginScreen_verifyingAutomatically;
+
   /// No description provided for @profileScreen_editName.
   ///
   /// In en, this message translates to:

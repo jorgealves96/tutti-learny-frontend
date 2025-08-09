@@ -116,6 +116,7 @@
       }
    },
    "phoneLoginScreen_invalidCode": "Invalid code. Please try again.",
+   "phoneLoginScreen_verifyingAutomatically": "Verifying automatically...",
    "profileScreen_editName": "Edit Name",
    "profileScreen_enterYourName": "Enter your name",
    "profileScreen_cancel": "Cancel",

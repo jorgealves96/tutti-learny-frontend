@@ -212,6 +212,10 @@ class AppLocalizationsEs extends AppLocalizations {
       'Código inválido. Por favor, inténtalo de nuevo.';
 
   @override
+  String get phoneLoginScreen_verifyingAutomatically =>
+      'Verificando automáticamente...';
+
+  @override
   String get profileScreen_editName => 'Editar Nombre';
 
   @override

@@ -17,25 +17,23 @@ import 'package:flutter/foundation.dart';
 import 'services/notification_service.dart';
 import 'providers/notification_settings_provider.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await NotificationService().initialize();
 
-  // --- RevenueCat SDK Initialization ---
-  // Enable debug logs
+  final notificationSettingsProvider = NotificationSettingsProvider();
+  await notificationSettingsProvider.init();
+
   if (kDebugMode) {
-    // Use verbose logs for development
     await Purchases.setLogLevel(LogLevel.debug);
   } else {
-    // Use less verbose logs for release builds
     await Purchases.setLogLevel(LogLevel.info);
   }
   late PurchasesConfiguration configuration;
   if (Platform.isAndroid) {
     configuration = PurchasesConfiguration("goog_miazFZFONgYPqIurCcTBbdvCYvX");
   } else if (Platform.isIOS) {
-    // TODO: Replace with your actual public Apple API key from RevenueCat
     configuration = PurchasesConfiguration("your_apple_api_key");
   }
   await Purchases.configure(configuration);
@@ -45,7 +43,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => LocaleProvider()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        ChangeNotifierProvider(create: (_) => NotificationSettingsProvider()),
+        ChangeNotifierProvider.value(value: notificationSettingsProvider),
       ],
       child: const TuttiLearnyApp(),
     ),

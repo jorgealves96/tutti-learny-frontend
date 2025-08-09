@@ -211,6 +211,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get phoneLoginScreen_invalidCode => 'Invalid code. Please try again.';
 
   @override
+  String get phoneLoginScreen_verifyingAutomatically =>
+      'Verifying automatically...';
+
+  @override
   String get profileScreen_editName => 'Edit Name';
 
   @override

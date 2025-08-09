@@ -56,6 +56,7 @@
     "phoneLoginScreen_failedToSendCode": "Error al enviar el código: {error}",
     "phoneLoginScreen_anErrorOccurred": "Ocurrió un error: {error}",
     "phoneLoginScreen_invalidCode": "Código inválido. Por favor, inténtalo de nuevo.",
+    "phoneLoginScreen_verifyingAutomatically": "Verificando automáticamente...",
     "profileScreen_editName": "Editar Nombre",
     "profileScreen_enterYourName": "Introduce tu nombre",
     "profileScreen_cancel": "Cancelar",

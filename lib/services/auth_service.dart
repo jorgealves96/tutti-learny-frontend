@@ -5,7 +5,7 @@ import 'api_service.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 class AuthService {
-  static final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  static FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   static final ValueNotifier<User?> currentUserNotifier = ValueNotifier(
     currentUser,
   );
@@ -13,9 +13,9 @@ class AuthService {
   static Future<void> postLoginSetup() async {
     try {
       await ApiService().syncUser();
-      await _firebaseAuth.currentUser?.reload();
+      await firebaseAuth.currentUser?.reload();
 
-      currentUserNotifier.value = _firebaseAuth.currentUser;
+      currentUserNotifier.value = firebaseAuth.currentUser;
     } catch (e) {
       if (kDebugMode) {
         print("Error during critical post-login setup: $e");
@@ -55,7 +55,7 @@ class AuthService {
         idToken: googleAuth.idToken,
       );
 
-      await _firebaseAuth.signInWithCredential(credential);
+      await firebaseAuth.signInWithCredential(credential);
       return true;
     } catch (e) {
       if (kDebugMode) print('Error during Google Sign-In: $e');
@@ -63,15 +63,35 @@ class AuthService {
     }
   }
 
+  static Future<bool> signInWithPhoneCredential(
+    PhoneAuthCredential credential,
+  ) async {
+    try {
+      // This is the sign-in step shown in the documentation
+      await firebaseAuth.signInWithCredential(credential);
+      // After sign-in, run your critical user sync
+      await postLoginSetup();
+      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        print("Failed to sign in with phone credential: $e");
+      }
+      return false;
+    }
+  }
+
   static Future<void> startPhoneLogin({
     required String phoneNumber,
-    required void Function(String, int?) codeSent,
-    required void Function(FirebaseAuthException) verificationFailed,
+    required Function(PhoneAuthCredential) onVerificationCompleted,
+    required Function() onAutoVerificationStarted, // ADD THIS
+    required Function(String, int?) codeSent,
+    required Function(FirebaseAuthException) verificationFailed,
   }) async {
-    await _firebaseAuth.verifyPhoneNumber(
+    await firebaseAuth.verifyPhoneNumber(
       phoneNumber: phoneNumber,
-      verificationCompleted: (PhoneAuthCredential credential) async {
-        await _firebaseAuth.signInWithCredential(credential);
+      verificationCompleted: (PhoneAuthCredential credential) {
+        onAutoVerificationStarted(); // Call this immediately
+        onVerificationCompleted(credential);
       },
       verificationFailed: verificationFailed,
       codeSent: codeSent,
@@ -88,7 +108,7 @@ class AuthService {
         verificationId: verificationId,
         smsCode: otp,
       );
-      await _firebaseAuth.signInWithCredential(credential);
+      await firebaseAuth.signInWithCredential(credential);
       return true;
     } catch (e) {
       if (kDebugMode) print('Error verifying phone login: $e');
@@ -99,7 +119,7 @@ class AuthService {
   static Future<void> logout() async {
     try {
       await GoogleSignIn().signOut();
-      await _firebaseAuth.signOut();
+      await firebaseAuth.signOut();
       currentUserNotifier.value = null;
     } catch (e) {
       if (kDebugMode) print('Error during logout: $e');
@@ -107,9 +127,9 @@ class AuthService {
   }
 
   static Future<String?> getIdToken() async {
-    return await _firebaseAuth.currentUser?.getIdToken();
+    return await firebaseAuth.currentUser?.getIdToken();
   }
 
-  static Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
-  static User? get currentUser => _firebaseAuth.currentUser;
+  static Stream<User?> get authStateChanges => firebaseAuth.authStateChanges();
+  static User? get currentUser => firebaseAuth.currentUser;
 }
