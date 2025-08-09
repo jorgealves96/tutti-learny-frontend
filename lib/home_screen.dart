@@ -14,6 +14,7 @@ import 'l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'utils/snackbar_helper.dart';
 import 'package:shimmer/shimmer.dart';
+import 'models/path_detail_model.dart';
 
 class HomeScreen extends StatefulWidget {
   final List<MyPath>? recentPaths;
@@ -86,6 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         );
+
         _handlePathCreationResult(l10n, result);
       } else {
         // If no suggestions are returned (or if the limit was reached on the backend),
@@ -116,10 +118,38 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void _handlePathCreationResult(AppLocalizations l10n, result) {
-    if (result is int) {
+  void _handlePathCreationResult(AppLocalizations l10n, dynamic result) {
+    // Handle the user backing out of a screen
+    if (result == null) return;
+
+    // Case 1: A suggestion was chosen, and we received the full path object.
+    if (result is LearningPathDetail) {
+      showSuccessSnackBar(context, l10n.homeScreen_pathCreatedSuccess);
+
+      // Navigate to the detail screen, passing the data we already have.
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PathDetailScreen(
+            initialPathData: result,
+            subscriptionStatus: widget.subscriptionStatus,
+          ),
+        ),
+      ).then((_) {
+        // THIS IS THE FIX:
+        // Refresh the main list only AFTER returning from the detail screen.
+        widget.onPathAction();
+        widget.homeFocusNode.unfocus();
+      });
+      _promptController.clear();
+    }
+    // Case 2: A new path was generated from scratch.
+    else if (result is int) {
       _navigateToDetailAndRefresh(result);
-    } else if (result is Map && result.containsKey('limit_error')) {
+      _promptController.clear(); 
+    }
+    // Case 3: Handle errors from the generation process.
+    else if (result is Map && result.containsKey('limit_error')) {
       _showUpgradeDialog(
         l10n,
         result['limit_error'],
@@ -164,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => PathDetailScreen(pathId: pathId)),
-    ).then((_) => widget.onPathAction());
+    ).then((_) { widget.onPathAction(); widget.homeFocusNode.unfocus();});
   }
 
   void _showSubscriptionSheet(SubscriptionStatus? status) {

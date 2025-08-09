@@ -13,60 +13,87 @@ import 'report_status_screen.dart';
 import 'quiz_history_screen.dart';
 
 class PathDetailScreen extends StatefulWidget {
-  final int pathId;
+  final int? pathId;
+  final LearningPathDetail? initialPathData;
   final SubscriptionStatus? subscriptionStatus;
 
   const PathDetailScreen({
     super.key,
-    required this.pathId,
+    this.pathId,
+    this.initialPathData,
     this.subscriptionStatus,
-  });
+  }) : assert(pathId != null || initialPathData != null, 
+              'Either pathId or initialPathData must be provided.');
 
   @override
   State<PathDetailScreen> createState() => _PathDetailScreenState();
 }
 
 class _PathDetailScreenState extends State<PathDetailScreen> {
-  late Future<LearningPathDetail> _pathDetailFuture;
+  LearningPathDetail? _pathDetail;
+  bool _isLoading = true;
+  String? _error;
   final ApiService _apiService = ApiService();
 
   @override
   void initState() {
     super.initState();
-    _pathDetailFuture = _apiService.fetchPathDetails(widget.pathId);
+    // --- NEW: Logic to handle initial data ---
+    if (widget.initialPathData != null) {
+      // If data was passed in, use it directly.
+      setState(() {
+        _pathDetail = widget.initialPathData;
+        _isLoading = false;
+      });
+    } else {
+      // Otherwise, fetch from the API.
+      _fetchPathDetails();
+    }
   }
 
-  // --- Add this refresh method ---
-  void _refreshPathDetails() {
+  Future<void> _fetchPathDetails() async {
     setState(() {
-      _pathDetailFuture = _apiService.fetchPathDetails(widget.pathId);
+      _isLoading = true;
+      _error = null;
     });
+    try {
+      final path = await _apiService.fetchPathDetails(widget.pathId!);
+      if (mounted) {
+        setState(() {
+          _pathDetail = path;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _error = e.toString();
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<LearningPathDetail>(
-      future: _pathDetailFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        } else if (snapshot.hasError) {
-          return Scaffold(
-            body: Center(child: Text("Error: ${snapshot.error}")),
-          );
-        } else if (!snapshot.hasData) {
-          return const Scaffold(body: Center(child: Text("Path not found.")));
-        }
+    // --- REFACTORED: Removed FutureBuilder ---
+    if (_isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
 
-        final pathDetail = snapshot.data!;
-        return _PathDetailView(
-          pathDetail: pathDetail,
-          subscriptionStatus: widget.subscriptionStatus,
-          onRefresh: _refreshPathDetails,
-        );
-      },
+    if (_error != null) {
+      return Scaffold(body: Center(child: Text("Error: $_error")));
+    }
+
+    if (_pathDetail == null) {
+      return const Scaffold(body: Center(child: Text("Path not found.")));
+    }
+
+    // Once loaded, build the main view
+    return _PathDetailView(
+      pathDetail: _pathDetail!,
+      subscriptionStatus: widget.subscriptionStatus,
+      onRefresh: _fetchPathDetails, // The refresh callback now calls _fetchPathDetails
     );
   }
 }

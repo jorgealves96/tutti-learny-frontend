@@ -21,7 +21,7 @@ class SuggestionsScreen extends StatelessWidget {
     try {
       final newPath = await apiService.assignPath(templateId);
       if (context.mounted) {
-        Navigator.pop(context, newPath.userPathId);
+        Navigator.pop(context, newPath);
       }
     } catch (e) {
       if (context.mounted) {
