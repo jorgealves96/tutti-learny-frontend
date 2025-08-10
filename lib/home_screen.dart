@@ -339,23 +339,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Showcase(
                       key: _welcomeKey,
+                      showArrow: false,
+                      tooltipBorderRadius: BorderRadius.circular(12.0),
 
-                      // Use the l10n key for the title
                       title: l10n.homeScreen_onboarding_welcome_title,
 
                       // Apply a single style to the entire title
                       titleTextStyle: GoogleFonts.lora(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color:
-                            learniColor,
+                        color: learniColor,
                       ),
 
                       description:
                           l10n.homeScreen_onboarding_welcome_description,
 
-                      // This makes the highlight a small, transparent circle in the center
-                      targetShapeBorder: const CircleBorder(),
                       child: const SizedBox.shrink(),
                     ),
                     Column(

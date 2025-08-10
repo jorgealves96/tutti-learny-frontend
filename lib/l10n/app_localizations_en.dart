@@ -186,6 +186,35 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pathDetailScreen_testYourKnowledge => 'Test Your Knowledge';
 
   @override
+  String get pathDetailScreen_onboarding_main_title => 'Your Learning Path';
+
+  @override
+  String get pathDetailScreen_onboarding_main_description =>
+      'Here you can see your path\'s title, description, and overall progress.';
+
+  @override
+  String get pathDetailScreen_onboarding_checkbox_title =>
+      'Track Your Progress';
+
+  @override
+  String get pathDetailScreen_onboarding_checkbox_description =>
+      'Mark entire sections or individual resources as complete by tapping the checkboxes.';
+
+  @override
+  String get pathDetailScreen_onboarding_menu_title => 'Path Options';
+
+  @override
+  String get pathDetailScreen_onboarding_menu_description =>
+      'Tap here to test your knowledge with a quiz, report a problem, or delete the path.';
+
+  @override
+  String get pathDetailScreen_onboarding_resource_title => 'View Content';
+
+  @override
+  String get pathDetailScreen_onboarding_resource_description =>
+      'Tap on any resource like an article or video to open it for viewing.';
+
+  @override
   String get phoneLoginScreen_enterPhoneNumberTitle =>
       'Enter Your Phone Number';
 

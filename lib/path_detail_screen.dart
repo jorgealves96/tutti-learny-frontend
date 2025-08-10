@@ -11,6 +11,8 @@ import 'models/subscription_status_model.dart';
 import 'report_problem_screen.dart';
 import 'report_status_screen.dart';
 import 'quiz_history_screen.dart';
+import 'package:showcaseview/showcaseview.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PathDetailScreen extends StatefulWidget {
   final int? pathId;
@@ -22,8 +24,10 @@ class PathDetailScreen extends StatefulWidget {
     this.pathId,
     this.initialPathData,
     this.subscriptionStatus,
-  }) : assert(pathId != null || initialPathData != null, 
-              'Either pathId or initialPathData must be provided.');
+  }) : assert(
+         pathId != null || initialPathData != null,
+         'Either pathId or initialPathData must be provided.',
+       );
 
   @override
   State<PathDetailScreen> createState() => _PathDetailScreenState();
@@ -93,7 +97,8 @@ class _PathDetailScreenState extends State<PathDetailScreen> {
     return _PathDetailView(
       pathDetail: _pathDetail!,
       subscriptionStatus: widget.subscriptionStatus,
-      onRefresh: _fetchPathDetails, // The refresh callback now calls _fetchPathDetails
+      onRefresh:
+          _fetchPathDetails, // The refresh callback now calls _fetchPathDetails
     );
   }
 }
@@ -120,6 +125,12 @@ class _PathDetailViewState extends State<_PathDetailView> {
   bool _isPathComplete = false;
   // --- 1. State variable to track new item IDs ---
   final Set<int> _newlyAddedItemIds = <int>{};
+
+  // Showcase keys
+  final GlobalKey _progressKey = GlobalKey();
+  final GlobalKey _checkboxKey = GlobalKey();
+  final GlobalKey _resourceKey = GlobalKey();
+  final GlobalKey _moreMenuKey = GlobalKey();
 
   @override
   void initState() {
@@ -389,6 +400,24 @@ class _PathDetailViewState extends State<_PathDetailView> {
     }
   }
 
+  Future<void> _showOnboarding(BuildContext context) async {
+    // Use a unique key for this screen's tour
+    const String tourKey = 'hasSeenPathDetailTour';
+    final showCase = ShowCaseWidget.of(context);
+
+    final prefs = await SharedPreferences.getInstance();
+    final bool hasSeenTour = prefs.getBool(tourKey) ?? false;
+
+    if (!hasSeenTour) {
+      // Use a post-frame callback to ensure the showcase starts after the build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showCase.startShowCase([_progressKey, _checkboxKey, _resourceKey, _moreMenuKey]);
+      });
+
+      await prefs.setBool(tourKey, true);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -396,268 +425,321 @@ class _PathDetailViewState extends State<_PathDetailView> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new),
-          onPressed: () => Navigator.of(context).pop(_completionPercent),
-        ),
-        actions: [
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.more_horiz),
-            iconSize: 35.0,
-            onSelected: (value) async {
-              if (value == 'delete') {
-                _showDeleteConfirmation(l10n);
-              } else if (value == 'report') {
-                final bool? reportSubmitted = await Navigator.push<bool>(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ReportProblemScreen(
-                      pathTemplateId: widget.pathDetail.pathTemplateId,
-                    ),
-                  ),
-                );
+    return ShowCaseWidget(
+      builder: (context) {
+        // Schedule the onboarding to run after the screen is built.
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _showOnboarding(context);
+        });
 
-                // --- Call the refresh method from the parent ---
-                if (reportSubmitted == true && mounted) {
-                  widget.onRefresh();
-                }
-              } else if (value == 'check_status') {
-                final bool? acknowledged = await Navigator.push<bool>(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ReportStatusScreen(
-                      pathTemplateId: widget.pathDetail.pathTemplateId,
-                    ),
-                  ),
-                );
-                // If the report was acknowledged, refresh the data
-                if (acknowledged == true) {
-                  widget.onRefresh();
-                }
-              } else if (value == 'quiz') {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => QuizHistoryScreen(
-                      // Navigate to the new screen
-                      pathTemplateId: widget.pathDetail.pathTemplateId,
-                      pathTitle: widget.pathDetail.title,
-                      subscriptionStatus: widget.subscriptionStatus,
-                    ),
-                  ),
-                );
-              }
-            },
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              PopupMenuItem<String>(
-                value: 'quiz',
-                child: ListTile(
-                  leading: const Icon(Icons.quiz_outlined),
-                  title: Text(l10n.pathDetailScreen_testYourKnowledge),
-                ),
-              ),
-              if (widget.pathDetail.hasOpenReport)
-                PopupMenuItem<String>(
-                  value: 'check_status',
-                  child: ListTile(
-                    leading: Icon(Icons.history),
-                    title: Text(l10n.pathDetailScreen_checkReportStatus),
-                  ),
-                )
-              else
-                PopupMenuItem<String>(
-                  value: 'report',
-                  child: ListTile(
-                    leading: Icon(Icons.report_problem_outlined),
-                    title: Text(l10n.pathDetailScreen_reportProblem),
-                  ),
-                ),
-              PopupMenuItem<String>(
-                value: 'delete',
-                child: ListTile(
-                  leading: Icon(Icons.delete_outline, color: Colors.red),
-                  title: Text(
-                    l10n.pathDetailScreen_deletePathTitle,
-                    style: TextStyle(color: Colors.red),
-                  ),
+        return Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios_new),
+              onPressed: () => Navigator.of(context).pop(_completionPercent),
+            ),
+            actions: [
+              // --- Showcase for the 3-dot menu ---
+              Showcase(
+                key: _moreMenuKey,
+                title: l10n.pathDetailScreen_onboarding_menu_title,
+                description: l10n.pathDetailScreen_onboarding_menu_description,
+                child: PopupMenuButton<String>(
+                  icon: const Icon(Icons.more_horiz),
+                  iconSize: 35.0,
+                  onSelected: (value) async {
+                    if (value == 'delete') {
+                      _showDeleteConfirmation(l10n);
+                    } else if (value == 'report') {
+                      final bool? reportSubmitted = await Navigator.push<bool>(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ReportProblemScreen(
+                            pathTemplateId: widget.pathDetail.pathTemplateId,
+                          ),
+                        ),
+                      );
+                      if (reportSubmitted == true && mounted) {
+                        widget.onRefresh();
+                      }
+                    } else if (value == 'check_status') {
+                      final bool? acknowledged = await Navigator.push<bool>(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ReportStatusScreen(
+                            pathTemplateId: widget.pathDetail.pathTemplateId,
+                          ),
+                        ),
+                      );
+                      if (acknowledged == true) {
+                        widget.onRefresh();
+                      }
+                    } else if (value == 'quiz') {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => QuizHistoryScreen(
+                            pathTemplateId: widget.pathDetail.pathTemplateId,
+                            pathTitle: widget.pathDetail.title,
+                            subscriptionStatus: widget.subscriptionStatus,
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                  itemBuilder: (BuildContext context) =>
+                      <PopupMenuEntry<String>>[
+                        PopupMenuItem<String>(
+                          value: 'quiz',
+                          child: ListTile(
+                            leading: const Icon(Icons.quiz_outlined),
+                            title: Text(
+                              l10n.pathDetailScreen_testYourKnowledge,
+                            ),
+                          ),
+                        ),
+                        if (widget.pathDetail.hasOpenReport)
+                          PopupMenuItem<String>(
+                            value: 'check_status',
+                            child: ListTile(
+                              leading: const Icon(Icons.history),
+                              title: Text(
+                                l10n.pathDetailScreen_checkReportStatus,
+                              ),
+                            ),
+                          )
+                        else
+                          PopupMenuItem<String>(
+                            value: 'report',
+                            child: ListTile(
+                              leading: const Icon(
+                                Icons.report_problem_outlined,
+                              ),
+                              title: Text(l10n.pathDetailScreen_reportProblem),
+                            ),
+                          ),
+                        PopupMenuItem<String>(
+                          value: 'delete',
+                          child: ListTile(
+                            leading: const Icon(
+                              Icons.delete_outline,
+                              color: Colors.red,
+                            ),
+                            title: Text(
+                              l10n.pathDetailScreen_deletePathTitle,
+                              style: const TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        ),
+                      ],
                 ),
               ),
             ],
+            backgroundColor: Colors.transparent,
+            elevation: 0,
           ),
-        ],
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: _isPathComplete
-          ? FloatingActionButton.extended(
-              onPressed: null, // Disabled button
-              label: Text(l10n.pathDetailScreen_pathIsComplete),
-              icon: const Icon(Icons.check_circle),
-              backgroundColor: Colors.green,
-            )
-          : FloatingActionButton.extended(
-              onPressed: _isExtending ? null : () => _extendPath(l10n),
-              label: Text(
-                _isExtending
-                    ? l10n.pathDetailScreen_generating
-                    : l10n.pathDetailScreen_extendPath,
-              ),
-              icon: _isExtending
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 2,
-                      ),
-                    )
-                  : const Icon(Icons.add_road),
-              backgroundColor: Theme.of(context).colorScheme.secondary,
-              foregroundColor: Colors.white,
-            ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                CircularPercentIndicator(
-                  radius: 45.0,
-                  lineWidth: 8.0,
-                  percent: _completionPercent,
-                  center: Text(
-                    "${(_completionPercent * 100).toInt()}%",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20.0,
-                    ),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+          floatingActionButton: _isPathComplete
+              ? FloatingActionButton.extended(
+                  onPressed: null,
+                  label: Text(l10n.pathDetailScreen_pathIsComplete),
+                  icon: const Icon(Icons.check_circle),
+                  backgroundColor: Colors.green,
+                )
+              : FloatingActionButton.extended(
+                  onPressed: _isExtending ? null : () => _extendPath(l10n),
+                  label: Text(
+                    _isExtending
+                        ? l10n.pathDetailScreen_generating
+                        : l10n.pathDetailScreen_extendPath,
                   ),
-                  progressColor: Theme.of(context).colorScheme.secondary,
-                  backgroundColor: Colors.grey.shade300,
-                  circularStrokeCap: CircularStrokeCap.round,
+                  icon: _isExtending
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Icon(Icons.add_road),
+                  backgroundColor: Theme.of(context).colorScheme.secondary,
+                  foregroundColor: Colors.white,
                 ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // --- Showcase for the progress/title section ---
+                Showcase(
+                  key: _progressKey,
+                  title: l10n.pathDetailScreen_onboarding_main_title,
+                  description:
+                      l10n.pathDetailScreen_onboarding_main_description,
+                  child: Row(
                     children: [
-                      Text(
-                        widget.pathDetail.title,
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+                      CircularPercentIndicator(
+                        radius: 45.0,
+                        lineWidth: 8.0,
+                        percent: _completionPercent,
+                        center: Text(
+                          "${(_completionPercent * 100).toInt()}%",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20.0,
+                          ),
                         ),
+                        progressColor: Theme.of(context).colorScheme.secondary,
+                        backgroundColor: Colors.grey.shade300,
+                        circularStrokeCap: CircularStrokeCap.round,
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        widget.pathDetail.description,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey.shade600,
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.pathDetail.title,
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              widget.pathDetail.description,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey.shade600,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
                 ),
+                const SizedBox(height: 30),
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: _items.length,
+                  itemBuilder: (context, index) {
+                    final item = _items[index];
+                    final bool isNew = _newlyAddedItemIds.contains(item.id);
+
+                    // For the first item in the list, wrap it for the showcase.
+                    if (index == 0) {
+                      return Showcase(
+                        key: _checkboxKey,
+                        title: l10n.pathDetailScreen_onboarding_checkbox_title,
+                        description: l10n
+                            .pathDetailScreen_onboarding_checkbox_description,
+                        child: _buildPathItemCard(item, isNew, l10n),
+                      );
+                    }
+                    // For all other items, build the card normally.
+                    return _buildPathItemCard(item, isNew, l10n);
+                  },
+                ),
+                const SizedBox(height: 80),
               ],
             ),
-            const SizedBox(height: 30),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: _items.length,
-              itemBuilder: (context, index) {
-                final item = _items[index];
-                // Check if the current item is newly added
-                final bool isNew = _newlyAddedItemIds.contains(item.id);
+          ),
+        );
+      },
+    );
+  }
 
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 16.0),
-                  elevation: 2,
-                  shadowColor: Colors.black.withOpacity(0.1),
-                  // --- 3. Conditionally apply a green border to the Card ---
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16.0),
-                    side: isNew
-                        ? const BorderSide(color: Colors.green, width: 2)
-                        : BorderSide.none,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 8.0,
-                      horizontal: 16.0,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Transform.scale(
-                              scale: 1.4,
-                              child: Checkbox(
-                                value: item.isCompleted,
-                                tristate:
-                                    !item.resources.every(
-                                      (r) => r.isCompleted,
-                                    ) &&
-                                    item.resources.any((r) => r.isCompleted),
-                                onChanged: (bool? value) {
-                                  _togglePathItem(item);
-                                },
-                                activeColor: Theme.of(
-                                  context,
-                                ).colorScheme.secondary,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Text(
-                                item.title,
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const Divider(height: 1),
-                        ...item.resources.map((resource) {
-                          return ListTile(
-                            leading: Checkbox(
-                              value: resource.isCompleted,
-                              onChanged: (bool? value) {
-                                _toggleResource(resource, item);
-                              },
-                              activeColor: Theme.of(
-                                context,
-                              ).colorScheme.secondary,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            title: Text(resource.title),
-                            trailing: Icon(
-                              resource.icon,
-                              color: Colors.grey.shade700,
-                            ),
-                            onTap: () => _openContent(resource, l10n),
-                            contentPadding: EdgeInsets.zero,
-                          );
-                        }).toList(),
-                      ],
+  Widget _buildPathItemCard(
+    PathItemDetail item,
+    bool isNew,
+    AppLocalizations l10n,
+  ) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 16.0),
+      elevation: 2,
+      shadowColor: Colors.black.withOpacity(0.1),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16.0),
+        side: isNew
+            ? const BorderSide(color: Colors.green, width: 2)
+            : BorderSide.none,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Transform.scale(
+                  scale: 1.4,
+                  child: Checkbox(
+                    value: item.isCompleted,
+                    tristate:
+                        !item.resources.every((r) => r.isCompleted) &&
+                        item.resources.any((r) => r.isCompleted),
+                    onChanged: (bool? value) {
+                      _togglePathItem(item);
+                    },
+                    activeColor: Theme.of(context).colorScheme.secondary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
                     ),
                   ),
-                );
-              },
+                ),
+                Expanded(
+                  child: Text(
+                    item.title,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 80),
+            const Divider(height: 1),
+            ...item.resources.asMap().entries.map((entry) {
+              int resourceIndex = entry.key;
+              ResourceDetail resource = entry.value;
+
+              // This is the ListTile for the resource
+              Widget resourceTile = ListTile(
+                leading: Checkbox(
+                  value: resource.isCompleted,
+                  onChanged: (bool? value) {
+                    _toggleResource(resource, item);
+                  },
+                  activeColor: Theme.of(context).colorScheme.secondary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                title: Text(resource.title),
+                trailing: Icon(resource.icon, color: Colors.grey.shade700),
+                onTap: () => _openContent(resource, l10n),
+                contentPadding: EdgeInsets.zero,
+              );
+
+              // If this is the FIRST path item AND the FIRST resource, wrap it for the showcase.
+              // We check item.order == 1 because the list index might not match the order number.
+              if (item.order == 1 && resourceIndex == 0) {
+                return Showcase(
+                  key: _resourceKey,
+                  title: l10n.pathDetailScreen_onboarding_resource_title,
+                  description:
+                      l10n.pathDetailScreen_onboarding_resource_description,
+                  child: resourceTile,
+                );
+              }
+
+              // Otherwise, return the normal ListTile.
+              return resourceTile;
+            }).toList(),
           ],
         ),
       ),

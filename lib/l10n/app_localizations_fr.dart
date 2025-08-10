@@ -192,6 +192,35 @@ class AppLocalizationsFr extends AppLocalizations {
   String get pathDetailScreen_testYourKnowledge => 'Testez vos connaissances';
 
   @override
+  String get pathDetailScreen_onboarding_main_title =>
+      'Votre Parcours d\'Apprentissage';
+
+  @override
+  String get pathDetailScreen_onboarding_main_description =>
+      'Ici, vous pouvez voir le titre, la description et la progression globale de votre parcours.';
+
+  @override
+  String get pathDetailScreen_onboarding_checkbox_title => 'Suivez Vos Progrès';
+
+  @override
+  String get pathDetailScreen_onboarding_checkbox_description =>
+      'Marquez des sections entières ou des ressources individuelles comme terminées en cochant les cases.';
+
+  @override
+  String get pathDetailScreen_onboarding_menu_title => 'Options du Parcours';
+
+  @override
+  String get pathDetailScreen_onboarding_menu_description =>
+      'Appuyez ici pour tester vos connaissances avec un quiz, signaler un problème ou supprimer le parcours.';
+
+  @override
+  String get pathDetailScreen_onboarding_resource_title => 'Voir le Contenu';
+
+  @override
+  String get pathDetailScreen_onboarding_resource_description =>
+      'Appuyez sur n\'importe quelle ressource comme un article ou une vidéo pour l\'ouvrir.';
+
+  @override
   String get phoneLoginScreen_enterPhoneNumberTitle =>
       'Entrez votre numéro de téléphone';
 

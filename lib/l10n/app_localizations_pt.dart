@@ -191,6 +191,36 @@ class AppLocalizationsPt extends AppLocalizations {
       'Teste os seus conhecimentos';
 
   @override
+  String get pathDetailScreen_onboarding_main_title =>
+      'O Seu Percurso de Aprendizagem';
+
+  @override
+  String get pathDetailScreen_onboarding_main_description =>
+      'Aqui pode ver o título, a descrição e o progresso geral do seu percurso.';
+
+  @override
+  String get pathDetailScreen_onboarding_checkbox_title =>
+      'Acompanhe o Seu Progresso';
+
+  @override
+  String get pathDetailScreen_onboarding_checkbox_description =>
+      'Marque secções inteiras ou recursos individuais como concluídos tocando nas caixas de seleção.';
+
+  @override
+  String get pathDetailScreen_onboarding_menu_title => 'Opções do Percurso';
+
+  @override
+  String get pathDetailScreen_onboarding_menu_description =>
+      'Toque aqui para testar os seus conhecimentos com um questionário, reportar um problema ou eliminar o percurso.';
+
+  @override
+  String get pathDetailScreen_onboarding_resource_title => 'Ver Conteúdo';
+
+  @override
+  String get pathDetailScreen_onboarding_resource_description =>
+      'Toque em qualquer recurso, como um artigo ou vídeo, para o abrir e visualizar.';
+
+  @override
   String get phoneLoginScreen_enterPhoneNumberTitle =>
       'Insira o seu número de telemóvel';
 

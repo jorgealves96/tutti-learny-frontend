@@ -408,6 +408,54 @@ abstract class AppLocalizations {
   /// **'Test Your Knowledge'**
   String get pathDetailScreen_testYourKnowledge;
 
+  /// No description provided for @pathDetailScreen_onboarding_main_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Learning Path'**
+  String get pathDetailScreen_onboarding_main_title;
+
+  /// No description provided for @pathDetailScreen_onboarding_main_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Here you can see your path\'s title, description, and overall progress.'**
+  String get pathDetailScreen_onboarding_main_description;
+
+  /// No description provided for @pathDetailScreen_onboarding_checkbox_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Track Your Progress'**
+  String get pathDetailScreen_onboarding_checkbox_title;
+
+  /// No description provided for @pathDetailScreen_onboarding_checkbox_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark entire sections or individual resources as complete by tapping the checkboxes.'**
+  String get pathDetailScreen_onboarding_checkbox_description;
+
+  /// No description provided for @pathDetailScreen_onboarding_menu_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Path Options'**
+  String get pathDetailScreen_onboarding_menu_title;
+
+  /// No description provided for @pathDetailScreen_onboarding_menu_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap here to test your knowledge with a quiz, report a problem, or delete the path.'**
+  String get pathDetailScreen_onboarding_menu_description;
+
+  /// No description provided for @pathDetailScreen_onboarding_resource_title.
+  ///
+  /// In en, this message translates to:
+  /// **'View Content'**
+  String get pathDetailScreen_onboarding_resource_title;
+
+  /// No description provided for @pathDetailScreen_onboarding_resource_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap on any resource like an article or video to open it for viewing.'**
+  String get pathDetailScreen_onboarding_resource_description;
+
   /// No description provided for @phoneLoginScreen_enterPhoneNumberTitle.
   ///
   /// In en, this message translates to:

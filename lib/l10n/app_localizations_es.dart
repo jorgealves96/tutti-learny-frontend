@@ -188,6 +188,34 @@ class AppLocalizationsEs extends AppLocalizations {
       'Pon a prueba tus conocimientos';
 
   @override
+  String get pathDetailScreen_onboarding_main_title => 'Tu Ruta de Aprendizaje';
+
+  @override
+  String get pathDetailScreen_onboarding_main_description =>
+      'Aquí puedes ver el título, la descripción y el progreso general de tu ruta.';
+
+  @override
+  String get pathDetailScreen_onboarding_checkbox_title => 'Sigue Tu Progreso';
+
+  @override
+  String get pathDetailScreen_onboarding_checkbox_description =>
+      'Marca secciones enteras o recursos individuales como completados tocando las casillas de verificación.';
+
+  @override
+  String get pathDetailScreen_onboarding_menu_title => 'Opciones de la Ruta';
+
+  @override
+  String get pathDetailScreen_onboarding_menu_description =>
+      'Toca aquí para poner a prueba tus conocimientos con un cuestionario, reportar un problema o eliminar la ruta.';
+
+  @override
+  String get pathDetailScreen_onboarding_resource_title => 'Ver Contenido';
+
+  @override
+  String get pathDetailScreen_onboarding_resource_description =>
+      'Toca en cualquier recurso como un artículo o video para abrirlo y verlo.';
+
+  @override
   String get phoneLoginScreen_enterPhoneNumberTitle =>
       'Introduce tu Número de Teléfono';
 
