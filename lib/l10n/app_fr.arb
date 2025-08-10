@@ -145,6 +145,8 @@
     "ratingScreen_thankYouTitle": "Merci pour votre retour !",
     "notificationsScreen_learningReminders": "Rappels d'Apprentissage",
     "notificationsScreen_learningRemindersDesc": "Recevoir des notifications pour les parcours non terminés",
+    "notificationsScreen_generalAnnouncements": "Annonces Générales",
+    "notificationsScreen_generalAnnouncementsSubtitle": "Recevez des nouvelles et des mises à jour occasionnelles sur l'application.",
     "reportScreen_title": "Signaler un Problème",
     "reportScreen_question": "Quel est le problème ?",
     "reportScreen_optionalDetails": "Détails Optionnels",

@@ -513,6 +513,13 @@ class AppLocalizationsEs extends AppLocalizations {
       'Recibir notificaciones de rutas no finalizadas';
 
   @override
+  String get notificationsScreen_generalAnnouncements => 'Anuncios Generales';
+
+  @override
+  String get notificationsScreen_generalAnnouncementsSubtitle =>
+      'Recibe noticias y actualizaciones ocasionales sobre la aplicación.';
+
+  @override
   String get reportScreen_title => 'Reportar un Problema';
 
   @override

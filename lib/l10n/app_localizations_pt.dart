@@ -515,6 +515,13 @@ class AppLocalizationsPt extends AppLocalizations {
       'Receber notificações para percursos não terminados';
 
   @override
+  String get notificationsScreen_generalAnnouncements => 'Anúncios Gerais';
+
+  @override
+  String get notificationsScreen_generalAnnouncementsSubtitle =>
+      'Receba notícias e atualizações ocasionais sobre a aplicação.';
+
+  @override
   String get reportScreen_title => 'Reportar um Problema';
 
   @override

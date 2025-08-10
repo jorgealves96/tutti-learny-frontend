@@ -918,6 +918,18 @@ abstract class AppLocalizations {
   /// **'Receive notifications for unfinished paths'**
   String get notificationsScreen_learningRemindersDesc;
 
+  /// No description provided for @notificationsScreen_generalAnnouncements.
+  ///
+  /// In en, this message translates to:
+  /// **'General Announcements'**
+  String get notificationsScreen_generalAnnouncements;
+
+  /// No description provided for @notificationsScreen_generalAnnouncementsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive occasional news and updates about the app.'**
+  String get notificationsScreen_generalAnnouncementsSubtitle;
+
   /// No description provided for @reportScreen_title.
   ///
   /// In en, this message translates to:

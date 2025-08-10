@@ -505,6 +505,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'Receive notifications for unfinished paths';
 
   @override
+  String get notificationsScreen_generalAnnouncements =>
+      'General Announcements';
+
+  @override
+  String get notificationsScreen_generalAnnouncementsSubtitle =>
+      'Receive occasional news and updates about the app.';
+
+  @override
   String get reportScreen_title => 'Report a Problem';
 
   @override

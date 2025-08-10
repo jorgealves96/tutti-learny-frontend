@@ -323,6 +323,8 @@
    "ratingScreen_thankYouTitle": "Thank you for your feedback!",
    "notificationsScreen_learningReminders": "Learning Reminders",
    "notificationsScreen_learningRemindersDesc": "Receive notifications for unfinished paths",
+   "notificationsScreen_generalAnnouncements": "General Announcements",
+   "notificationsScreen_generalAnnouncementsSubtitle": "Receive occasional news and updates about the app.",
    "reportScreen_title": "Report a Problem",
    "reportScreen_question": "What is the problem?",
    "reportScreen_optionalDetails": "Optional Details",

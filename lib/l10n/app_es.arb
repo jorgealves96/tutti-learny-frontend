@@ -145,6 +145,8 @@
     "ratingScreen_thankYouTitle": "¡Gracias por tu comentario!",
     "notificationsScreen_learningReminders": "Recordatorios de Aprendizaje",
     "notificationsScreen_learningRemindersDesc": "Recibir notificaciones de rutas no finalizadas",
+    "notificationsScreen_generalAnnouncements": "Anuncios Generales",
+    "notificationsScreen_generalAnnouncementsSubtitle": "Recibe noticias y actualizaciones ocasionales sobre la aplicación.",
     "reportScreen_title": "Reportar un Problema",
     "reportScreen_question": "¿Cuál es el problema?",
     "reportScreen_optionalDetails": "Detalles Opcionales",

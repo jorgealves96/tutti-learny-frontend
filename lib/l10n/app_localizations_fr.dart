@@ -516,6 +516,13 @@ class AppLocalizationsFr extends AppLocalizations {
       'Recevoir des notifications pour les parcours non terminés';
 
   @override
+  String get notificationsScreen_generalAnnouncements => 'Annonces Générales';
+
+  @override
+  String get notificationsScreen_generalAnnouncementsSubtitle =>
+      'Recevez des nouvelles et des mises à jour occasionnelles sur l\'application.';
+
+  @override
   String get reportScreen_title => 'Signaler un Problème';
 
   @override
