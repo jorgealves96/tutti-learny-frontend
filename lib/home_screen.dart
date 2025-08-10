@@ -15,6 +15,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'utils/snackbar_helper.dart';
 import 'package:shimmer/shimmer.dart';
 import 'models/path_detail_model.dart';
+import 'package:showcaseview/showcaseview.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   final List<MyPath>? recentPaths;
@@ -40,6 +42,11 @@ class _HomeScreenState extends State<HomeScreen> {
   User? _user;
   bool _isCheckingSuggestions = false;
 
+  // Showcase things
+  final GlobalKey _welcomeKey = GlobalKey();
+  final GlobalKey _promptKey = GlobalKey();
+  final GlobalKey _createPathKey = GlobalKey();
+
   @override
   void initState() {
     super.initState();
@@ -50,6 +57,23 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     _promptController.dispose();
     super.dispose();
+  }
+
+  Future<void> _showOnboarding(BuildContext context) async {
+    // 1. Get the ShowCaseWidget instance BEFORE any async calls.
+    final showCase = ShowCaseWidget.of(context);
+
+    // 2. Now perform your async operation.
+    final prefs = await SharedPreferences.getInstance();
+    const String homeScreenTourKey = 'hasSeenHomeScreenTour';
+    final bool hasSeenTour = prefs.getBool(homeScreenTourKey) ?? false;
+
+    if (!hasSeenTour) {
+      // 3. Use the instance you saved earlier. This is now safe.
+      showCase.startShowCase([_welcomeKey, _promptKey, _createPathKey]);
+
+      await prefs.setBool(homeScreenTourKey, true);
+    }
   }
 
   Future<void> _startPathCreationFlow(AppLocalizations l10n) async {
@@ -146,7 +170,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // Case 2: A new path was generated from scratch.
     else if (result is int) {
       _navigateToDetailAndRefresh(result);
-      _promptController.clear(); 
+      _promptController.clear();
     }
     // Case 3: Handle errors from the generation process.
     else if (result is Map && result.containsKey('limit_error')) {
@@ -194,7 +218,10 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => PathDetailScreen(pathId: pathId)),
-    ).then((_) { widget.onPathAction(); widget.homeFocusNode.unfocus();});
+    ).then((_) {
+      widget.onPathAction();
+      widget.homeFocusNode.unfocus();
+    });
   }
 
   void _showSubscriptionSheet(SubscriptionStatus? status) {
@@ -245,7 +272,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     var firstName = _user?.displayName?.split(' ').first;
 
-    // If it's null OR empty, fall back to 'there'
     if (firstName == null || firstName.isEmpty) {
       firstName = 'there';
     }
@@ -257,125 +283,175 @@ class _HomeScreenState extends State<HomeScreen> {
     final isDarkMode = theme.brightness == Brightness.dark;
 
     final tuttiColor = isDarkMode ? Colors.white : const Color(0xFF141443);
-    final learniColor =
-        theme.colorScheme.secondary; // This works for both modes
+    final learniColor = theme.colorScheme.secondary;
     final defaultTextColor = isDarkMode ? Colors.white : Colors.black;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            RichText(
-              text: TextSpan(
-                style: GoogleFonts.lora(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 35,
-                ),
-                children: [
-                  TextSpan(
-                    text: 'Tutti',
-                    style: TextStyle(
-                      color: tuttiColor, // Hex color for #141443
-                    ),
-                  ),
-                  TextSpan(
-                    text: ' Learni',
-                    style: TextStyle(
-                      color: learniColor, // Hex color for #0067f9
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      body: GestureDetector(
-        onTap: () {
-          // This line removes focus from the text field and hides the keyboard.
-          FocusScope.of(context).unfocus();
-        },
-        // This ensures the GestureDetector captures taps even on empty space.
-        behavior: HitTestBehavior.opaque,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return ShowCaseWidget(
+      builder: (context) => Scaffold(
+        appBar: AppBar(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              const SizedBox(height: 20),
               RichText(
                 text: TextSpan(
-                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                  style: GoogleFonts.lora(
                     fontWeight: FontWeight.bold,
-                    color: defaultTextColor,
+                    fontSize: 35,
                   ),
-                  children: <TextSpan>[
-                    TextSpan(text: l10n.homeScreen_hi),
-                    ...[
-                      for (int i = 0; i < userName.length; i++)
-                        TextSpan(
-                          text: userName[i],
-                          style: TextStyle(
-                            color: i < userName.length / 2
-                                ? tuttiColor // First half
-                                : learniColor, // Second half
-                          ),
-                        ),
-                    ],
-                    TextSpan(text: l10n.homeScreen_callToActionMsg),
+                  children: [
+                    TextSpan(
+                      text: 'Tutti',
+                      style: TextStyle(color: tuttiColor),
+                    ),
+                    TextSpan(
+                      text: ' Learni',
+                      style: TextStyle(color: learniColor),
+                    ),
                   ],
                 ),
               ),
-              const SizedBox(height: 30),
-              RotatingHintTextField(
-                controller: _promptController,
-                focusNode: widget.homeFocusNode,
-                onSubmitted: () => _startPathCreationFlow(l10n),
-                subscriptionStatus: widget.subscriptionStatus,
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _isCheckingSuggestions
-                      ? null
-                      : () => _startPathCreationFlow(l10n),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    elevation: 5,
-                  ),
-                  child: _isCheckingSuggestions
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 2,
-                          ),
-                        )
-                      : Text(
-                          l10n.homeScreen_createLearningPath,
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                ),
-              ),
-              _buildRecentPathsSection(context, l10n),
             ],
           ),
+          centerTitle: true,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+        ),
+        body: Builder(
+          builder: (context) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _showOnboarding(context);
+            });
+
+            return GestureDetector(
+              onTap: () {
+                FocusScope.of(context).unfocus();
+              },
+              behavior: HitTestBehavior.opaque,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24.0,
+                  vertical: 16.0,
+                ),
+                child: Stack(
+                  // Use a Stack to overlay the invisible anchor
+                  alignment: Alignment.center,
+                  children: [
+                    Showcase(
+                      key: _welcomeKey,
+
+                      // Use the l10n key for the title
+                      title: l10n.homeScreen_onboarding_welcome_title,
+
+                      // Apply a single style to the entire title
+                      titleTextStyle: GoogleFonts.lora(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color:
+                            learniColor,
+                      ),
+
+                      description:
+                          l10n.homeScreen_onboarding_welcome_description,
+
+                      // This makes the highlight a small, transparent circle in the center
+                      targetShapeBorder: const CircleBorder(),
+                      child: const SizedBox.shrink(),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 20),
+                        RichText(
+                          text: TextSpan(
+                            style: Theme.of(context).textTheme.displaySmall
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: defaultTextColor,
+                                ),
+                            children: <TextSpan>[
+                              TextSpan(text: l10n.homeScreen_hi),
+                              ...[
+                                for (int i = 0; i < userName.length; i++)
+                                  TextSpan(
+                                    text: userName[i],
+                                    style: TextStyle(
+                                      color: i < userName.length / 2
+                                          ? tuttiColor
+                                          : learniColor,
+                                    ),
+                                  ),
+                              ],
+                              TextSpan(text: l10n.homeScreen_callToActionMsg),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 30),
+                        RotatingHintTextField(
+                          controller: _promptController,
+                          focusNode: widget.homeFocusNode,
+                          onSubmitted: () => _startPathCreationFlow(l10n),
+                          subscriptionStatus: widget.subscriptionStatus,
+                          showcaseKey: _promptKey,
+                          showcaseTitle:
+                              l10n.homeScreen_onboarding_prompt_title,
+                          showcaseDescription:
+                              l10n.homeScreen_onboarding_prompt_description,
+                        ),
+                        const SizedBox(height: 20),
+                        Showcase(
+                          key: _createPathKey,
+                          title: l10n.homeScreen_onboarding_createButton_title,
+                          description: l10n
+                              .homeScreen_onboarding_createButton_description,
+                          targetBorderRadius: BorderRadius.circular(12.0),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: _isCheckingSuggestions
+                                  ? null
+                                  : () => _startPathCreationFlow(l10n),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Theme.of(
+                                  context,
+                                ).colorScheme.secondary,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16.0,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                                elevation: 5,
+                              ),
+                              child: _isCheckingSuggestions
+                                  ? const SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : Text(
+                                      l10n.homeScreen_createLearningPath,
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                            ),
+                          ),
+                        ),
+                        _buildRecentPathsSection(context, l10n),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         ),
       ),
     );

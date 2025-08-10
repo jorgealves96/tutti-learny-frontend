@@ -49,6 +49,29 @@ class AppLocalizationsPt extends AppLocalizations {
   String get homeScreen_pathCreatedSuccess => 'Percurso criado com sucesso!';
 
   @override
+  String get homeScreen_onboarding_prompt_title =>
+      'Introduza um Tópico de Aprendizagem';
+
+  @override
+  String get homeScreen_onboarding_prompt_description =>
+      'Escreva qualquer coisa que queira aprender aqui, desde \"como fazer pão\" até \"os fundamentos da física quântica\".';
+
+  @override
+  String get homeScreen_onboarding_createButton_title => 'Crie o Seu Percurso';
+
+  @override
+  String get homeScreen_onboarding_createButton_description =>
+      'Toque aqui e a nossa IA começará a gerar o seu plano de aprendizagem personalizado.';
+
+  @override
+  String get homeScreen_onboarding_welcome_title =>
+      'Bem-vindo ao Tutti Learni!';
+
+  @override
+  String get homeScreen_onboarding_welcome_description =>
+      'Este é o seu guia pessoal para aprender qualquer coisa. Vamos mostrar-lhe rapidamente como funciona.';
+
+  @override
   String get loginScreen_welcomePrimary => 'Bem-vindo ao';
 
   @override

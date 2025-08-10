@@ -174,6 +174,42 @@ abstract class AppLocalizations {
   /// **'Path created successfully!'**
   String get homeScreen_pathCreatedSuccess;
 
+  /// No description provided for @homeScreen_onboarding_prompt_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a Learning Topic'**
+  String get homeScreen_onboarding_prompt_title;
+
+  /// No description provided for @homeScreen_onboarding_prompt_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Type anything you want to learn about here, from \"how to bake bread\" to \"the basics of quantum physics\".'**
+  String get homeScreen_onboarding_prompt_description;
+
+  /// No description provided for @homeScreen_onboarding_createButton_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Your Path'**
+  String get homeScreen_onboarding_createButton_title;
+
+  /// No description provided for @homeScreen_onboarding_createButton_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap here and our AI will start to generate your personalized learning plan.'**
+  String get homeScreen_onboarding_createButton_description;
+
+  /// No description provided for @homeScreen_onboarding_welcome_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Tutti Learni!'**
+  String get homeScreen_onboarding_welcome_title;
+
+  /// No description provided for @homeScreen_onboarding_welcome_description.
+  ///
+  /// In en, this message translates to:
+  /// **'This is your personal guide to learn anything. Let\'s quickly show you how it works.'**
+  String get homeScreen_onboarding_welcome_description;
+
   /// No description provided for @loginScreen_welcomePrimary.
   ///
   /// In en, this message translates to:

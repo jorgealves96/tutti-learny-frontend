@@ -48,6 +48,29 @@ class AppLocalizationsEs extends AppLocalizations {
   String get homeScreen_pathCreatedSuccess => '¡Ruta creada con éxito!';
 
   @override
+  String get homeScreen_onboarding_prompt_title =>
+      'Introduce un Tema de Aprendizaje';
+
+  @override
+  String get homeScreen_onboarding_prompt_description =>
+      'Escribe cualquier cosa que quieras aprender aquí, desde \"cómo hacer pan\" hasta \"los fundamentos de la física cuántica\".';
+
+  @override
+  String get homeScreen_onboarding_createButton_title => 'Crea Tu Ruta';
+
+  @override
+  String get homeScreen_onboarding_createButton_description =>
+      'Toca aquí y nuestra IA comenzará a generar tu plan de aprendizaje personalizado.';
+
+  @override
+  String get homeScreen_onboarding_welcome_title =>
+      '¡Bienvenido a Tutti Learni!';
+
+  @override
+  String get homeScreen_onboarding_welcome_description =>
+      'Esta es tu guía personal para aprender cualquier cosa. Vamos a mostrarte rápidamente cómo funciona.';
+
+  @override
   String get loginScreen_welcomePrimary => 'Bienvenido a';
 
   @override
