@@ -61,19 +61,32 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _showOnboarding(BuildContext context) async {
-    // 1. Get the ShowCaseWidget instance BEFORE any async calls.
-    final showCase = ShowCaseWidget.of(context);
-
-    // 2. Now perform your async operation.
     final prefs = await SharedPreferences.getInstance();
     const String homeScreenTourKey = 'hasSeenHomeScreenTour';
     final bool hasSeenTour = prefs.getBool(homeScreenTourKey) ?? false;
 
-    if (!hasSeenTour) {
-      // 3. Use the instance you saved earlier. This is now safe.
-      showCase.startShowCase([_welcomeKey, _promptKey, _createPathKey]);
+    if (hasSeenTour) return;
 
-      await prefs.setBool(homeScreenTourKey, true);
+    final route = ModalRoute.of(context);
+    if (route == null) return;
+
+    // This is the function that will start the showcase
+    void startShowcase() {
+      final showCase = ShowCaseWidget.of(context);
+      showCase.startShowCase([_welcomeKey, _promptKey, _createPathKey]);
+      prefs.setBool(homeScreenTourKey, true);
+    }
+
+    // Check if the animation is already complete
+    if (route.animation?.status == AnimationStatus.completed) {
+      startShowcase();
+    } else {
+      // Otherwise, add a listener to wait for it to complete
+      route.animation?.addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          startShowcase();
+        }
+      });
     }
   }
 
@@ -124,7 +137,11 @@ class _HomeScreenState extends State<HomeScreen> {
       // This will now catch the "limit reached" error from fetchSuggestions
       if (mounted) {
         if (e.toString().toLowerCase().contains('limit')) {
-          _showUpgradeDialog(l10n, l10n.homeScreen_generationLimitExceeded, widget.subscriptionStatus);
+          _showUpgradeDialog(
+            l10n,
+            l10n.homeScreen_generationLimitExceeded,
+            widget.subscriptionStatus,
+          );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
