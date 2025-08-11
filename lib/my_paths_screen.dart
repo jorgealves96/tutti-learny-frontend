@@ -20,6 +20,7 @@ class MyPathsScreen extends StatelessWidget {
   });
 
   Future<void> _navigateToDetail(BuildContext context, int userPathId) async {
+    // Use .then() to ensure the refresh happens AFTER returning from the detail screen.
     await Navigator.push(
       context,
       MaterialPageRoute(
@@ -28,7 +29,10 @@ class MyPathsScreen extends StatelessWidget {
           subscriptionStatus: subscriptionStatus,
         ),
       ),
-    );
+    ).then((_) {
+      // This code runs the moment the user presses the back button.
+      onRefresh();
+    });
   }
 
   @override
