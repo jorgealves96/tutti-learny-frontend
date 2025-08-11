@@ -12,7 +12,7 @@
    "homeScreen_recentlyCreatedPaths": "Recently Created Paths",
    "homeScreen_pathCreatedSuccess": "Path created successfully!",
    "homeScreen_onboarding_prompt_title": "Enter a Learning Topic",
-   "homeScreen_onboarding_prompt_description": "Type anything you want to learn about here, from \"how to bake bread\" to \"the basics of quantum physics\".",
+   "homeScreen_onboarding_prompt_description": "Type anything you want to learn about here.",
    "homeScreen_onboarding_createButton_title": "Create Your Path",
    "homeScreen_onboarding_createButton_description": "Tap here and our AI will start to generate your personalized learning plan.",
    "homeScreen_onboarding_welcome_title": "Welcome to Tutti Learni!",

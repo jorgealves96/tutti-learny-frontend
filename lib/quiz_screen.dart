@@ -435,26 +435,48 @@ class _QuizScreenState extends State<QuizScreen>
               ),
               const SizedBox(height: 32),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(true),
-                    child: Text(l10n.quizScreen_backToPath),
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () => Navigator.of(context).pop(true),
+                      child: Text(l10n.quizScreen_backToPath),
+                    ),
                   ),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      if (_quizResultId != null) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                QuizReviewScreen(quizResultId: _quizResultId!),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (_quizResultId != null) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => QuizReviewScreen(
+                                quizResultId: _quizResultId!,
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment:
+                            MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.rate_review_outlined,
+                            size: 20,
                           ),
-                        );
-                      }
-                    },
-                    icon: const Icon(Icons.rate_review_outlined),
-                    label: Text(l10n.quizReviewScreen_reviewAnswersButton),
+                          const SizedBox(width: 8),
+                          Flexible(
+                            child: Text(
+                              l10n.quizReviewScreen_reviewAnswersButton,
+                              textAlign:
+                                  TextAlign.center,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),

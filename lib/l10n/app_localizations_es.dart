@@ -53,7 +53,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get homeScreen_onboarding_prompt_description =>
-      'Escribe cualquier cosa que quieras aprender aquí, desde \"cómo hacer pan\" hasta \"los fundamentos de la física cuántica\".';
+      'Escribe aquí cualquier cosa que quieras aprender.';
 
   @override
   String get homeScreen_onboarding_createButton_title => 'Crea Tu Ruta';

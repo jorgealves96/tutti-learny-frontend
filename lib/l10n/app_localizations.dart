@@ -183,7 +183,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeScreen_onboarding_prompt_description.
   ///
   /// In en, this message translates to:
-  /// **'Type anything you want to learn about here, from \"how to bake bread\" to \"the basics of quantum physics\".'**
+  /// **'Type anything you want to learn about here.'**
   String get homeScreen_onboarding_prompt_description;
 
   /// No description provided for @homeScreen_onboarding_createButton_title.

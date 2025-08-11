@@ -38,15 +38,13 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     super.initState();
     _initializeData();
     AuthService.updateFcmTokenInBackground();
-
-    AuthService.currentUserNotifier.addListener(_onUserChanged);
+    
     WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
     _homeScreenFocusNode.dispose();
-    AuthService.currentUserNotifier.removeListener(_onUserChanged);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }

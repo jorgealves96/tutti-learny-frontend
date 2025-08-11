@@ -30,12 +30,14 @@ Future<void> main() async {
   } else {
     await Purchases.setLogLevel(LogLevel.info);
   }
+
   late PurchasesConfiguration configuration;
   if (Platform.isAndroid) {
     configuration = PurchasesConfiguration("goog_miazFZFONgYPqIurCcTBbdvCYvX");
   } else if (Platform.isIOS) {
     configuration = PurchasesConfiguration("your_apple_api_key");
   }
+  
   await Purchases.configure(configuration);
 
   runApp(
@@ -89,7 +91,6 @@ class TuttiLearnyApp extends StatelessWidget {
               primary: const Color(0xFFB3C5FF),
               secondary: const Color(0xFF5A9BFF),
               surface: const Color(0xFF1A1A1A),
-              background: const Color(0xFF121212),
               brightness: Brightness.dark,
             ),
             scaffoldBackgroundColor: const Color(0xFF121212),
@@ -127,10 +128,8 @@ class AuthWrapper extends StatelessWidget {
           if (user == null) {
             return LoginScreen(onLoginSuccess: () {});
           }
-          // If user is logged in, show the setup screen
           return const PostAuthScreen();
         }
-        // While waiting for the initial auth state, show a loading indicator
         return const Scaffold(body: Center(child: CircularProgressIndicator()));
       },
     );

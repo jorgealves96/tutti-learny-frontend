@@ -5,25 +5,21 @@ import 'api_service.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 class AuthService {
-  static FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-  static final ValueNotifier<User?> currentUserNotifier = ValueNotifier(
-    currentUser,
-  );
+  static final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
-  static Future<void> postLoginSetup() async {
-    try {
-      await ApiService().syncUser();
-      await firebaseAuth.currentUser?.reload();
-
-      currentUserNotifier.value = firebaseAuth.currentUser;
-    } catch (e) {
-      if (kDebugMode) {
-        print("Error during critical post-login setup: $e");
-      }
-      // Rethrow to let the UI know something went wrong.
-      rethrow;
+static Future<void> postLoginSetup() async {
+  try {
+    // We still try to sync the latest data.
+    await ApiService().syncUser();
+    await firebaseAuth.currentUser?.reload();
+  } catch (e) {
+    // If the sync fails, we don't crash. We just log the error
+    // and let the app continue with the user's cached data.
+    if (kDebugMode) {
+      print("Non-critical error during post-login setup: $e. App will continue with cached user.");
     }
   }
+}
 
   static Future<void> updateFcmTokenInBackground() async {
     try {
@@ -65,10 +61,7 @@ class AuthService {
     PhoneAuthCredential credential,
   ) async {
     try {
-      // This is the sign-in step shown in the documentation
       await firebaseAuth.signInWithCredential(credential);
-      // After sign-in, run your critical user sync
-      await postLoginSetup();
       return true;
     } catch (e) {
       if (kDebugMode) {
@@ -118,7 +111,6 @@ class AuthService {
     try {
       await GoogleSignIn().signOut();
       await firebaseAuth.signOut();
-      currentUserNotifier.value = null;
     } catch (e) {
       if (kDebugMode) print('Error during logout: $e');
     }

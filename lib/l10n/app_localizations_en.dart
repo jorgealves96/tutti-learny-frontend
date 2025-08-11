@@ -53,7 +53,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeScreen_onboarding_prompt_description =>
-      'Type anything you want to learn about here, from \"how to bake bread\" to \"the basics of quantum physics\".';
+      'Type anything you want to learn about here.';
 
   @override
   String get homeScreen_onboarding_createButton_title => 'Create Your Path';

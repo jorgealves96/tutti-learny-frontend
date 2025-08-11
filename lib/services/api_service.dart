@@ -22,7 +22,7 @@ class ApiService {
     if (kDebugMode) {
       if (Platform.isAndroid) {
         return 'https://10.0.2.2:7251/api'; // local API
-        // return 'https://tutti-learni-api-215912661867.europe-west1.run.app/api'; // deployed API
+        //return 'https://tutti-learni-api-215912661867.europe-west1.run.app/api'; // deployed API
       } else {
         return 'https://10.0.2.2:7251/api';
       }

@@ -27,7 +27,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get homeScreen_maybeLater => 'Peut-être plus tard';
 
   @override
-  String get homeScreen_upgrade => 'Mettre à niveau';
+  String get homeScreen_upgrade => 'Surclasser';
 
   @override
   String get homeScreen_namePlaceholder => '';
@@ -55,7 +55,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get homeScreen_onboarding_prompt_description =>
-      'Tapez tout ce que vous voulez apprendre ici, de \"comment faire du pain\" à \"les bases de la physique quantique\".';
+      'Tapez ici tout ce que vous voulez apprendre.';
 
   @override
   String get homeScreen_onboarding_createButton_title => 'Créez Votre Parcours';
@@ -79,7 +79,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get homeScreen_generationLimitExceeded =>
-      'Vous avez atteint votre limite mensuelle pour la création de nouveaux parcours. Pensez à mettre à niveau votre abonnement pour continuer.';
+      'Vous avez atteint votre limite mensuelle pour la création de nouveaux parcours. Vous pouvez surclasser votre abonnement pour continuer.';
 
   @override
   String get loginScreen_welcomePrimary => 'Bienvenue sur';
@@ -134,7 +134,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get pathDetailScreen_maybeLater => 'Peut-être plus tard';
 
   @override
-  String get pathDetailScreen_upgrade => 'Mettre à niveau';
+  String get pathDetailScreen_upgrade => 'Surclasser';
 
   @override
   String get pathDetailScreen_pathCompleted =>
@@ -231,7 +231,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get pathDetailScreen_extensionLimitExceeded =>
-      'Vous avez atteint votre limite mensuelle pour l\'extension des parcours. Pensez à mettre à niveau votre abonnement pour continuer.';
+      'Vous avez atteint votre limite mensuelle pour l\'extension des parcours. Vous pouvez surclasser votre abonnement pour continuer.';
 
   @override
   String get pathDetailScreen_onboarding_extend_title =>
@@ -419,7 +419,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get subscriptionScreen_yearly => 'Annuel (Économisez ~30%)';
 
   @override
-  String get subscriptionScreen_upgradeNow => 'Mettre à niveau maintenant';
+  String get subscriptionScreen_upgradeNow => 'Surclasser';
 
   @override
   String subscriptionScreen_startingPurchase(
@@ -593,7 +593,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get notificationsScreen_generalAnnouncementsSubtitle =>
-      'Recevez des nouvelles et des mises à jour occasionnelles sur l\'application.';
+      'Soyez prévenu lors de l\'apparition de nouveautés ou mises à jour sur notre application.';
 
   @override
   String get reportScreen_title => 'Signaler un Problème';
@@ -694,7 +694,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get quizHistoryScreen_creationLimitExceeded =>
-      'Vous avez atteint votre limite mensuelle pour la création de quiz. Pensez à mettre à niveau votre abonnement pour continuer.';
+      'Vous avez atteint votre limite mensuelle pour la création de quiz. Vous pouvez surclasser votre abonnement pour continuer.';
 
   @override
   String get quizScreen_failedToLoad => 'Échec du chargement du quiz.';

@@ -88,11 +88,11 @@ class _QuizReviewScreenState extends State<QuizReviewScreen> {
 
                         // Determine highlighting
                         if (optionIndex == answer.correctAnswerIndex) {
-                          tileColor = Colors.green.withOpacity(0.15);
+                          tileColor = Colors.green.withValues(alpha: 0.15);
                           iconData = Icons.check_circle;
                           iconColor = Colors.green;
                         } else if (optionIndex == answer.selectedAnswerIndex) {
-                          tileColor = Colors.red.withOpacity(0.15);
+                          tileColor = Colors.red.withValues(alpha: 0.15);
                           iconData = Icons.cancel;
                           iconColor = Colors.red;
                         }
