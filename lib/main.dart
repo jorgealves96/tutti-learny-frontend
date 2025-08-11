@@ -154,24 +154,46 @@ class _PostAuthScreenState extends State<PostAuthScreen> {
     _setupFuture = AuthService.postLoginSetup();
   }
 
+  // Add a method to retry the setup
+  void _retrySetup() {
+    setState(() {
+      _setupFuture = AuthService.postLoginSetup();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<void>(
       future: _setupFuture,
       builder: (context, snapshot) {
-        // While setup is running, show a loading spinner
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         }
-        // If setup fails, show an error (postLoginSetup handles logout)
+
+        // If setup fails, show an error message and a retry button.
         if (snapshot.hasError) {
-          return const Scaffold(
-            body: Center(child: Text('Failed to load user data.')),
+          return Scaffold(
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Failed to connect. Please check your internet connection.',
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: _retrySetup,
+                    child: const Text('Try Again'),
+                  ),
+                ],
+              ),
+            ),
           );
         }
-        // Once the setup future is complete, show the main app
+
+        // Once setup is complete, show the main app.
         return MainScreen(
           setupFuture: _setupFuture,
           onLogout: () async {

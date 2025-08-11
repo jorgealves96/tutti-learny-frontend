@@ -20,8 +20,6 @@ class AuthService {
       if (kDebugMode) {
         print("Error during critical post-login setup: $e");
       }
-      // Logout on failure to prevent a broken state.
-      await logout();
       // Rethrow to let the UI know something went wrong.
       rethrow;
     }
