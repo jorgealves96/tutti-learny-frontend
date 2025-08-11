@@ -53,14 +53,43 @@ class _QuizHistoryScreenState extends State<QuizHistoryScreen> {
     });
   }
 
-  void _showUpgradeDialog(String errorMessage) {
-    final l10n = AppLocalizations.of(context)!;
+  void _showUpgradeDialog(
+    AppLocalizations l10n,
+    errorMessage,
+    SubscriptionStatus? status,
+  ) {
+    String nextResetDateText = '';
+    if (status != null) {
+      final nextResetDate = status.lastUsageResetDate.add(
+        const Duration(days: 30),
+      );
+      // Format the date into a user-friendly string (e.g., "August 10, 2025")
+      final formattedDate = DateFormat.yMMMMd(
+        l10n.localeName,
+      ).format(nextResetDate);
+      nextResetDateText = l10n.homeScreen_limitResetsOn(formattedDate);
+    }
+
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: Text(l10n.homeScreen_usageLimitReached),
-          content: Text(errorMessage.replaceFirst("Exception: ", "")),
+          // Use a Column to display multiple lines of text
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(errorMessage.replaceFirst("Exception: ", "")),
+              if (nextResetDateText.isNotEmpty) ...[
+                const SizedBox(height: 16),
+                Text(
+                  nextResetDateText,
+                  style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
+                ),
+              ],
+            ],
+          ),
           actions: <Widget>[
             TextButton(
               child: Text(l10n.homeScreen_maybeLater),
@@ -69,8 +98,8 @@ class _QuizHistoryScreenState extends State<QuizHistoryScreen> {
             ElevatedButton(
               child: Text(l10n.homeScreen_upgrade),
               onPressed: () {
-                Navigator.of(dialogContext).pop();
-                _showSubscriptionSheet();
+                Navigator.of(dialogContext).pop(); // Close the dialog
+                _showSubscriptionSheet(); // Open the subscription sheet
               },
             ),
           ],
@@ -80,6 +109,7 @@ class _QuizHistoryScreenState extends State<QuizHistoryScreen> {
   }
 
   void _navigateToNewQuiz() async {
+    final l10n = AppLocalizations.of(context)!;
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
@@ -94,7 +124,7 @@ class _QuizHistoryScreenState extends State<QuizHistoryScreen> {
     // After returning, check the result
     if (result is Map && result.containsKey('error')) {
       if (result['error'].toString().toLowerCase().contains('limit')) {
-        _showUpgradeDialog(result['error']);
+        _showUpgradeDialog(l10n, l10n.quizHistoryScreen_creationLimitExceeded, widget.subscriptionStatus);
       }
     } else if (result == true) {
       _refreshHistory();

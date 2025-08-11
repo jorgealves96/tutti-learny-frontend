@@ -70,6 +70,15 @@ class AppLocalizationsEn extends AppLocalizations {
       'This is your personal guide to learn anything. Let\'s quickly show you how it works.';
 
   @override
+  String homeScreen_limitResetsOn(String date) {
+    return 'Your monthly limit resets on $date.';
+  }
+
+  @override
+  String get homeScreen_generationLimitExceeded =>
+      'You have reached your monthly limit for creating new paths. Consider upgrading to continue';
+
+  @override
   String get loginScreen_welcomePrimary => 'Welcome to';
 
   @override
@@ -213,6 +222,17 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get pathDetailScreen_onboarding_resource_description =>
       'Tap on any resource like an article or video to open it for viewing.';
+
+  @override
+  String get pathDetailScreen_extensionLimitExceeded =>
+      'You have reached your monthly limit for extending paths. Consider upgrading to continue';
+
+  @override
+  String get pathDetailScreen_onboarding_extend_title => 'Extend Your Learning';
+
+  @override
+  String get pathDetailScreen_onboarding_extend_description =>
+      'Want to go deeper? Tap here to add the next logical steps to your path.';
 
   @override
   String get phoneLoginScreen_enterPhoneNumberTitle =>
@@ -659,6 +679,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quizHistoryScreen_quizInProgress => 'Quiz in Progress';
 
   @override
+  String get quizHistoryScreen_creationLimitExceeded =>
+      'You have reached your monthly limit for creating quizzes. Consider upgrading to continue';
+
+  @override
   String get quizScreen_failedToLoad => 'Failed to load quiz.';
 
   @override
@@ -691,12 +715,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quizScreen_resumingTitle => 'Resuming your quiz...';
 
   @override
+  String get quizScreen_loadingSubtitle =>
+      'Our AI is preparing a set of questions to test your knowledge. This may take a few moments.';
+
+  @override
   String get quizReviewScreen_title => 'Review Answers';
 
   @override
   String get quizReviewScreen_reviewAnswersButton => 'Review Answers';
-
-  @override
-  String get quizScreen_loadingSubtitle =>
-      'Our AI is preparing a set of questions to test your knowledge. This may take a few moments.';
 }

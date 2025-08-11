@@ -8,6 +8,7 @@ class SubscriptionStatus {
   final int? quizCreationLimit;
   final DateTime? subscriptionExpiryDate;
   final int? daysLeftInSubscription;
+  final DateTime lastUsageResetDate;
 
   SubscriptionStatus({
     required this.tier,
@@ -19,6 +20,7 @@ class SubscriptionStatus {
     this.quizCreationLimit,
     this.subscriptionExpiryDate,
     this.daysLeftInSubscription,
+    required this.lastUsageResetDate,
   });
 
   factory SubscriptionStatus.fromJson(Map<String, dynamic> json) {
@@ -36,6 +38,7 @@ class SubscriptionStatus {
           ? DateTime.parse(json['subscriptionExpiryDate'])
           : null,
       daysLeftInSubscription: json['daysLeftInSubscription'],
+      lastUsageResetDate: DateTime.parse(json['lastUsageResetDate']),
     );
   }
 }

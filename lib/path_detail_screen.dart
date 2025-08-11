@@ -13,6 +13,7 @@ import 'report_status_screen.dart';
 import 'quiz_history_screen.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
 class PathDetailScreen extends StatefulWidget {
   final int? pathId;
@@ -42,7 +43,6 @@ class _PathDetailScreenState extends State<PathDetailScreen> {
   @override
   void initState() {
     super.initState();
-    // --- NEW: Logic to handle initial data ---
     if (widget.initialPathData != null) {
       // If data was passed in, use it directly.
       setState(() {
@@ -80,7 +80,6 @@ class _PathDetailScreenState extends State<PathDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // --- REFACTORED: Removed FutureBuilder ---
     if (_isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
@@ -130,6 +129,7 @@ class _PathDetailViewState extends State<_PathDetailView> {
   final GlobalKey _progressKey = GlobalKey();
   final GlobalKey _checkboxKey = GlobalKey();
   final GlobalKey _resourceKey = GlobalKey();
+  final GlobalKey _extendPathKey = GlobalKey();
   final GlobalKey _moreMenuKey = GlobalKey();
 
   @override
@@ -161,25 +161,49 @@ class _PathDetailViewState extends State<_PathDetailView> {
   }
 
   void _showUpgradeDialog(
-    String errorMessage,
     AppLocalizations l10n,
+    errorMessage,
     SubscriptionStatus? status,
   ) {
+    String nextResetDateText = '';
+    if (status != null) {
+      final nextResetDate = status.lastUsageResetDate.add(
+        const Duration(days: 30),
+      );
+      // Format the date into a user-friendly string (e.g., "August 10, 2025")
+      final formattedDate = DateFormat.yMMMMd(
+        l10n.localeName,
+      ).format(nextResetDate);
+      nextResetDateText = l10n.homeScreen_limitResetsOn(formattedDate);
+    }
+
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          title: Text(l10n.pathDetailScreen_usageLimitReached),
-          content: Text(errorMessage.replaceFirst("Exception: ", "")),
+          title: Text(l10n.homeScreen_usageLimitReached),
+          // Use a Column to display multiple lines of text
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(errorMessage.replaceFirst("Exception: ", "")),
+              if (nextResetDateText.isNotEmpty) ...[
+                const SizedBox(height: 16),
+                Text(
+                  nextResetDateText,
+                  style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
+                ),
+              ],
+            ],
+          ),
           actions: <Widget>[
             TextButton(
-              child: Text(l10n.pathDetailScreen_maybeLater),
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-              },
+              child: Text(l10n.homeScreen_maybeLater),
+              onPressed: () => Navigator.of(dialogContext).pop(),
             ),
             ElevatedButton(
-              child: Text(l10n.pathDetailScreen_upgrade),
+              child: Text(l10n.homeScreen_upgrade),
               onPressed: () {
                 Navigator.of(dialogContext).pop(); // Close the dialog
                 _showSubscriptionSheet(status); // Open the subscription sheet
@@ -225,7 +249,11 @@ class _PathDetailViewState extends State<_PathDetailView> {
       // --- 3. Update the catch block to check the error message ---
       if (e.toString().toLowerCase().contains('limit')) {
         // If the user hit their usage limit, show the upgrade dialog
-        _showUpgradeDialog(e.toString(), l10n, widget.subscriptionStatus);
+        _showUpgradeDialog(
+          l10n,
+          l10n.pathDetailScreen_extensionLimitExceeded,
+          widget.subscriptionStatus,
+        );
       } else {
         // Otherwise, show the normal error snackbar
         if (mounted) {
@@ -411,7 +439,13 @@ class _PathDetailViewState extends State<_PathDetailView> {
     if (!hasSeenTour) {
       // Use a post-frame callback to ensure the showcase starts after the build
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        showCase.startShowCase([_progressKey, _checkboxKey, _resourceKey, _moreMenuKey]);
+        showCase.startShowCase([
+          _progressKey,
+          _checkboxKey,
+          _resourceKey,
+          _extendPathKey,
+          _moreMenuKey,
+        ]);
       });
 
       await prefs.setBool(tourKey, true);
@@ -444,6 +478,7 @@ class _PathDetailViewState extends State<_PathDetailView> {
                 key: _moreMenuKey,
                 title: l10n.pathDetailScreen_onboarding_menu_title,
                 description: l10n.pathDetailScreen_onboarding_menu_description,
+                targetBorderRadius: BorderRadius.circular(48.0),
                 child: PopupMenuButton<String>(
                   icon: const Icon(Icons.more_horiz),
                   iconSize: 35.0,
@@ -540,39 +575,44 @@ class _PathDetailViewState extends State<_PathDetailView> {
           ),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
-          floatingActionButton: _isPathComplete
-              ? FloatingActionButton.extended(
-                  onPressed: null,
-                  label: Text(l10n.pathDetailScreen_pathIsComplete),
-                  icon: const Icon(Icons.check_circle),
-                  backgroundColor: Colors.green,
-                )
-              : FloatingActionButton.extended(
-                  onPressed: _isExtending ? null : () => _extendPath(l10n),
-                  label: Text(
-                    _isExtending
-                        ? l10n.pathDetailScreen_generating
-                        : l10n.pathDetailScreen_extendPath,
+          floatingActionButton: Showcase(
+            key: _extendPathKey,
+            title: l10n.pathDetailScreen_onboarding_extend_title,
+            description: l10n.pathDetailScreen_onboarding_extend_description,
+            targetBorderRadius: BorderRadius.circular(100.0),
+            child: _isPathComplete
+                ? FloatingActionButton.extended(
+                    onPressed: null, // Disabled button
+                    label: Text(l10n.pathDetailScreen_pathIsComplete),
+                    icon: const Icon(Icons.check_circle),
+                    backgroundColor: Colors.green,
+                  )
+                : FloatingActionButton.extended(
+                    onPressed: _isExtending ? null : () => _extendPath(l10n),
+                    label: Text(
+                      _isExtending
+                          ? l10n.pathDetailScreen_generating
+                          : l10n.pathDetailScreen_extendPath,
+                    ),
+                    icon: _isExtending
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : const Icon(Icons.add_road),
+                    backgroundColor: Theme.of(context).colorScheme.secondary,
+                    foregroundColor: Colors.white,
                   ),
-                  icon: _isExtending
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 2,
-                          ),
-                        )
-                      : const Icon(Icons.add_road),
-                  backgroundColor: Theme.of(context).colorScheme.secondary,
-                  foregroundColor: Colors.white,
-                ),
+          ),
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(24.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // --- Showcase for the progress/title section ---
                 Showcase(
                   key: _progressKey,
                   title: l10n.pathDetailScreen_onboarding_main_title,

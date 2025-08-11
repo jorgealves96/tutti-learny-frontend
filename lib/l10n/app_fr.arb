@@ -17,6 +17,8 @@
     "homeScreen_onboarding_createButton_description": "Appuyez ici et notre IA commencera à générer votre plan d'apprentissage personnalisé.",
     "homeScreen_onboarding_welcome_title": "Bienvenue chez Tutti Learni !",
     "homeScreen_onboarding_welcome_description": "Ceci est votre guide personnel pour tout apprendre. Voyons rapidement comment cela fonctionne.",
+    "homeScreen_generationLimitExceeded": "Vous avez atteint votre limite mensuelle pour la création de nouveaux parcours. Pensez à mettre à niveau votre abonnement pour continuer.",
+    "homeScreen_limitResetsOn": "Votre limite mensuelle se réinitialise le {date}.",
     "loginScreen_welcomePrimary": "Bienvenue sur",
     "loginScreen_welcomeSecondary": "Votre guide personnel pour tout apprendre.",
     "loginScreen_continueWithGoogle": "Continuer avec Google",
@@ -58,6 +60,9 @@
     "pathDetailScreen_onboarding_menu_description": "Appuyez ici pour tester vos connaissances avec un quiz, signaler un problème ou supprimer le parcours.",
     "pathDetailScreen_onboarding_resource_title": "Voir le Contenu",
     "pathDetailScreen_onboarding_resource_description": "Appuyez sur n'importe quelle ressource comme un article ou une vidéo pour l'ouvrir.",
+    "pathDetailScreen_extensionLimitExceeded": "Vous avez atteint votre limite mensuelle pour l'extension des parcours. Pensez à mettre à niveau votre abonnement pour continuer.",
+    "pathDetailScreen_onboarding_extend_title": "Approfondissez Votre Apprentissage",
+    "pathDetailScreen_onboarding_extend_description": "Vous voulez aller plus loin ? Appuyez ici pour ajouter les prochaines étapes logiques à votre parcours.",
     "phoneLoginScreen_enterPhoneNumberTitle": "Entrez votre numéro de téléphone",
     "phoneLoginScreen_enterVerificationCodeTitle": "Entrez le code de vérification",
     "phoneLoginScreen_enterPhoneNumberSubtitle": "Sélectionnez votre pays et entrez votre numéro de téléphone.",
@@ -189,6 +194,7 @@
     "quizHistoryScreen_score": "Score : {score}/{total}",
     "quizHistoryScreen_takenOn": "Effectué le : {date}",
     "quizHistoryScreen_quizInProgress": "Quiz en cours",
+    "quizHistoryScreen_creationLimitExceeded": "Vous avez atteint votre limite mensuelle pour la création de quiz. Pensez à mettre à niveau votre abonnement pour continuer.",
     "quizScreen_failedToLoad": "Échec du chargement du quiz.",
     "quizScreen_questionOf": "Question {current} sur {total}",
     "quizScreen_nextQuestion": "Question Suivante",
@@ -199,7 +205,7 @@
     "quizScreen_backToPath": "Retour au Parcours",
     "quizScreen_loadingTitle": "Génération de votre quiz personnalisé...",
     "quizScreen_resumingTitle": "Reprise de votre quiz...",
+    "quizScreen_loadingSubtitle": "Notre IA prépare une série de questions pour tester vos connaissances. Cela peut prendre quelques instants.",
     "quizReviewScreen_title": "Vérifier les Réponses",
-    "quizReviewScreen_reviewAnswersButton": "Vérifier les Réponses",
-    "quizScreen_loadingSubtitle": "Notre IA prépare une série de questions pour tester vos connaissances. Cela peut prendre quelques instants."
+    "quizReviewScreen_reviewAnswersButton": "Vérifier les Réponses"
 }

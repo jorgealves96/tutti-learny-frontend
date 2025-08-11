@@ -17,6 +17,17 @@
    "homeScreen_onboarding_createButton_description": "Tap here and our AI will start to generate your personalized learning plan.",
    "homeScreen_onboarding_welcome_title": "Welcome to Tutti Learni!",
    "homeScreen_onboarding_welcome_description": "This is your personal guide to learn anything. Let's quickly show you how it works.",
+   "homeScreen_limitResetsOn": "Your monthly limit resets on {date}.",
+   "@homeScreen_limitResetsOn": {
+      "description": "A message telling the user when their usage limit will reset.",
+      "placeholders": {
+         "date": {
+            "type": "String",
+            "example": "August 10, 2025"
+         }
+      }
+   },
+   "homeScreen_generationLimitExceeded": "You have reached your monthly limit for creating new paths. Consider upgrading to continue",
    "loginScreen_welcomePrimary": "Welcome to",
    "loginScreen_welcomeSecondary": "Your personal guide to learn anything.",
    "loginScreen_continueWithGoogle": "Continue with Google",
@@ -95,6 +106,9 @@
    "pathDetailScreen_onboarding_menu_description": "Tap here to test your knowledge with a quiz, report a problem, or delete the path.",
    "pathDetailScreen_onboarding_resource_title": "View Content",
    "pathDetailScreen_onboarding_resource_description": "Tap on any resource like an article or video to open it for viewing.",
+   "pathDetailScreen_extensionLimitExceeded": "You have reached your monthly limit for extending paths. Consider upgrading to continue",
+   "pathDetailScreen_onboarding_extend_title": "Extend Your Learning",
+   "pathDetailScreen_onboarding_extend_description": "Want to go deeper? Tap here to add the next logical steps to your path.",
    "phoneLoginScreen_enterPhoneNumberTitle": "Enter Your Phone Number",
    "phoneLoginScreen_enterVerificationCodeTitle": "Enter Verification Code",
    "phoneLoginScreen_enterPhoneNumberSubtitle": "Select your country and enter your phone number.",
@@ -391,6 +405,7 @@
       }
    },
    "quizHistoryScreen_quizInProgress": "Quiz in Progress",
+   "quizHistoryScreen_creationLimitExceeded": "You have reached your monthly limit for creating quizzes. Consider upgrading to continue",
    "quizScreen_failedToLoad": "Failed to load quiz.",
    "quizScreen_questionOf": "Question {current} of {total}",
    "@quizScreen_questionOf": {
@@ -411,7 +426,7 @@
    "quizScreen_backToPath": "Back to Path",
    "quizScreen_loadingTitle": "Generating your custom quiz...",
    "quizScreen_resumingTitle": "Resuming your quiz...",
+   "quizScreen_loadingSubtitle": "Our AI is preparing a set of questions to test your knowledge. This may take a few moments.",
    "quizReviewScreen_title": "Review Answers",
-   "quizReviewScreen_reviewAnswersButton": "Review Answers",
-   "quizScreen_loadingSubtitle": "Our AI is preparing a set of questions to test your knowledge. This may take a few moments."
+   "quizReviewScreen_reviewAnswersButton": "Review Answers"
 }

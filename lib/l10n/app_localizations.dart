@@ -210,6 +210,18 @@ abstract class AppLocalizations {
   /// **'This is your personal guide to learn anything. Let\'s quickly show you how it works.'**
   String get homeScreen_onboarding_welcome_description;
 
+  /// A message telling the user when their usage limit will reset.
+  ///
+  /// In en, this message translates to:
+  /// **'Your monthly limit resets on {date}.'**
+  String homeScreen_limitResetsOn(String date);
+
+  /// No description provided for @homeScreen_generationLimitExceeded.
+  ///
+  /// In en, this message translates to:
+  /// **'You have reached your monthly limit for creating new paths. Consider upgrading to continue'**
+  String get homeScreen_generationLimitExceeded;
+
   /// No description provided for @loginScreen_welcomePrimary.
   ///
   /// In en, this message translates to:
@@ -455,6 +467,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tap on any resource like an article or video to open it for viewing.'**
   String get pathDetailScreen_onboarding_resource_description;
+
+  /// No description provided for @pathDetailScreen_extensionLimitExceeded.
+  ///
+  /// In en, this message translates to:
+  /// **'You have reached your monthly limit for extending paths. Consider upgrading to continue'**
+  String get pathDetailScreen_extensionLimitExceeded;
+
+  /// No description provided for @pathDetailScreen_onboarding_extend_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Extend Your Learning'**
+  String get pathDetailScreen_onboarding_extend_title;
+
+  /// No description provided for @pathDetailScreen_onboarding_extend_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Want to go deeper? Tap here to add the next logical steps to your path.'**
+  String get pathDetailScreen_onboarding_extend_description;
 
   /// No description provided for @phoneLoginScreen_enterPhoneNumberTitle.
   ///
@@ -1182,6 +1212,12 @@ abstract class AppLocalizations {
   /// **'Quiz in Progress'**
   String get quizHistoryScreen_quizInProgress;
 
+  /// No description provided for @quizHistoryScreen_creationLimitExceeded.
+  ///
+  /// In en, this message translates to:
+  /// **'You have reached your monthly limit for creating quizzes. Consider upgrading to continue'**
+  String get quizHistoryScreen_creationLimitExceeded;
+
   /// No description provided for @quizScreen_failedToLoad.
   ///
   /// In en, this message translates to:
@@ -1242,6 +1278,12 @@ abstract class AppLocalizations {
   /// **'Resuming your quiz...'**
   String get quizScreen_resumingTitle;
 
+  /// No description provided for @quizScreen_loadingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Our AI is preparing a set of questions to test your knowledge. This may take a few moments.'**
+  String get quizScreen_loadingSubtitle;
+
   /// No description provided for @quizReviewScreen_title.
   ///
   /// In en, this message translates to:
@@ -1253,12 +1295,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Review Answers'**
   String get quizReviewScreen_reviewAnswersButton;
-
-  /// No description provided for @quizScreen_loadingSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Our AI is preparing a set of questions to test your knowledge. This may take a few moments.'**
-  String get quizScreen_loadingSubtitle;
 }
 
 class _AppLocalizationsDelegate

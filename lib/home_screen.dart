@@ -17,6 +17,7 @@ import 'package:shimmer/shimmer.dart';
 import 'models/path_detail_model.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
 class HomeScreen extends StatefulWidget {
   final List<MyPath>? recentPaths;
@@ -123,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
       // This will now catch the "limit reached" error from fetchSuggestions
       if (mounted) {
         if (e.toString().toLowerCase().contains('limit')) {
-          _showUpgradeDialog(l10n, e.toString(), widget.subscriptionStatus);
+          _showUpgradeDialog(l10n, l10n.homeScreen_generationLimitExceeded, widget.subscriptionStatus);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -244,12 +245,38 @@ class _HomeScreenState extends State<HomeScreen> {
     errorMessage,
     SubscriptionStatus? status,
   ) {
+    String nextResetDateText = '';
+    if (status != null) {
+      final nextResetDate = status.lastUsageResetDate.add(
+        const Duration(days: 30),
+      );
+      // Format the date into a user-friendly string (e.g., "August 10, 2025")
+      final formattedDate = DateFormat.yMMMMd(
+        l10n.localeName,
+      ).format(nextResetDate);
+      nextResetDateText = l10n.homeScreen_limitResetsOn(formattedDate);
+    }
+
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: Text(l10n.homeScreen_usageLimitReached),
-          content: Text(errorMessage.replaceFirst("Exception: ", "")),
+          // Use a Column to display multiple lines of text
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(errorMessage.replaceFirst("Exception: ", "")),
+              if (nextResetDateText.isNotEmpty) ...[
+                const SizedBox(height: 16),
+                Text(
+                  nextResetDateText,
+                  style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
+                ),
+              ],
+            ],
+          ),
           actions: <Widget>[
             TextButton(
               child: Text(l10n.homeScreen_maybeLater),
