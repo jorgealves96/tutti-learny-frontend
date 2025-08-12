@@ -98,6 +98,22 @@ class AppLocalizationsEs extends AppLocalizations {
       'Continuar con Número de Teléfono';
 
   @override
+  String get main_restoreAccountDialog_title => 'Cuenta Encontrada';
+
+  @override
+  String get main_restoreAccountDialog_content =>
+      'Esta cuenta fue eliminada recientemente. ¿Te gustaría restaurarla y continuar?';
+
+  @override
+  String get main_restoreAccountDialog_cancel => 'Cancelar';
+
+  @override
+  String get main_restoreAccountDialog_restore => 'Restaurar Cuenta';
+
+  @override
+  String get main_signInCancelled => 'Inicio de sesión cancelado.';
+
+  @override
   String get mainScreen_labelMyPaths => 'Mis Rutas';
 
   @override
@@ -404,6 +420,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get profileScreen_usageQuizzesCreated => 'Cuestionarios Creados';
+
+  @override
+  String get profileScreen_deleteAccountDisclaimer =>
+      'Tu cuenta y tus datos se eliminarán permanentemente después de 30 días. Si inicias sesión durante este período, tendrás la opción de restaurar tu cuenta.';
 
   @override
   String get subscriptionScreen_title => 'Mejora Tu Aprendizaje';

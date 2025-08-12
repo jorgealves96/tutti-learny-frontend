@@ -100,6 +100,22 @@ class AppLocalizationsFr extends AppLocalizations {
       'Continuer avec un numéro de téléphone';
 
   @override
+  String get main_restoreAccountDialog_title => 'Compte Trouvé';
+
+  @override
+  String get main_restoreAccountDialog_content =>
+      'Ce compte a été récemment supprimé. Souhaitez-vous le restaurer et continuer ?';
+
+  @override
+  String get main_restoreAccountDialog_cancel => 'Annuler';
+
+  @override
+  String get main_restoreAccountDialog_restore => 'Restaurer le Compte';
+
+  @override
+  String get main_signInCancelled => 'Connexion annulée.';
+
+  @override
   String get mainScreen_labelMyPaths => 'Mes Parcours';
 
   @override
@@ -408,6 +424,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get profileScreen_usageQuizzesCreated => 'Quiz Créés';
+
+  @override
+  String get profileScreen_deleteAccountDisclaimer =>
+      'Votre compte et vos données seront définitivement supprimés après 30 jours. Si vous vous connectez pendant cette période, vous aurez la possibilité de restaurer votre compte.';
 
   @override
   String get subscriptionScreen_title => 'Améliorez Votre Apprentissage';

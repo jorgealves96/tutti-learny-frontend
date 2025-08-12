@@ -184,7 +184,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
       builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: Text(l10n.profileScreen_deleteAccount),
-          content: Text(l10n.profileScreen_deleteAccountConfirm),
+          content: Column(
+            mainAxisSize:
+                MainAxisSize.min, // Prevents the column from expanding
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(l10n.profileScreen_deleteAccountConfirm),
+              const SizedBox(height: 16),
+              Text(
+                l10n.profileScreen_deleteAccountDisclaimer, // Your new disclaimer text
+                style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+              ),
+            ],
+          ),
           actions: <Widget>[
             TextButton(
               child: Text(l10n.profileScreen_cancel),
@@ -193,7 +205,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             TextButton(
               child: Text(
                 l10n.profileScreen_delete,
-                style: TextStyle(color: Colors.red),
+                style: const TextStyle(color: Colors.red),
               ),
               onPressed: () {
                 Navigator.of(dialogContext).pop();
@@ -390,9 +402,9 @@ class _LearningStats extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  if (stats == null) {
-    return const _LearningStatsSkeleton(); // NEW
-  }
+    if (stats == null) {
+      return const _LearningStatsSkeleton(); // NEW
+    }
 
     final l10n = AppLocalizations.of(context);
     if (l10n == null) {
@@ -551,10 +563,10 @@ class _MonthlyUsage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  if (stats == null) {
-    // This can share the same skeleton as the subscription details.
-    return const _SubscriptionSkeleton(); // NEW
-  }
+    if (stats == null) {
+      // This can share the same skeleton as the subscription details.
+      return const _SubscriptionSkeleton(); // NEW
+    }
 
     final generationsUsed = stats!.pathsGeneratedThisMonth;
     final generationLimit = stats!.pathGenerationLimit;
@@ -625,9 +637,9 @@ class _SubscriptionDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-      if (status == null) {
-    return const _SubscriptionSkeleton(); // NEW
-  }
+    if (status == null) {
+      return const _SubscriptionSkeleton(); // NEW
+    }
 
     final l10n = AppLocalizations.of(context)!;
 
@@ -791,7 +803,10 @@ class _LearningStatsSkeleton extends StatelessWidget {
       highlightColor: Colors.grey.shade100,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: List.generate(4, (_) => const Expanded(child: _SkeletonStatCard())),
+        children: List.generate(
+          4,
+          (_) => const Expanded(child: _SkeletonStatCard()),
+        ),
       ),
     );
   }

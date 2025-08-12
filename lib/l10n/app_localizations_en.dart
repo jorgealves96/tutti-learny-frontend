@@ -97,6 +97,22 @@ class AppLocalizationsEn extends AppLocalizations {
       'Continue with Phone Number';
 
   @override
+  String get main_restoreAccountDialog_title => 'Account Found';
+
+  @override
+  String get main_restoreAccountDialog_content =>
+      'This account was recently deleted. Would you like to restore it and continue?';
+
+  @override
+  String get main_restoreAccountDialog_cancel => 'Cancel';
+
+  @override
+  String get main_restoreAccountDialog_restore => 'Restore Account';
+
+  @override
+  String get main_signInCancelled => 'Sign-in cancelled.';
+
+  @override
   String get mainScreen_labelMyPaths => 'My Paths';
 
   @override
@@ -398,6 +414,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileScreen_usageQuizzesCreated => 'Quizzes Created';
+
+  @override
+  String get profileScreen_deleteAccountDisclaimer =>
+      'Your account and data will be permanently deleted after 30 days. If you log in during this period, you will have the option to restore your account.';
 
   @override
   String get subscriptionScreen_title => 'Upgrade Your Learning';

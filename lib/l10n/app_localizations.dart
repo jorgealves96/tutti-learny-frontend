@@ -252,6 +252,36 @@ abstract class AppLocalizations {
   /// **'Continue with Phone Number'**
   String get loginScreen_continueWithPhoneNumber;
 
+  /// No description provided for @main_restoreAccountDialog_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Found'**
+  String get main_restoreAccountDialog_title;
+
+  /// No description provided for @main_restoreAccountDialog_content.
+  ///
+  /// In en, this message translates to:
+  /// **'This account was recently deleted. Would you like to restore it and continue?'**
+  String get main_restoreAccountDialog_content;
+
+  /// No description provided for @main_restoreAccountDialog_cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get main_restoreAccountDialog_cancel;
+
+  /// No description provided for @main_restoreAccountDialog_restore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore Account'**
+  String get main_restoreAccountDialog_restore;
+
+  /// No description provided for @main_signInCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign-in cancelled.'**
+  String get main_signInCancelled;
+
   /// No description provided for @mainScreen_labelMyPaths.
   ///
   /// In en, this message translates to:
@@ -767,6 +797,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Quizzes Created'**
   String get profileScreen_usageQuizzesCreated;
+
+  /// No description provided for @profileScreen_deleteAccountDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account and data will be permanently deleted after 30 days. If you log in during this period, you will have the option to restore your account.'**
+  String get profileScreen_deleteAccountDisclaimer;
 
   /// No description provided for @subscriptionScreen_title.
   ///

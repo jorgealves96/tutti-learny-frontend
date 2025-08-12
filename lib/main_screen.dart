@@ -57,12 +57,6 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     }
   }
 
-  void _onUserChanged() {
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
   Future<void> _initializeData() async {
     // 1. Wait for the setup future from the parent screen to complete.
     await widget.setupFuture;
