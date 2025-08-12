@@ -194,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
     else if (result is Map && result.containsKey('limit_error')) {
       _showUpgradeDialog(
         l10n,
-        result['limit_error'],
+        l10n.homeScreen_generationLimitExceeded,
         widget.subscriptionStatus,
       );
     } else if (result is Map && result.containsKey('error')) {
