@@ -86,8 +86,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         await _apiService.updateUserName(newName);
         await _user?.updateDisplayName(newName);
         setState(() {
-          _user = AuthService.currentUser;
+          _user = AuthService.firebaseAuth.currentUser;
         });
+
+        widget.onRefresh();
 
         if (mounted) {
           showSuccessSnackBar(context, l10n.profileScreen_nameUpdateSuccess);
