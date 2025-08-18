@@ -624,6 +624,9 @@ class _PathDetailViewState extends State<_PathDetailView> {
                         radius: 45.0,
                         lineWidth: 8.0,
                         percent: _completionPercent,
+                        animation: true,
+                        animateFromLastPercent: true,
+                        animationDuration: 400,
                         center: Text(
                           "${(_completionPercent * 100).toInt()}%",
                           style: const TextStyle(

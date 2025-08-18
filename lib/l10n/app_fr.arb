@@ -164,7 +164,7 @@
     "rotatingHintTextField_generationsLeft": "{count} Générations de parcours restantes",
     "ratingScreen_title": "Évaluer le Parcours",
     "ratingScreen_congratulationsTitle": "Félicitations pour avoir terminé le parcours '{pathTitle}' !",
-    "ratingScreen_callToAction": "Votre évaluation aide les autres utilisateurs à trouver les meilleurs parcours d'apprentissage.",
+    "ratingScreen_callToAction": "Comment s'est passé ce parcours d'apprentissage ? Votre évaluation nous aide à trouver le meilleur contenu pour vous et pour les autres apprenants.",
     "ratingScreen_submitRating": "Envoyer l'évaluation",
     "ratingScreen_noThanks": "Non, merci",
     "ratingScreen_thankYouTitle": "Merci pour votre retour !",

@@ -164,7 +164,7 @@
     "rotatingHintTextField_generationsLeft": "{count} Generaciones de Rutas Restantes",
     "ratingScreen_title": "Calificar Ruta",
     "ratingScreen_congratulationsTitle": "¡Felicidades por terminar la ruta '{pathTitle}'!",
-    "ratingScreen_callToAction": "Tu calificación ayuda a otros usuarios a encontrar las mejores rutas de aprendizaje.",
+    "ratingScreen_callToAction": "¿Qué tal fue esta ruta de aprendizaje? Tu valoración nos ayuda a encontrar el mejor contenido para ti y para otros estudiantes.",
     "ratingScreen_submitRating": "Enviar Calificación",
     "ratingScreen_noThanks": "No, gracias",
     "ratingScreen_thankYouTitle": "¡Gracias por tu comentario!",

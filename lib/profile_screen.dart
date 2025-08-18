@@ -353,7 +353,7 @@ class _ProfileHeader extends StatelessWidget {
               ? NetworkImage(user!.photoURL!)
               : null,
           child: user?.photoURL == null
-              ? const Icon(Icons.person, size: 50)
+              ? const Icon(Icons.person_outline, size: 50)
               : null,
         ),
         const SizedBox(height: 16),
@@ -533,6 +533,8 @@ class _AccountManagementState extends State<_AccountManagement> {
             title: Text(l10n.profileScreen_manageNotifications),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
+              FocusScope.of(context).unfocus(); 
+
               Navigator.push(
                 context,
                 MaterialPageRoute(

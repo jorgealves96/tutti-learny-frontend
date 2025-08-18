@@ -589,7 +589,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get ratingScreen_callToAction =>
-      'A sua avaliação ajuda outros utilizadores a encontrar os melhores percursos de aprendizagem.';
+      'Como foi este percurso de aprendizagem? A sua avaliação ajuda-nos a encontrar o melhor conteúdo para si e para outros utilizadores.';
 
   @override
   String get ratingScreen_submitRating => 'Enviar Avaliação';

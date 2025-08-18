@@ -576,7 +576,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ratingScreen_callToAction =>
-      'Your rating helps other users find the best learning paths.';
+      'How was this learning path? Your rating helps us find the best content for you and other learners.';
 
   @override
   String get ratingScreen_submitRating => 'Submit rating';

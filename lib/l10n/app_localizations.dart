@@ -1035,7 +1035,7 @@ abstract class AppLocalizations {
   /// No description provided for @ratingScreen_callToAction.
   ///
   /// In en, this message translates to:
-  /// **'Your rating helps other users find the best learning paths.'**
+  /// **'How was this learning path? Your rating helps us find the best content for you and other learners.'**
   String get ratingScreen_callToAction;
 
   /// No description provided for @ratingScreen_submitRating.
