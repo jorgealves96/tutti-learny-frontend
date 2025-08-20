@@ -14,7 +14,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get generatingPathsScreen_loadingPathGenerationMessage =>
-      'Nuestra IA está trabajando para crear un plan de estudios adaptado a tus objetivos y estilo de aprendizaje. Esto puede tardar unos momentos.';
+      'Trazando tu ruta de aprendizaje... Estamos analizando tu tema y seleccionando los mejores recursos. Esto puede tardar un momento.';
 
   @override
   String get homeScreen_pleaseEnterATopic =>
@@ -96,6 +96,22 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get loginScreen_continueWithPhoneNumber =>
       'Continuar con Número de Teléfono';
+
+  @override
+  String get main_restoreAccountDialog_title => 'Cuenta Encontrada';
+
+  @override
+  String get main_restoreAccountDialog_content =>
+      'Esta cuenta fue eliminada recientemente. ¿Te gustaría restaurarla y continuar?';
+
+  @override
+  String get main_restoreAccountDialog_cancel => 'Cancelar';
+
+  @override
+  String get main_restoreAccountDialog_restore => 'Restaurar Cuenta';
+
+  @override
+  String get main_signInCancelled => 'Inicio de sesión cancelado.';
 
   @override
   String get mainScreen_labelMyPaths => 'Mis Rutas';
@@ -406,6 +422,30 @@ class AppLocalizationsEs extends AppLocalizations {
   String get profileScreen_usageQuizzesCreated => 'Cuestionarios Creados';
 
   @override
+  String get profileScreen_deleteAccountDisclaimer =>
+      'Tu cuenta y tus datos se eliminarán permanentemente después de 30 días. Si inicias sesión durante este período, tendrás la opción de restaurar tu cuenta.';
+
+  @override
+  String get profileScreen_support => 'Soporte';
+
+  @override
+  String get profileScreen_legal => 'Legal';
+
+  @override
+  String get profileScreen_contactViaEmail =>
+      'Contactar por correo electrónico';
+
+  @override
+  String get profileScreen_followOnX =>
+      'Síguenos en X para las últimas actualizaciones';
+
+  @override
+  String get profileScreen_termsOfUse => 'Términos de Uso';
+
+  @override
+  String get profileScreen_privacyPolicy => 'Política de Privacidad';
+
+  @override
   String get subscriptionScreen_title => 'Mejora Tu Aprendizaje';
 
   @override
@@ -565,7 +605,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get ratingScreen_callToAction =>
-      'Tu calificación ayuda a otros usuarios a encontrar las mejores rutas de aprendizaje.';
+      '¿Qué tal fue esta ruta de aprendizaje? Tu valoración nos ayuda a encontrar el mejor contenido para ti y para otros estudiantes.';
 
   @override
   String get ratingScreen_submitRating => 'Enviar Calificación';
@@ -729,7 +769,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get quizScreen_loadingSubtitle =>
-      'Nuestra IA está preparando una serie de preguntas para poner a prueba tus conocimientos. Esto puede tardar unos momentos.';
+      'Para ayudar a reforzar lo que has aprendido, estamos analizando el contenido de tu ruta para crear un conjunto único de preguntas. Esto puede tardar un momento.';
 
   @override
   String get quizReviewScreen_title => 'Revisar Respuestas';

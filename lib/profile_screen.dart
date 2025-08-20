@@ -15,6 +15,7 @@ import 'dart:io' show Platform;
 import 'notifications_screen.dart';
 import 'utils/snackbar_helper.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ProfileScreen extends StatefulWidget {
   final VoidCallback onLogout;
@@ -86,8 +87,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         await _apiService.updateUserName(newName);
         await _user?.updateDisplayName(newName);
         setState(() {
-          _user = AuthService.currentUser;
+          _user = AuthService.firebaseAuth.currentUser;
         });
+
+        widget.onRefresh();
 
         if (mounted) {
           showSuccessSnackBar(context, l10n.profileScreen_nameUpdateSuccess);
@@ -184,7 +187,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
       builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: Text(l10n.profileScreen_deleteAccount),
-          content: Text(l10n.profileScreen_deleteAccountConfirm),
+          content: Column(
+            mainAxisSize:
+                MainAxisSize.min, // Prevents the column from expanding
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(l10n.profileScreen_deleteAccountConfirm),
+              const SizedBox(height: 16),
+              Text(
+                l10n.profileScreen_deleteAccountDisclaimer, // Your new disclaimer text
+                style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+              ),
+            ],
+          ),
           actions: <Widget>[
             TextButton(
               child: Text(l10n.profileScreen_cancel),
@@ -193,7 +208,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             TextButton(
               child: Text(
                 l10n.profileScreen_delete,
-                style: TextStyle(color: Colors.red),
+                style: const TextStyle(color: Colors.red),
               ),
               onPressed: () {
                 Navigator.of(dialogContext).pop();
@@ -261,7 +276,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
               _SectionTitle(title: l10n.profileScreen_sectionAccountManagement),
               const SizedBox(height: 16),
               const _AccountManagement(),
-              const SizedBox(height: 8),
+              const SizedBox(height: 30),
+              _SectionTitle(title: l10n.profileScreen_support),
+              const SizedBox(height: 16),
+              const _SupportSection(),
+              const SizedBox(height: 30),
+
+              // Legal Section
+              _SectionTitle(title: l10n.profileScreen_legal),
+              const SizedBox(height: 16),
+              const _LegalSection(),
+              const SizedBox(height: 24),
               TextButton.icon(
                 onPressed: () => _showLogoutConfirmation(l10n),
                 icon: const Icon(Icons.logout, color: Colors.red),
@@ -294,8 +319,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 }
-
-// --- Reusable Widgets for Sections ---
 
 class _SectionTitle extends StatelessWidget {
   final String title;
@@ -339,7 +362,7 @@ class _ProfileHeader extends StatelessWidget {
               ? NetworkImage(user!.photoURL!)
               : null,
           child: user?.photoURL == null
-              ? const Icon(Icons.person, size: 50)
+              ? const Icon(Icons.person_outline, size: 50)
               : null,
         ),
         const SizedBox(height: 16),
@@ -390,9 +413,9 @@ class _LearningStats extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  if (stats == null) {
-    return const _LearningStatsSkeleton(); // NEW
-  }
+    if (stats == null) {
+      return const _LearningStatsSkeleton(); // NEW
+    }
 
     final l10n = AppLocalizations.of(context);
     if (l10n == null) {
@@ -519,6 +542,8 @@ class _AccountManagementState extends State<_AccountManagement> {
             title: Text(l10n.profileScreen_manageNotifications),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
+              FocusScope.of(context).unfocus();
+
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -551,10 +576,10 @@ class _MonthlyUsage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  if (stats == null) {
-    // This can share the same skeleton as the subscription details.
-    return const _SubscriptionSkeleton(); // NEW
-  }
+    if (stats == null) {
+      // This can share the same skeleton as the subscription details.
+      return const _SubscriptionSkeleton(); // NEW
+    }
 
     final generationsUsed = stats!.pathsGeneratedThisMonth;
     final generationLimit = stats!.pathGenerationLimit;
@@ -625,9 +650,9 @@ class _SubscriptionDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-      if (status == null) {
-    return const _SubscriptionSkeleton(); // NEW
-  }
+    if (status == null) {
+      return const _SubscriptionSkeleton(); // NEW
+    }
 
     final l10n = AppLocalizations.of(context)!;
 
@@ -791,7 +816,10 @@ class _LearningStatsSkeleton extends StatelessWidget {
       highlightColor: Colors.grey.shade100,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: List.generate(4, (_) => const Expanded(child: _SkeletonStatCard())),
+        children: List.generate(
+          4,
+          (_) => const Expanded(child: _SkeletonStatCard()),
+        ),
       ),
     );
   }
@@ -835,5 +863,81 @@ class _SubscriptionSkeleton extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class _SupportSection extends StatelessWidget {
+  const _SupportSection({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    const String email = 'tuttilearni@gmail.com';
+    const String twitterHandle = 'tuttilearni';
+
+    return Card(
+      elevation: 2,
+      shadowColor: Colors.black.withValues(alpha: 0.1),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Column(
+        children: [
+          ListTile(
+            leading: const Icon(Icons.email_outlined),
+            title: Text(l10n.profileScreen_contactViaEmail),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => _launchUrl('mailto:$email'),
+          ),
+          const Divider(height: 1, indent: 16, endIndent: 16),
+          ListTile(
+            leading: const FaIcon(FontAwesomeIcons.xTwitter),
+            title: Text(l10n.profileScreen_followOnX),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => _launchUrl('https://x.com/$twitterHandle'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LegalSection extends StatelessWidget {
+  const _LegalSection({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    const String termsUrl = 'https://tuttilearni.com/terms.html';
+    const String privacyUrl = 'https://tuttilearni.com/privacy.html';
+
+    return Card(
+      elevation: 2,
+      shadowColor: Colors.black.withValues(alpha: 0.1),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Column(
+        children: [
+          ListTile(
+            leading: const Icon(Icons.description_outlined),
+            title: Text(l10n.profileScreen_termsOfUse),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => _launchUrl(termsUrl),
+          ),
+          const Divider(height: 1, indent: 16, endIndent: 16),
+          ListTile(
+            leading: const Icon(Icons.shield_outlined),
+            title: Text(l10n.profileScreen_privacyPolicy),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => _launchUrl(privacyUrl),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Helper function to launch a URL.
+Future<void> _launchUrl(String urlString) async {
+  final Uri url = Uri.parse(urlString);
+  if (!await launchUrl(url)) {
+    debugPrint('Could not launch $urlString');
   }
 }

@@ -14,7 +14,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get generatingPathsScreen_loadingPathGenerationMessage =>
-      'Our AI is working hard to create a curriculum tailored to your goals and learning style. This may take a few moments.';
+      'Plotting your learning course... We\'re analyzing your topic and curating the best resources. This may take a moment.';
 
   @override
   String get homeScreen_pleaseEnterATopic =>
@@ -95,6 +95,22 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get loginScreen_continueWithPhoneNumber =>
       'Continue with Phone Number';
+
+  @override
+  String get main_restoreAccountDialog_title => 'Account Found';
+
+  @override
+  String get main_restoreAccountDialog_content =>
+      'This account was recently deleted. Would you like to restore it and continue?';
+
+  @override
+  String get main_restoreAccountDialog_cancel => 'Cancel';
+
+  @override
+  String get main_restoreAccountDialog_restore => 'Restore Account';
+
+  @override
+  String get main_signInCancelled => 'Sign-in cancelled.';
 
   @override
   String get mainScreen_labelMyPaths => 'My Paths';
@@ -400,6 +416,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileScreen_usageQuizzesCreated => 'Quizzes Created';
 
   @override
+  String get profileScreen_deleteAccountDisclaimer =>
+      'Your account and data will be permanently deleted after 30 days. If you log in during this period, you will have the option to restore your account.';
+
+  @override
+  String get profileScreen_support => 'Support';
+
+  @override
+  String get profileScreen_legal => 'Legal';
+
+  @override
+  String get profileScreen_contactViaEmail => 'Contact via Email';
+
+  @override
+  String get profileScreen_followOnX => 'Follow Us on X for the Latest Updates';
+
+  @override
+  String get profileScreen_termsOfUse => 'Terms of Use';
+
+  @override
+  String get profileScreen_privacyPolicy => 'Privacy Policy';
+
+  @override
   String get subscriptionScreen_title => 'Upgrade Your Learning';
 
   @override
@@ -556,7 +594,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ratingScreen_callToAction =>
-      'Your rating helps other users find the best learning paths.';
+      'How was this learning path? Your rating helps us find the best content for you and other learners.';
 
   @override
   String get ratingScreen_submitRating => 'Submit rating';
@@ -716,7 +754,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get quizScreen_loadingSubtitle =>
-      'Our AI is preparing a set of questions to test your knowledge. This may take a few moments.';
+      'To help reinforce what you\'ve learned, we\'re analyzing your path\'s content to create a unique set of questions. This may take a moment.';
 
   @override
   String get quizReviewScreen_title => 'Review Answers';

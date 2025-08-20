@@ -7,19 +7,27 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 class AuthService {
   static final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
-static Future<void> postLoginSetup() async {
-  try {
-    // We still try to sync the latest data.
-    await ApiService().syncUser();
-    await firebaseAuth.currentUser?.reload();
-  } catch (e) {
-    // If the sync fails, we don't crash. We just log the error
-    // and let the app continue with the user's cached data.
-    if (kDebugMode) {
-      print("Non-critical error during post-login setup: $e. App will continue with cached user.");
+  static Future<void> postLoginSetup() async {
+    try {
+      await ApiService().syncUser();
+      await firebaseAuth.currentUser?.reload();
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error during post-login setup: $e.");
+      }
+
+      rethrow;
     }
   }
-}
+
+  static Future<void> restoreAccount() async {
+    try {
+      await ApiService().restoreAccount();
+    } catch (e) {
+      // Rethrow the error so the UI can handle it if needed
+      rethrow;
+    }
+  }
 
   static Future<void> updateFcmTokenInBackground() async {
     try {

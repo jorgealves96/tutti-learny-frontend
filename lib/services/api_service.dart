@@ -16,6 +16,11 @@ import '../models/quiz_history_model.dart';
 import '../models/user_answer_model.dart';
 import '../models/quiz_review_model.dart';
 
+class AccountInCooldownException implements Exception {
+  final String message;
+  AccountInCooldownException(this.message);
+}
+
 class ApiService {
   static String get _baseUrl {
     // Use local URLs ONLY when in debug modeW
@@ -60,6 +65,12 @@ class ApiService {
         Uri.parse('$_baseUrl/users/sync'),
         headers: headers,
       );
+
+      if (response.statusCode == 409) {
+        // Check for the 409 status code
+        final body = jsonDecode(response.body);
+        throw AccountInCooldownException(body['message']);
+      }
 
       if (response.statusCode != 200) {
         throw Exception(
@@ -397,6 +408,18 @@ class ApiService {
 
     if (response.statusCode != 200) {
       throw Exception('Failed to delete account.');
+    }
+  }
+
+  Future<void> restoreAccount() async {
+    final ioClient = _createIOClient();
+    final headers = await _getHeaders();
+    final response = await ioClient.post(
+      Uri.parse('$_baseUrl/users/restore'),
+      headers: headers,
+    );
+    if (response.statusCode != 200) {
+      throw Exception('Failed to restore account');
     }
   }
 

@@ -314,7 +314,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var firstName = _user?.displayName?.split(' ').first;
+    final user = AuthService.currentUser;
+    var firstName = user?.displayName?.split(' ').first;
 
     if (firstName == null || firstName.isEmpty) {
       firstName = 'there';

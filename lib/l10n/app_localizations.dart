@@ -111,7 +111,7 @@ abstract class AppLocalizations {
   /// No description provided for @generatingPathsScreen_loadingPathGenerationMessage.
   ///
   /// In en, this message translates to:
-  /// **'Our AI is working hard to create a curriculum tailored to your goals and learning style. This may take a few moments.'**
+  /// **'Plotting your learning course... We\'re analyzing your topic and curating the best resources. This may take a moment.'**
   String get generatingPathsScreen_loadingPathGenerationMessage;
 
   /// No description provided for @homeScreen_pleaseEnterATopic.
@@ -251,6 +251,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Continue with Phone Number'**
   String get loginScreen_continueWithPhoneNumber;
+
+  /// No description provided for @main_restoreAccountDialog_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Found'**
+  String get main_restoreAccountDialog_title;
+
+  /// No description provided for @main_restoreAccountDialog_content.
+  ///
+  /// In en, this message translates to:
+  /// **'This account was recently deleted. Would you like to restore it and continue?'**
+  String get main_restoreAccountDialog_content;
+
+  /// No description provided for @main_restoreAccountDialog_cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get main_restoreAccountDialog_cancel;
+
+  /// No description provided for @main_restoreAccountDialog_restore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore Account'**
+  String get main_restoreAccountDialog_restore;
+
+  /// No description provided for @main_signInCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign-in cancelled.'**
+  String get main_signInCancelled;
 
   /// No description provided for @mainScreen_labelMyPaths.
   ///
@@ -768,6 +798,48 @@ abstract class AppLocalizations {
   /// **'Quizzes Created'**
   String get profileScreen_usageQuizzesCreated;
 
+  /// No description provided for @profileScreen_deleteAccountDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account and data will be permanently deleted after 30 days. If you log in during this period, you will have the option to restore your account.'**
+  String get profileScreen_deleteAccountDisclaimer;
+
+  /// No description provided for @profileScreen_support.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get profileScreen_support;
+
+  /// No description provided for @profileScreen_legal.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal'**
+  String get profileScreen_legal;
+
+  /// No description provided for @profileScreen_contactViaEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact via Email'**
+  String get profileScreen_contactViaEmail;
+
+  /// No description provided for @profileScreen_followOnX.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow Us on X for the Latest Updates'**
+  String get profileScreen_followOnX;
+
+  /// No description provided for @profileScreen_termsOfUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Use'**
+  String get profileScreen_termsOfUse;
+
+  /// No description provided for @profileScreen_privacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get profileScreen_privacyPolicy;
+
   /// No description provided for @subscriptionScreen_title.
   ///
   /// In en, this message translates to:
@@ -999,7 +1071,7 @@ abstract class AppLocalizations {
   /// No description provided for @ratingScreen_callToAction.
   ///
   /// In en, this message translates to:
-  /// **'Your rating helps other users find the best learning paths.'**
+  /// **'How was this learning path? Your rating helps us find the best content for you and other learners.'**
   String get ratingScreen_callToAction;
 
   /// No description provided for @ratingScreen_submitRating.
@@ -1281,7 +1353,7 @@ abstract class AppLocalizations {
   /// No description provided for @quizScreen_loadingSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Our AI is preparing a set of questions to test your knowledge. This may take a few moments.'**
+  /// **'To help reinforce what you\'ve learned, we\'re analyzing your path\'s content to create a unique set of questions. This may take a moment.'**
   String get quizScreen_loadingSubtitle;
 
   /// No description provided for @quizReviewScreen_title.

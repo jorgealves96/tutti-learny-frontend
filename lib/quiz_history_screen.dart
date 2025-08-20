@@ -176,7 +176,7 @@ class _QuizHistoryScreenState extends State<QuizHistoryScreen> {
                   const SizedBox(height: 24),
                   OutlinedButton.icon(
                     onPressed: _navigateToNewQuiz,
-                    icon: const Icon(Icons.quiz),
+                    icon: const Icon(Icons.quiz_outlined),
                     label: Text(l10n.quizHistoryScreen_createQuizButton),
                     style: OutlinedButton.styleFrom(
                       // Add padding to make the button bigger
@@ -269,7 +269,7 @@ class _QuizHistoryScreenState extends State<QuizHistoryScreen> {
                     width: double.infinity,
                     child: OutlinedButton.icon(
                       onPressed: _navigateToNewQuiz,
-                      icon: const Icon(Icons.add),
+                      icon: Icon(Icons.quiz_outlined),
                       label: Text(
                         l10n.quizHistoryScreen_createAnotherQuizButton,
                       ),

@@ -37,7 +37,6 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     _initializeData();
-    AuthService.updateFcmTokenInBackground();
     
     WidgetsBinding.instance.addObserver(this);
   }
@@ -54,12 +53,6 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed) {
       ApiService().syncUser();
-    }
-  }
-
-  void _onUserChanged() {
-    if (mounted) {
-      setState(() {});
     }
   }
 

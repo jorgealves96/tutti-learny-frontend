@@ -37,7 +37,7 @@ Future<void> main() async {
   } else if (Platform.isIOS) {
     configuration = PurchasesConfiguration("your_apple_api_key");
   }
-  
+
   await Purchases.configure(configuration);
 
   runApp(
@@ -65,7 +65,6 @@ class TuttiLearnyApp extends StatelessWidget {
         return MaterialApp(
           title: 'Tutti Learni',
 
-          // --- Theme Configuration ---
           themeMode: themeProvider.themeMode,
           theme: ThemeData(
             useMaterial3: true,
@@ -78,7 +77,6 @@ class TuttiLearnyApp extends StatelessWidget {
               brightness: Brightness.light,
             ),
             scaffoldBackgroundColor: const Color(0xFFF4F6F8),
-            // FIX: Create TextTheme from a consistent base
             textTheme: GoogleFonts.interTextTheme(
               ThemeData(brightness: Brightness.light).textTheme,
             ),
@@ -94,7 +92,6 @@ class TuttiLearnyApp extends StatelessWidget {
               brightness: Brightness.dark,
             ),
             scaffoldBackgroundColor: const Color(0xFF121212),
-            // FIX: Create TextTheme from a consistent base
             textTheme: GoogleFonts.interTextTheme(
               ThemeData(brightness: Brightness.dark).textTheme,
             ),
@@ -149,15 +146,50 @@ class _PostAuthScreenState extends State<PostAuthScreen> {
   @override
   void initState() {
     super.initState();
-    // Start the setup process which includes sync, reload, and FCM token update
     _setupFuture = AuthService.postLoginSetup();
   }
 
-  // Add a method to retry the setup
   void _retrySetup() {
     setState(() {
       _setupFuture = AuthService.postLoginSetup();
     });
+  }
+
+  void _showRestoreAccountDialog() {
+    final l10n = AppLocalizations.of(context)!;
+    showDialog(
+      context: context,
+      barrierDismissible: false, // User must choose an action
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: Text(l10n.main_restoreAccountDialog_title),
+          content: Text(l10n.main_restoreAccountDialog_content),
+          actions: [
+            TextButton(
+              child: Text(l10n.main_restoreAccountDialog_cancel),
+              onPressed: () async {
+                Navigator.of(dialogContext).pop();
+                await AuthService.logout(); // Log the user out if they cancel
+              },
+            ),
+            ElevatedButton(
+              child: Text(l10n.main_restoreAccountDialog_restore),
+              onPressed: () async {
+                final navigator = Navigator.of(dialogContext);
+                try {
+                  await AuthService.restoreAccount();
+                  navigator.pop();
+                  _retrySetup(); // Re-run the setup process after restoring
+                } catch (e) {
+                  navigator.pop();
+                  // Handle error during restore
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -171,28 +203,37 @@ class _PostAuthScreenState extends State<PostAuthScreen> {
           );
         }
 
-        // If setup fails, show an error message and a retry button.
         if (snapshot.hasError) {
-          return Scaffold(
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'Failed to connect. Please check your internet connection.',
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: _retrySetup,
-                    child: const Text('Try Again'),
-                  ),
-                ],
+          // Check if the error is our specific "account in cooldown" exception.
+          if (snapshot.error.toString().contains('AccountInCooldownException')) {
+            // Use a post-frame callback to show the dialog safely after the build.
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _showRestoreAccountDialog();
+            });
+            // Return an empty screen while the dialog is being prepared.
+            return const Scaffold();
+          } else {
+            // For all other errors, show the generic retry screen.
+            return Scaffold(
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Failed to connect. Please check your internet connection.',
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: _retrySetup,
+                      child: const Text('Try Again'),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
+            );
+          }
         }
 
-        // Once setup is complete, show the main app.
         return MainScreen(
           setupFuture: _setupFuture,
           onLogout: () async {

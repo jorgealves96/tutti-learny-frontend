@@ -1,6 +1,6 @@
 {
    "generatingPathsScreen_craftingPersonalizedLearningPath": "Crafting your personalized learning path",
-   "generatingPathsScreen_loadingPathGenerationMessage": "Our AI is working hard to create a curriculum tailored to your goals and learning style. This may take a few moments.",
+   "generatingPathsScreen_loadingPathGenerationMessage": "Plotting your learning course... We're analyzing your topic and curating the best resources. This may take a moment.",
    "homeScreen_pleaseEnterATopic": "Please enter a topic to generate a path.",
    "homeScreen_usageLimitReached": "Usage Limit Reached",
    "homeScreen_maybeLater": "Maybe Later",
@@ -33,6 +33,11 @@
    "loginScreen_continueWithGoogle": "Continue with Google",
    "loginScreen_failedToSignInGoogle": "Failed to sign in with Google.",
    "loginScreen_continueWithPhoneNumber": "Continue with Phone Number",
+   "main_restoreAccountDialog_title": "Account Found",
+   "main_restoreAccountDialog_content": "This account was recently deleted. Would you like to restore it and continue?",
+   "main_restoreAccountDialog_cancel": "Cancel",
+   "main_restoreAccountDialog_restore": "Restore Account",
+   "main_signInCancelled": "Sign-in cancelled.",
    "mainScreen_labelMyPaths": "My Paths",
    "mainScreen_labelHome": "Home",
    "mainScreen_labelProfile": "Profile",
@@ -206,6 +211,13 @@
    "profileScreen_nameUpdateSuccess": "Name updated successfully!",
    "profileScreen_statQuizzesCompleted": "Quizzes Completed",
    "profileScreen_usageQuizzesCreated": "Quizzes Created",
+   "profileScreen_deleteAccountDisclaimer": "Your account and data will be permanently deleted after 30 days. If you log in during this period, you will have the option to restore your account.",
+   "profileScreen_support": "Support",
+   "profileScreen_legal": "Legal",
+   "profileScreen_contactViaEmail": "Contact via Email",
+   "profileScreen_followOnX": "Follow Us on X for the Latest Updates",
+   "profileScreen_termsOfUse": "Terms of Use",
+   "profileScreen_privacyPolicy": "Privacy Policy",
    "subscriptionScreen_title": "Upgrade Your Learning",
    "subscriptionScreen_monthly": "Monthly",
    "subscriptionScreen_yearly": "Yearly (Save ~30%)",
@@ -345,7 +357,7 @@
          }
       }
    },
-   "ratingScreen_callToAction": "Your rating helps other users find the best learning paths.",
+   "ratingScreen_callToAction": "How was this learning path? Your rating helps us find the best content for you and other learners.",
    "ratingScreen_submitRating": "Submit rating",
    "ratingScreen_noThanks": "No thanks",
    "ratingScreen_thankYouTitle": "Thank you for your feedback!",
@@ -426,7 +438,7 @@
    "quizScreen_backToPath": "Back to Path",
    "quizScreen_loadingTitle": "Generating your custom quiz...",
    "quizScreen_resumingTitle": "Resuming your quiz...",
-   "quizScreen_loadingSubtitle": "Our AI is preparing a set of questions to test your knowledge. This may take a few moments.",
+   "quizScreen_loadingSubtitle": "To help reinforce what you've learned, we're analyzing your path's content to create a unique set of questions. This may take a moment.",
    "quizReviewScreen_title": "Review Answers",
    "quizReviewScreen_reviewAnswersButton": "Review Answers"
 }
