@@ -15,6 +15,7 @@ import 'dart:io' show Platform;
 import 'notifications_screen.dart';
 import 'utils/snackbar_helper.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ProfileScreen extends StatefulWidget {
   final VoidCallback onLogout;
@@ -275,7 +276,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
               _SectionTitle(title: l10n.profileScreen_sectionAccountManagement),
               const SizedBox(height: 16),
               const _AccountManagement(),
-              const SizedBox(height: 8),
+              const SizedBox(height: 30),
+              _SectionTitle(title: l10n.profileScreen_support),
+              const SizedBox(height: 16),
+              const _SupportSection(),
+              const SizedBox(height: 30),
+
+              // Legal Section
+              _SectionTitle(title: l10n.profileScreen_legal),
+              const SizedBox(height: 16),
+              const _LegalSection(),
+              const SizedBox(height: 24),
               TextButton.icon(
                 onPressed: () => _showLogoutConfirmation(l10n),
                 icon: const Icon(Icons.logout, color: Colors.red),
@@ -308,8 +319,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 }
-
-// --- Reusable Widgets for Sections ---
 
 class _SectionTitle extends StatelessWidget {
   final String title;
@@ -533,7 +542,7 @@ class _AccountManagementState extends State<_AccountManagement> {
             title: Text(l10n.profileScreen_manageNotifications),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
-              FocusScope.of(context).unfocus(); 
+              FocusScope.of(context).unfocus();
 
               Navigator.push(
                 context,
@@ -854,5 +863,81 @@ class _SubscriptionSkeleton extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class _SupportSection extends StatelessWidget {
+  const _SupportSection({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    const String email = 'tuttilearni@gmail.com';
+    const String twitterHandle = 'tuttilearni';
+
+    return Card(
+      elevation: 2,
+      shadowColor: Colors.black.withValues(alpha: 0.1),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Column(
+        children: [
+          ListTile(
+            leading: const Icon(Icons.email_outlined),
+            title: Text(l10n.profileScreen_contactViaEmail),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => _launchUrl('mailto:$email'),
+          ),
+          const Divider(height: 1, indent: 16, endIndent: 16),
+          ListTile(
+            leading: const FaIcon(FontAwesomeIcons.xTwitter),
+            title: Text(l10n.profileScreen_followOnX),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => _launchUrl('https://x.com/$twitterHandle'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LegalSection extends StatelessWidget {
+  const _LegalSection({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    const String termsUrl = 'https://tuttilearni.com/terms.html';
+    const String privacyUrl = 'https://tuttilearni.com/privacy.html';
+
+    return Card(
+      elevation: 2,
+      shadowColor: Colors.black.withValues(alpha: 0.1),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Column(
+        children: [
+          ListTile(
+            leading: const Icon(Icons.description_outlined),
+            title: Text(l10n.profileScreen_termsOfUse),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => _launchUrl(termsUrl),
+          ),
+          const Divider(height: 1, indent: 16, endIndent: 16),
+          ListTile(
+            leading: const Icon(Icons.shield_outlined),
+            title: Text(l10n.profileScreen_privacyPolicy),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => _launchUrl(privacyUrl),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Helper function to launch a URL.
+Future<void> _launchUrl(String urlString) async {
+  final Uri url = Uri.parse(urlString);
+  if (!await launchUrl(url)) {
+    debugPrint('Could not launch $urlString');
   }
 }

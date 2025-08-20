@@ -37,7 +37,6 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     _initializeData();
-    AuthService.updateFcmTokenInBackground();
     
     WidgetsBinding.instance.addObserver(this);
   }

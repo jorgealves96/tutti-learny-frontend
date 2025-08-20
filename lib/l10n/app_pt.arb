@@ -1,6 +1,6 @@
 {
     "generatingPathsScreen_craftingPersonalizedLearningPath": "A criar o seu percurso de aprendizagem personalizado",
-    "generatingPathsScreen_loadingPathGenerationMessage": "A nossa IA está a trabalhar para criar um currículo à medida dos seus objetivos e estilo de aprendizagem. Isto pode demorar alguns momentos.",
+    "generatingPathsScreen_loadingPathGenerationMessage": "A traçar o seu percurso de aprendizagem... Estamos a analisar o seu tópico e a selecionar os melhores recursos. Isto pode demorar um momento.",
     "homeScreen_pleaseEnterATopic": "Por favor, insira um tópico para gerar um percurso.",
     "homeScreen_usageLimitReached": "Limite de Utilização Atingido",
     "homeScreen_maybeLater": "Talvez Depois",
@@ -126,6 +126,12 @@
     "profileScreen_statQuizzesCompleted": "Quizzes Concluídos",
     "profileScreen_usageQuizzesCreated": "Quizzes Criados",
     "profileScreen_deleteAccountDisclaimer": "A sua conta e os seus dados serão eliminados permanentemente após 30 dias. Se iniciar sessão durante este período, terá a opção de restaurar a sua conta.",
+    "profileScreen_support": "Suporte",
+    "profileScreen_legal": "Legal",
+    "profileScreen_contactViaEmail": "Contactar por e-mail",
+    "profileScreen_followOnX": "Siga-nos no X para as últimas atualizações",
+    "profileScreen_termsOfUse": "Termos de Uso",
+    "profileScreen_privacyPolicy": "Política de Privacidade",
     "subscriptionScreen_title": "Melhore a Sua Aprendizagem",
     "subscriptionScreen_monthly": "Mensal",
     "subscriptionScreen_yearly": "Anual (Poupe ~30%)",
@@ -211,7 +217,7 @@
     "quizScreen_backToPath": "Voltar ao Percurso",
     "quizScreen_loadingTitle": "A gerar o seu quiz personalizado...",
     "quizScreen_resumingTitle": "A retomar o seu quiz...",
-    "quizScreen_loadingSubtitle": "A nossa IA está a preparar um conjunto de perguntas para testar os seus conhecimentos. Isto pode demorar alguns momentos.",
+    "quizScreen_loadingSubtitle": "Para ajudar a reforçar o que aprendeu, estamos a analisar o conteúdo do seu percurso para criar um conjunto único de perguntas. Isto pode demorar um momento.",
     "quizReviewScreen_title": "Rever Respostas",
     "quizReviewScreen_reviewAnswersButton": "Rever Respostas"
 }

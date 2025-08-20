@@ -14,7 +14,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get generatingPathsScreen_loadingPathGenerationMessage =>
-      'Our AI is working hard to create a curriculum tailored to your goals and learning style. This may take a few moments.';
+      'Plotting your learning course... We\'re analyzing your topic and curating the best resources. This may take a moment.';
 
   @override
   String get homeScreen_pleaseEnterATopic =>
@@ -420,6 +420,24 @@ class AppLocalizationsEn extends AppLocalizations {
       'Your account and data will be permanently deleted after 30 days. If you log in during this period, you will have the option to restore your account.';
 
   @override
+  String get profileScreen_support => 'Support';
+
+  @override
+  String get profileScreen_legal => 'Legal';
+
+  @override
+  String get profileScreen_contactViaEmail => 'Contact via Email';
+
+  @override
+  String get profileScreen_followOnX => 'Follow Us on X for the Latest Updates';
+
+  @override
+  String get profileScreen_termsOfUse => 'Terms of Use';
+
+  @override
+  String get profileScreen_privacyPolicy => 'Privacy Policy';
+
+  @override
   String get subscriptionScreen_title => 'Upgrade Your Learning';
 
   @override
@@ -736,7 +754,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get quizScreen_loadingSubtitle =>
-      'Our AI is preparing a set of questions to test your knowledge. This may take a few moments.';
+      'To help reinforce what you\'ve learned, we\'re analyzing your path\'s content to create a unique set of questions. This may take a moment.';
 
   @override
   String get quizReviewScreen_title => 'Review Answers';

@@ -111,7 +111,7 @@ abstract class AppLocalizations {
   /// No description provided for @generatingPathsScreen_loadingPathGenerationMessage.
   ///
   /// In en, this message translates to:
-  /// **'Our AI is working hard to create a curriculum tailored to your goals and learning style. This may take a few moments.'**
+  /// **'Plotting your learning course... We\'re analyzing your topic and curating the best resources. This may take a moment.'**
   String get generatingPathsScreen_loadingPathGenerationMessage;
 
   /// No description provided for @homeScreen_pleaseEnterATopic.
@@ -804,6 +804,42 @@ abstract class AppLocalizations {
   /// **'Your account and data will be permanently deleted after 30 days. If you log in during this period, you will have the option to restore your account.'**
   String get profileScreen_deleteAccountDisclaimer;
 
+  /// No description provided for @profileScreen_support.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get profileScreen_support;
+
+  /// No description provided for @profileScreen_legal.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal'**
+  String get profileScreen_legal;
+
+  /// No description provided for @profileScreen_contactViaEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact via Email'**
+  String get profileScreen_contactViaEmail;
+
+  /// No description provided for @profileScreen_followOnX.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow Us on X for the Latest Updates'**
+  String get profileScreen_followOnX;
+
+  /// No description provided for @profileScreen_termsOfUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Use'**
+  String get profileScreen_termsOfUse;
+
+  /// No description provided for @profileScreen_privacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get profileScreen_privacyPolicy;
+
   /// No description provided for @subscriptionScreen_title.
   ///
   /// In en, this message translates to:
@@ -1317,7 +1353,7 @@ abstract class AppLocalizations {
   /// No description provided for @quizScreen_loadingSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Our AI is preparing a set of questions to test your knowledge. This may take a few moments.'**
+  /// **'To help reinforce what you\'ve learned, we\'re analyzing your path\'s content to create a unique set of questions. This may take a moment.'**
   String get quizScreen_loadingSubtitle;
 
   /// No description provided for @quizReviewScreen_title.

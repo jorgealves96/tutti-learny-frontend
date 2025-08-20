@@ -1,6 +1,6 @@
 {
     "generatingPathsScreen_craftingPersonalizedLearningPath": "Création de votre parcours d'apprentissage personnalisé",
-    "generatingPathsScreen_loadingPathGenerationMessage": "Notre IA travaille à créer un programme adapté à vos objectifs et à votre style d'apprentissage. Cela peut prendre quelques instants.",
+    "generatingPathsScreen_loadingPathGenerationMessage": "Tracé de votre parcours d'apprentissage... Nous analysons votre sujet et sélectionnons les meilleures ressources. Cela peut prendre un moment.",
     "homeScreen_pleaseEnterATopic": "Veuillez entrer un sujet pour générer un parcours.",
     "homeScreen_usageLimitReached": "Limite d'Utilisation Atteinte",
     "homeScreen_maybeLater": "Peut-être plus tard",
@@ -126,6 +126,12 @@
     "profileScreen_statQuizzesCompleted": "Quiz Terminés",
     "profileScreen_usageQuizzesCreated": "Quiz Créés",
     "profileScreen_deleteAccountDisclaimer": "Votre compte et vos données seront définitivement supprimés après 30 jours. Si vous vous connectez pendant cette période, vous aurez la possibilité de restaurer votre compte.",
+    "profileScreen_support": "Assistance",
+    "profileScreen_legal": "Légal",
+    "profileScreen_contactViaEmail": "Contacter par e-mail",
+    "profileScreen_followOnX": "Suivez-nous sur X pour les dernières mises à jour",
+    "profileScreen_termsOfUse": "Conditions d'utilisation",
+    "profileScreen_privacyPolicy": "Politique de confidentialité",
     "subscriptionScreen_title": "Améliorez Votre Apprentissage",
     "subscriptionScreen_monthly": "Mensuel",
     "subscriptionScreen_yearly": "Annuel (Économisez ~30%)",
@@ -211,7 +217,7 @@
     "quizScreen_backToPath": "Retour au Parcours",
     "quizScreen_loadingTitle": "Génération de votre quiz personnalisé...",
     "quizScreen_resumingTitle": "Reprise de votre quiz...",
-    "quizScreen_loadingSubtitle": "Notre IA prépare une série de questions pour tester vos connaissances. Cela peut prendre quelques instants.",
+    "quizScreen_loadingSubtitle": "Pour aider à renforcer ce que vous avez appris, nous analysons le contenu de votre parcours pour créer un ensemble unique de questions. Cela peut prendre un moment.",
     "quizReviewScreen_title": "Vérifier les Réponses",
     "quizReviewScreen_reviewAnswersButton": "Vérifier les Réponses"
 }

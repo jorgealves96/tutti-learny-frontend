@@ -1,6 +1,6 @@
 {
     "generatingPathsScreen_craftingPersonalizedLearningPath": "Creando tu ruta de aprendizaje personalizada",
-    "generatingPathsScreen_loadingPathGenerationMessage": "Nuestra IA está trabajando para crear un plan de estudios adaptado a tus objetivos y estilo de aprendizaje. Esto puede tardar unos momentos.",
+    "generatingPathsScreen_loadingPathGenerationMessage": "Trazando tu ruta de aprendizaje... Estamos analizando tu tema y seleccionando los mejores recursos. Esto puede tardar un momento.",
     "homeScreen_pleaseEnterATopic": "Por favor, introduce un tema para generar una ruta.",
     "homeScreen_usageLimitReached": "Límite de Uso Alcanzado",
     "homeScreen_maybeLater": "Quizás Más Tarde",
@@ -126,6 +126,12 @@
     "profileScreen_statQuizzesCompleted": "Cuestionarios Completados",
     "profileScreen_usageQuizzesCreated": "Cuestionarios Creados",
     "profileScreen_deleteAccountDisclaimer": "Tu cuenta y tus datos se eliminarán permanentemente después de 30 días. Si inicias sesión durante este período, tendrás la opción de restaurar tu cuenta.",
+    "profileScreen_support": "Soporte",
+    "profileScreen_legal": "Legal",
+    "profileScreen_contactViaEmail": "Contactar por correo electrónico",
+    "profileScreen_followOnX": "Síguenos en X para las últimas actualizaciones",
+    "profileScreen_termsOfUse": "Términos de Uso",
+    "profileScreen_privacyPolicy": "Política de Privacidad",
     "subscriptionScreen_title": "Mejora Tu Aprendizaje",
     "subscriptionScreen_monthly": "Mensual",
     "subscriptionScreen_yearly": "Anual (Ahorra ~30%)",
@@ -211,7 +217,7 @@
     "quizScreen_backToPath": "Volver a la Ruta",
     "quizScreen_loadingTitle": "Generando tu cuestionario personalizado...",
     "quizScreen_resumingTitle": "Reanudando tu cuestionario...",
-    "quizScreen_loadingSubtitle": "Nuestra IA está preparando una serie de preguntas para poner a prueba tus conocimientos. Esto puede tardar unos momentos.",
+    "quizScreen_loadingSubtitle": "Para ayudar a reforzar lo que has aprendido, estamos analizando el contenido de tu ruta para crear un conjunto único de preguntas. Esto puede tardar un momento.",
     "quizReviewScreen_title": "Revisar Respuestas",
     "quizReviewScreen_reviewAnswersButton": "Revisar Respuestas"
 }

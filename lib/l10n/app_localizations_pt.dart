@@ -14,7 +14,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get generatingPathsScreen_loadingPathGenerationMessage =>
-      'A nossa IA está a trabalhar para criar um currículo à medida dos seus objetivos e estilo de aprendizagem. Isto pode demorar alguns momentos.';
+      'A traçar o seu percurso de aprendizagem... Estamos a analisar o seu tópico e a selecionar os melhores recursos. Isto pode demorar um momento.';
 
   @override
   String get homeScreen_pleaseEnterATopic =>
@@ -430,6 +430,25 @@ class AppLocalizationsPt extends AppLocalizations {
       'A sua conta e os seus dados serão eliminados permanentemente após 30 dias. Se iniciar sessão durante este período, terá a opção de restaurar a sua conta.';
 
   @override
+  String get profileScreen_support => 'Suporte';
+
+  @override
+  String get profileScreen_legal => 'Legal';
+
+  @override
+  String get profileScreen_contactViaEmail => 'Contactar por e-mail';
+
+  @override
+  String get profileScreen_followOnX =>
+      'Siga-nos no X para as últimas atualizações';
+
+  @override
+  String get profileScreen_termsOfUse => 'Termos de Uso';
+
+  @override
+  String get profileScreen_privacyPolicy => 'Política de Privacidade';
+
+  @override
   String get subscriptionScreen_title => 'Melhore a Sua Aprendizagem';
 
   @override
@@ -749,7 +768,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get quizScreen_loadingSubtitle =>
-      'A nossa IA está a preparar um conjunto de perguntas para testar os seus conhecimentos. Isto pode demorar alguns momentos.';
+      'Para ajudar a reforçar o que aprendeu, estamos a analisar o conteúdo do seu percurso para criar um conjunto único de perguntas. Isto pode demorar um momento.';
 
   @override
   String get quizReviewScreen_title => 'Rever Respostas';
