@@ -216,7 +216,7 @@ class _RatingScreenState extends State<RatingScreen> {
           ConfettiWidget(
             confettiController: _confettiController,
             blastDirectionality: BlastDirectionality.explosive,
-            shouldLoop: true,
+            shouldLoop: false,
             numberOfParticles: 20,
             emissionFrequency: 0.015,
             colors: const [
