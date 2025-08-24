@@ -219,5 +219,12 @@
     "quizScreen_resumingTitle": "Reanudando tu cuestionario...",
     "quizScreen_loadingSubtitle": "Para ayudar a reforzar lo que has aprendido, estamos analizando el contenido de tu ruta para crear un conjunto único de preguntas. Esto puede tardar un momento.",
     "quizReviewScreen_title": "Revisar Respuestas",
-    "quizReviewScreen_reviewAnswersButton": "Revisar Respuestas"
+    "quizReviewScreen_reviewAnswersButton": "Revisar Respuestas",
+    "generationSettingsDialog_title": "Ajustes de Generación de Rutas",
+    "generationSettingsDialog_learningLevel": "Nivel de Aprendizaje",
+    "generationSettingsDialog_levelBeginner": "Principiante",
+    "generationSettingsDialog_levelIntermediate": "Intermedio",
+    "generationSettingsDialog_levelAdvanced": "Avanzado",
+    "generationSettingsDialog_cancel": "Cancelar",
+    "generationSettingsDialog_save": "Guardar"
 }

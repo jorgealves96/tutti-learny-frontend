@@ -68,7 +68,6 @@ class _QuizScreenState extends State<QuizScreen>
     if (_quiz == null) return;
 
     setState(() => _isSubmitting = true);
-    final l10n = AppLocalizations.of(context)!;
 
     try {
       int correctAnswers = 0;

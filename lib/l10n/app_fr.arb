@@ -219,5 +219,12 @@
     "quizScreen_resumingTitle": "Reprise de votre quiz...",
     "quizScreen_loadingSubtitle": "Pour aider à renforcer ce que vous avez appris, nous analysons le contenu de votre parcours pour créer un ensemble unique de questions. Cela peut prendre un moment.",
     "quizReviewScreen_title": "Vérifier les Réponses",
-    "quizReviewScreen_reviewAnswersButton": "Vérifier les Réponses"
+    "quizReviewScreen_reviewAnswersButton": "Vérifier les Réponses",
+    "generationSettingsDialog_title": "Paramètres de Génération de Parcours",
+    "generationSettingsDialog_learningLevel": "Niveau d'Apprentissage",
+    "generationSettingsDialog_levelBeginner": "Débutant",
+    "generationSettingsDialog_levelIntermediate": "Intermédiaire",
+    "generationSettingsDialog_levelAdvanced": "Avancé",
+    "generationSettingsDialog_cancel": "Annuler",
+    "generationSettingsDialog_save": "Enregistrer"
 }

@@ -80,6 +80,9 @@ class AppLocalizationsEs extends AppLocalizations {
       'Has alcanzado tu límite mensual para crear nuevas rutas. Considera actualizar tu suscripción para continuar.';
 
   @override
+  String get homeScreen_settingsSaved => 'Settings saved!';
+
+  @override
   String get loginScreen_welcomePrimary => 'Bienvenido a';
 
   @override
@@ -776,4 +779,25 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get quizReviewScreen_reviewAnswersButton => 'Revisar Respuestas';
+
+  @override
+  String get generationSettingsDialog_title => 'Ajustes de Generación de Rutas';
+
+  @override
+  String get generationSettingsDialog_learningLevel => 'Nivel de Aprendizaje';
+
+  @override
+  String get generationSettingsDialog_levelBeginner => 'Principiante';
+
+  @override
+  String get generationSettingsDialog_levelIntermediate => 'Intermedio';
+
+  @override
+  String get generationSettingsDialog_levelAdvanced => 'Avanzado';
+
+  @override
+  String get generationSettingsDialog_cancel => 'Cancelar';
+
+  @override
+  String get generationSettingsDialog_save => 'Guardar';
 }

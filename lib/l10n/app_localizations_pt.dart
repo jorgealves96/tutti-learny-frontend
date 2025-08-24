@@ -81,6 +81,9 @@ class AppLocalizationsPt extends AppLocalizations {
       'Atingiu o seu limite mensal para a criação de novos percursos. Considere atualizar a sua subscrição para continuar.';
 
   @override
+  String get homeScreen_settingsSaved => 'Settings saved!';
+
+  @override
   String get loginScreen_welcomePrimary => 'Bem-vindo ao';
 
   @override
@@ -775,4 +778,26 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get quizReviewScreen_reviewAnswersButton => 'Rever Respostas';
+
+  @override
+  String get generationSettingsDialog_title =>
+      'Definições de Geração de Percursos';
+
+  @override
+  String get generationSettingsDialog_learningLevel => 'Nível de Aprendizagem';
+
+  @override
+  String get generationSettingsDialog_levelBeginner => 'Iniciante';
+
+  @override
+  String get generationSettingsDialog_levelIntermediate => 'Intermédio';
+
+  @override
+  String get generationSettingsDialog_levelAdvanced => 'Avançado';
+
+  @override
+  String get generationSettingsDialog_cancel => 'Cancelar';
+
+  @override
+  String get generationSettingsDialog_save => 'Guardar';
 }

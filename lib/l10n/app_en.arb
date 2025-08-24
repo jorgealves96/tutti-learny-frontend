@@ -28,6 +28,7 @@
       }
    },
    "homeScreen_generationLimitExceeded": "You have reached your monthly limit for creating new paths. Consider upgrading to continue",
+   "homeScreen_settingsSaved": "Settings saved!",
    "loginScreen_welcomePrimary": "Welcome to",
    "loginScreen_welcomeSecondary": "Your personal guide to learn anything.",
    "loginScreen_continueWithGoogle": "Continue with Google",
@@ -440,5 +441,12 @@
    "quizScreen_resumingTitle": "Resuming your quiz...",
    "quizScreen_loadingSubtitle": "To help reinforce what you've learned, we're analyzing your path's content to create a unique set of questions. This may take a moment.",
    "quizReviewScreen_title": "Review Answers",
-   "quizReviewScreen_reviewAnswersButton": "Review Answers"
+   "quizReviewScreen_reviewAnswersButton": "Review Answers",
+   "generationSettingsDialog_title": "Path Generation Settings",
+   "generationSettingsDialog_learningLevel": "Learning Level",
+   "generationSettingsDialog_levelBeginner": "Beginner",
+   "generationSettingsDialog_levelIntermediate": "Intermediate",
+   "generationSettingsDialog_levelAdvanced": "Advanced",
+   "generationSettingsDialog_cancel": "Cancel",
+   "generationSettingsDialog_save": "Save"
 }

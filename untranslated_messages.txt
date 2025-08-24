@@ -1,1 +1,13 @@
-{}
+{
+  "es": [
+    "homeScreen_settingsSaved"
+  ],
+
+  "fr": [
+    "homeScreen_settingsSaved"
+  ],
+
+  "pt": [
+    "homeScreen_settingsSaved"
+  ]
+}

@@ -15,6 +15,7 @@ import '../models/quiz_model.dart';
 import '../models/quiz_history_model.dart';
 import '../models/user_answer_model.dart';
 import '../models/quiz_review_model.dart';
+import '../models/user_settings_model.dart';
 
 class AccountInCooldownException implements Exception {
   final String message;
@@ -664,6 +665,37 @@ class ApiService {
       return Quiz.fromJson(jsonDecode(response.body));
     } else {
       throw Exception('Failed to resume quiz.');
+    }
+  }
+
+  Future<void> updatePathGenerationSettings(LearningLevel level) async {
+    final ioClient = _createIOClient();
+    final headers = await _getHeaders();
+    final response = await ioClient.patch(
+      Uri.parse('$_baseUrl/users/me/path-generation-settings'),
+      headers: headers,
+      body: jsonEncode({
+        'learningLevel': level.index, // Send the enum's integer value
+      }),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to update settings.');
+    }
+  }
+
+  Future<UserSettings> fetchUserSettings() async {
+    final ioClient = _createIOClient();
+    final headers = await _getHeaders();
+    final response = await ioClient.get(
+      Uri.parse('$_baseUrl/users/me/settings'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      return UserSettings.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to load user settings.');
     }
   }
 }

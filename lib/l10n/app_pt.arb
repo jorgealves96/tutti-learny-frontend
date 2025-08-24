@@ -219,5 +219,12 @@
     "quizScreen_resumingTitle": "A retomar o seu quiz...",
     "quizScreen_loadingSubtitle": "Para ajudar a reforçar o que aprendeu, estamos a analisar o conteúdo do seu percurso para criar um conjunto único de perguntas. Isto pode demorar um momento.",
     "quizReviewScreen_title": "Rever Respostas",
-    "quizReviewScreen_reviewAnswersButton": "Rever Respostas"
+    "quizReviewScreen_reviewAnswersButton": "Rever Respostas",
+    "generationSettingsDialog_title": "Definições de Geração de Percursos",
+    "generationSettingsDialog_learningLevel": "Nível de Aprendizagem",
+    "generationSettingsDialog_levelBeginner": "Iniciante",
+    "generationSettingsDialog_levelIntermediate": "Intermédio",
+    "generationSettingsDialog_levelAdvanced": "Avançado",
+    "generationSettingsDialog_cancel": "Cancelar",
+    "generationSettingsDialog_save": "Guardar"
 }

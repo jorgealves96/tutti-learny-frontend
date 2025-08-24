@@ -222,6 +222,12 @@ abstract class AppLocalizations {
   /// **'You have reached your monthly limit for creating new paths. Consider upgrading to continue'**
   String get homeScreen_generationLimitExceeded;
 
+  /// No description provided for @homeScreen_settingsSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings saved!'**
+  String get homeScreen_settingsSaved;
+
   /// No description provided for @loginScreen_welcomePrimary.
   ///
   /// In en, this message translates to:
@@ -1367,6 +1373,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Review Answers'**
   String get quizReviewScreen_reviewAnswersButton;
+
+  /// No description provided for @generationSettingsDialog_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Path Generation Settings'**
+  String get generationSettingsDialog_title;
+
+  /// No description provided for @generationSettingsDialog_learningLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Learning Level'**
+  String get generationSettingsDialog_learningLevel;
+
+  /// No description provided for @generationSettingsDialog_levelBeginner.
+  ///
+  /// In en, this message translates to:
+  /// **'Beginner'**
+  String get generationSettingsDialog_levelBeginner;
+
+  /// No description provided for @generationSettingsDialog_levelIntermediate.
+  ///
+  /// In en, this message translates to:
+  /// **'Intermediate'**
+  String get generationSettingsDialog_levelIntermediate;
+
+  /// No description provided for @generationSettingsDialog_levelAdvanced.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced'**
+  String get generationSettingsDialog_levelAdvanced;
+
+  /// No description provided for @generationSettingsDialog_cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get generationSettingsDialog_cancel;
+
+  /// No description provided for @generationSettingsDialog_save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get generationSettingsDialog_save;
 }
 
 class _AppLocalizationsDelegate

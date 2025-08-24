@@ -82,6 +82,9 @@ class AppLocalizationsFr extends AppLocalizations {
       'Vous avez atteint votre limite mensuelle pour la création de nouveaux parcours. Vous pouvez surclasser votre abonnement pour continuer.';
 
   @override
+  String get homeScreen_settingsSaved => 'Settings saved!';
+
+  @override
   String get loginScreen_welcomePrimary => 'Bienvenue sur';
 
   @override
@@ -777,4 +780,27 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get quizReviewScreen_reviewAnswersButton => 'Vérifier les Réponses';
+
+  @override
+  String get generationSettingsDialog_title =>
+      'Paramètres de Génération de Parcours';
+
+  @override
+  String get generationSettingsDialog_learningLevel =>
+      'Niveau d\'Apprentissage';
+
+  @override
+  String get generationSettingsDialog_levelBeginner => 'Débutant';
+
+  @override
+  String get generationSettingsDialog_levelIntermediate => 'Intermédiaire';
+
+  @override
+  String get generationSettingsDialog_levelAdvanced => 'Avancé';
+
+  @override
+  String get generationSettingsDialog_cancel => 'Annuler';
+
+  @override
+  String get generationSettingsDialog_save => 'Enregistrer';
 }

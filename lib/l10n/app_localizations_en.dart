@@ -79,6 +79,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'You have reached your monthly limit for creating new paths. Consider upgrading to continue';
 
   @override
+  String get homeScreen_settingsSaved => 'Settings saved!';
+
+  @override
   String get loginScreen_welcomePrimary => 'Welcome to';
 
   @override
@@ -761,4 +764,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get quizReviewScreen_reviewAnswersButton => 'Review Answers';
+
+  @override
+  String get generationSettingsDialog_title => 'Path Generation Settings';
+
+  @override
+  String get generationSettingsDialog_learningLevel => 'Learning Level';
+
+  @override
+  String get generationSettingsDialog_levelBeginner => 'Beginner';
+
+  @override
+  String get generationSettingsDialog_levelIntermediate => 'Intermediate';
+
+  @override
+  String get generationSettingsDialog_levelAdvanced => 'Advanced';
+
+  @override
+  String get generationSettingsDialog_cancel => 'Cancel';
+
+  @override
+  String get generationSettingsDialog_save => 'Save';
 }
