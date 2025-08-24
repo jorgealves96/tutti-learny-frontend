@@ -800,4 +800,16 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get generationSettingsDialog_save => 'Guardar';
+
+  @override
+  String get generationSettingsDialog_pathLength => 'Longitud de la Ruta';
+
+  @override
+  String get generationSettingsDialog_lengthQuick => 'Resumen Rápido';
+
+  @override
+  String get generationSettingsDialog_lengthStandard => 'Estándar';
+
+  @override
+  String get generationSettingsDialog_lengthInDepth => 'En Profundidad';
 }

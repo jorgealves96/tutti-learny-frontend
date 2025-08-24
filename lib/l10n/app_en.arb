@@ -448,5 +448,9 @@
    "generationSettingsDialog_levelIntermediate": "Intermediate",
    "generationSettingsDialog_levelAdvanced": "Advanced",
    "generationSettingsDialog_cancel": "Cancel",
-   "generationSettingsDialog_save": "Save"
+   "generationSettingsDialog_save": "Save",
+   "generationSettingsDialog_pathLength": "Path Length",
+   "generationSettingsDialog_lengthQuick": "Quick Overview",
+   "generationSettingsDialog_lengthStandard": "Standard",
+   "generationSettingsDialog_lengthInDepth": "In-Depth"
 }

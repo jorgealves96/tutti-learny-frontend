@@ -785,4 +785,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get generationSettingsDialog_save => 'Save';
+
+  @override
+  String get generationSettingsDialog_pathLength => 'Path Length';
+
+  @override
+  String get generationSettingsDialog_lengthQuick => 'Quick Overview';
+
+  @override
+  String get generationSettingsDialog_lengthStandard => 'Standard';
+
+  @override
+  String get generationSettingsDialog_lengthInDepth => 'In-Depth';
 }

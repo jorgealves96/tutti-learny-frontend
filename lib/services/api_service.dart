@@ -668,14 +668,15 @@ class ApiService {
     }
   }
 
-  Future<void> updatePathGenerationSettings(LearningLevel level) async {
+  Future<void> updatePathGenerationSettings(UserSettings settings) async {
     final ioClient = _createIOClient();
     final headers = await _getHeaders();
     final response = await ioClient.patch(
       Uri.parse('$_baseUrl/users/me/path-generation-settings'),
       headers: headers,
       body: jsonEncode({
-        'learningLevel': level.index, // Send the enum's integer value
+        'learningLevel': settings.learningLevel.index,
+        'pathLength': settings.pathLength.index, // Send the enum's integer value
       }),
     );
 

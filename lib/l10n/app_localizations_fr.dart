@@ -803,4 +803,16 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get generationSettingsDialog_save => 'Enregistrer';
+
+  @override
+  String get generationSettingsDialog_pathLength => 'Longueur du Parcours';
+
+  @override
+  String get generationSettingsDialog_lengthQuick => 'Aperçu Rapide';
+
+  @override
+  String get generationSettingsDialog_lengthStandard => 'Standard';
+
+  @override
+  String get generationSettingsDialog_lengthInDepth => 'Approfondi';
 }

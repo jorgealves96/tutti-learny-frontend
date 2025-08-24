@@ -1415,6 +1415,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save'**
   String get generationSettingsDialog_save;
+
+  /// No description provided for @generationSettingsDialog_pathLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Path Length'**
+  String get generationSettingsDialog_pathLength;
+
+  /// No description provided for @generationSettingsDialog_lengthQuick.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Overview'**
+  String get generationSettingsDialog_lengthQuick;
+
+  /// No description provided for @generationSettingsDialog_lengthStandard.
+  ///
+  /// In en, this message translates to:
+  /// **'Standard'**
+  String get generationSettingsDialog_lengthStandard;
+
+  /// No description provided for @generationSettingsDialog_lengthInDepth.
+  ///
+  /// In en, this message translates to:
+  /// **'In-Depth'**
+  String get generationSettingsDialog_lengthInDepth;
 }
 
 class _AppLocalizationsDelegate

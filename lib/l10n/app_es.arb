@@ -226,5 +226,9 @@
     "generationSettingsDialog_levelIntermediate": "Intermedio",
     "generationSettingsDialog_levelAdvanced": "Avanzado",
     "generationSettingsDialog_cancel": "Cancelar",
-    "generationSettingsDialog_save": "Guardar"
+    "generationSettingsDialog_save": "Guardar",
+    "generationSettingsDialog_pathLength": "Longitud de la Ruta",
+    "generationSettingsDialog_lengthQuick": "Resumen Rápido",
+    "generationSettingsDialog_lengthStandard": "Estándar",
+    "generationSettingsDialog_lengthInDepth": "En Profundidad"
 }

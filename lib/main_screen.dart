@@ -147,7 +147,8 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     });
   }
 
-  void _updateUserSettings(UserSettings newSettings) {
+  Future<void> _updateUserSettings(UserSettings newSettings) async {
+    await ApiService().updatePathGenerationSettings(newSettings);
     setState(() {
       _userSettings = newSettings;
     });

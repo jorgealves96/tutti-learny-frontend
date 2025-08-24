@@ -800,4 +800,16 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get generationSettingsDialog_save => 'Guardar';
+
+  @override
+  String get generationSettingsDialog_pathLength => 'Comprimento do Percurso';
+
+  @override
+  String get generationSettingsDialog_lengthQuick => 'Resumo Rápido';
+
+  @override
+  String get generationSettingsDialog_lengthStandard => 'Padrão';
+
+  @override
+  String get generationSettingsDialog_lengthInDepth => 'Aprofundado';
 }

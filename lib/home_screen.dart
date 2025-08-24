@@ -103,29 +103,29 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _showSettingsDialog() async {
     final l10n = AppLocalizations.of(context)!;
     final scaffoldMessenger = ScaffoldMessenger.of(context);
-    final currentLevel =
-        widget.userSettings?.learningLevel ?? LearningLevel.beginner;
+    final currentSettings =
+        widget.userSettings ??
+        UserSettings(
+          learningLevel: LearningLevel.beginner,
+          pathLength: PathLength.standard,
+        );
 
-    final newLevel = await showDialog<LearningLevel>(
+    // Show the dialog and wait for the full UserSettings object back.
+    final newSettings = await showDialog<UserSettings>(
       context: context,
       builder: (context) =>
-          GenerationSettingsDialog(currentLevel: currentLevel),
+          GenerationSettingsDialog(currentSettings: currentSettings),
     );
 
     // After the dialog closes, check if the widget is still on screen.
     if (!mounted) return;
 
     // Only proceed if the user selected a new level.
-    if (newLevel != null && newLevel != currentLevel) {
+    if (newSettings != null) {
       try {
-        // Call the API to save the new setting to your backend.
-        await ApiService().updatePathGenerationSettings(newLevel);
+        // The API call is now in the onSettingsChanged callback.
+        widget.onSettingsChanged(newSettings);
 
-      final newSettings = UserSettings(learningLevel: newLevel);
-      
-      widget.onSettingsChanged(newSettings);
-
-        // Show your custom success snackbar.
         showSuccessSnackBar(context, l10n.homeScreen_settingsSaved);
       } catch (e) {
         // If the API call fails, show a generic error message.
