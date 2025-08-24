@@ -147,6 +147,12 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     });
   }
 
+  void _updateUserSettings(UserSettings newSettings) {
+    setState(() {
+      _userSettings = newSettings;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -171,6 +177,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
             recentPaths: _myPaths,
             subscriptionStatus: _subscriptionStatus,
             userSettings: _userSettings,
+            onSettingsChanged: _updateUserSettings,
             onPathAction: _reloadData,
             homeFocusNode: _homeScreenFocusNode,
           ),

@@ -27,6 +27,7 @@ class HomeScreen extends StatefulWidget {
   final FocusNode homeFocusNode;
   final SubscriptionStatus? subscriptionStatus;
   final UserSettings? userSettings;
+  final void Function(UserSettings) onSettingsChanged;
 
   const HomeScreen({
     super.key,
@@ -35,6 +36,7 @@ class HomeScreen extends StatefulWidget {
     required this.homeFocusNode,
     required this.subscriptionStatus,
     required this.userSettings,
+    required this.onSettingsChanged,
   });
 
   @override
@@ -119,8 +121,9 @@ class _HomeScreenState extends State<HomeScreen> {
         // Call the API to save the new setting to your backend.
         await ApiService().updatePathGenerationSettings(newLevel);
 
-        // Call the existing refresh function to update the parent's state.
-        widget.onPathAction(); 
+      final newSettings = UserSettings(learningLevel: newLevel);
+      
+      widget.onSettingsChanged(newSettings);
 
         // Show your custom success snackbar.
         showSuccessSnackBar(context, l10n.homeScreen_settingsSaved);
