@@ -83,6 +83,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get homeScreen_settingsSaved => 'Settings saved!';
 
   @override
+  String get homeScreen_onboarding_settings_title => 'Ajustes de Ruta';
+
+  @override
+  String get homeScreen_onboarding_settings_description =>
+      'Toca aquí para personalizar la generación de rutas, como establecer tu nivel de aprendizaje.';
+
+  @override
   String get loginScreen_welcomePrimary => 'Bienvenido a';
 
   @override
@@ -781,7 +788,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get quizReviewScreen_reviewAnswersButton => 'Revisar Respuestas';
 
   @override
-  String get generationSettingsDialog_title => 'Ajustes de Generación de Rutas';
+  String get generationSettingsDialog_title => 'Ajustes de Ruta de Aprendizaje';
 
   @override
   String get generationSettingsDialog_learningLevel => 'Nivel de Aprendizaje';
@@ -812,4 +819,32 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get generationSettingsDialog_lengthInDepth => 'En Profundidad';
+
+  @override
+  String get generationSettingsDialog_levelBeginner_subtitle =>
+      'Para quienes no tienen conocimientos previos.';
+
+  @override
+  String get generationSettingsDialog_levelIntermediate_subtitle =>
+      'Asume que conoces lo básico.';
+
+  @override
+  String get generationSettingsDialog_levelAdvanced_subtitle =>
+      'Para quienes quieren profundizar más.';
+
+  @override
+  String get generationSettingsDialog_lengthQuick_subtitle =>
+      'Para un resumen breve del tema.';
+
+  @override
+  String get generationSettingsDialog_lengthStandard_subtitle =>
+      'Una guía equilibrada y completa.';
+
+  @override
+  String get generationSettingsDialog_lengthInDepth_subtitle =>
+      'Para un análisis detallado y profundo del tema.';
+
+  @override
+  String get generationSettingsDialog_unavailableInFreeTier =>
+      '(No disponible en el plan gratuito)';
 }

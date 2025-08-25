@@ -19,6 +19,8 @@
     "homeScreen_onboarding_welcome_description": "Esta es tu guía personal para aprender cualquier cosa. Vamos a mostrarte rápidamente cómo funciona.",
     "homeScreen_generationLimitExceeded": "Has alcanzado tu límite mensual para crear nuevas rutas. Considera actualizar tu suscripción para continuar.",
     "homeScreen_limitResetsOn": "Tu límite mensual se restablece el {date}.",
+    "homeScreen_onboarding_settings_title": "Ajustes de Ruta",
+    "homeScreen_onboarding_settings_description": "Toca aquí para personalizar la generación de rutas, como establecer tu nivel de aprendizaje.",
     "loginScreen_welcomePrimary": "Bienvenido a",
     "loginScreen_welcomeSecondary": "Tu guía personal para aprender cualquier cosa.",
     "loginScreen_continueWithGoogle": "Continuar con Google",
@@ -220,7 +222,7 @@
     "quizScreen_loadingSubtitle": "Para ayudar a reforzar lo que has aprendido, estamos analizando el contenido de tu ruta para crear un conjunto único de preguntas. Esto puede tardar un momento.",
     "quizReviewScreen_title": "Revisar Respuestas",
     "quizReviewScreen_reviewAnswersButton": "Revisar Respuestas",
-    "generationSettingsDialog_title": "Ajustes de Generación de Rutas",
+    "generationSettingsDialog_title": "Ajustes de Ruta de Aprendizaje",
     "generationSettingsDialog_learningLevel": "Nivel de Aprendizaje",
     "generationSettingsDialog_levelBeginner": "Principiante",
     "generationSettingsDialog_levelIntermediate": "Intermedio",
@@ -230,5 +232,12 @@
     "generationSettingsDialog_pathLength": "Longitud de la Ruta",
     "generationSettingsDialog_lengthQuick": "Resumen Rápido",
     "generationSettingsDialog_lengthStandard": "Estándar",
-    "generationSettingsDialog_lengthInDepth": "En Profundidad"
+    "generationSettingsDialog_lengthInDepth": "En Profundidad",
+    "generationSettingsDialog_levelBeginner_subtitle": "Para quienes no tienen conocimientos previos.",
+    "generationSettingsDialog_levelIntermediate_subtitle": "Asume que conoces lo básico.",
+    "generationSettingsDialog_levelAdvanced_subtitle": "Para quienes quieren profundizar más.",
+    "generationSettingsDialog_lengthQuick_subtitle": "Para un resumen breve del tema.",
+    "generationSettingsDialog_lengthStandard_subtitle": "Una guía equilibrada y completa.",
+    "generationSettingsDialog_lengthInDepth_subtitle": "Para un análisis detallado y profundo del tema.",
+    "generationSettingsDialog_unavailableInFreeTier": "(No disponible en el plan gratuito)"
 }

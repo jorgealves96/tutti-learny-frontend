@@ -101,6 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _showSettingsDialog() async {
+    FocusScope.of(context).requestFocus(FocusNode());
     final l10n = AppLocalizations.of(context)!;
     final scaffoldMessenger = ScaffoldMessenger.of(context);
     final currentSettings =
@@ -113,8 +114,10 @@ class _HomeScreenState extends State<HomeScreen> {
     // Show the dialog and wait for the full UserSettings object back.
     final newSettings = await showDialog<UserSettings>(
       context: context,
-      builder: (context) =>
-          GenerationSettingsDialog(currentSettings: currentSettings),
+      builder: (context) => GenerationSettingsDialog(
+        currentSettings: currentSettings,
+        subscriptionStatus: widget.subscriptionStatus,
+      ),
     );
 
     // After the dialog closes, check if the widget is still on screen.
@@ -407,6 +410,21 @@ class _HomeScreenState extends State<HomeScreen> {
           centerTitle: true,
           backgroundColor: Colors.transparent,
           elevation: 0,
+          actions: [
+            Showcase(
+              key: _settingsKey,
+              title: l10n.homeScreen_onboarding_settings_title,
+              description: l10n.homeScreen_onboarding_settings_description,
+              targetShapeBorder: const CircleBorder(),
+              child: IconButton(
+                icon: const Icon(Icons.settings_outlined),
+                onPressed: _showSettingsDialog,
+                iconSize: 28,
+                color: Colors.grey.shade600,
+              ),
+            ),
+            const SizedBox(width: 8), // Add a little padding
+          ],
         ),
         body: Builder(
           builder: (context) {
@@ -488,71 +506,50 @@ class _HomeScreenState extends State<HomeScreen> {
                               l10n.homeScreen_onboarding_prompt_description,
                         ),
                         const SizedBox(height: 20),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Showcase(
-                                key: _createPathKey,
-                                title: l10n
-                                    .homeScreen_onboarding_createButton_title,
-                                description: l10n
-                                    .homeScreen_onboarding_createButton_description,
-                                targetBorderRadius: BorderRadius.circular(12.0),
-                                child: ElevatedButton(
-                                  onPressed: _isCheckingSuggestions
-                                      ? null
-                                      : () => _startPathCreationFlow(l10n),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Theme.of(
-                                      context,
-                                    ).colorScheme.secondary,
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 16.0,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12.0),
-                                    ),
-                                    elevation: 5,
-                                  ),
-                                  child: _isCheckingSuggestions
-                                      ? const SizedBox(
-                                          height: 20,
-                                          width: 20,
-                                          child: CircularProgressIndicator(
-                                            color: Colors.white,
-                                            strokeWidth: 2,
-                                          ),
-                                        )
-                                      : Text(
-                                          l10n.homeScreen_createLearningPath,
-                                          style: const TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
-                                        ),
+                        Showcase(
+                          key: _createPathKey,
+                          title: l10n.homeScreen_onboarding_createButton_title,
+                          description: l10n
+                              .homeScreen_onboarding_createButton_description,
+                          targetBorderRadius: BorderRadius.circular(12.0),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: _isCheckingSuggestions
+                                  ? null
+                                  : () => _startPathCreationFlow(l10n),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Theme.of(
+                                  context,
+                                ).colorScheme.secondary,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16.0,
                                 ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                                elevation: 5,
                               ),
+                              child: _isCheckingSuggestions
+                                  ? const SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : Text(
+                                      l10n.homeScreen_createLearningPath,
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
                             ),
-                            const SizedBox(width: 16),
-                            // The new settings cogwheel button
-                            Showcase(
-                              key: _settingsKey,
-                              title: 'Path Settings', // TODO: Add to l10n
-                              description:
-                                  'Tap here to customize the path generation, like setting your learning level.', // TODO: Add to l10n
-                              targetShapeBorder: const CircleBorder(),
-                              child: IconButton(
-                                icon: const Icon(Icons.settings_outlined),
-                                onPressed: () {
-                                  _showSettingsDialog();
-                                },
-                                iconSize: 28,
-                                color: Colors.grey.shade600,
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                         _buildRecentPathsSection(context, l10n),
                       ],

@@ -29,6 +29,8 @@
    },
    "homeScreen_generationLimitExceeded": "You have reached your monthly limit for creating new paths. Consider upgrading to continue",
    "homeScreen_settingsSaved": "Settings saved!",
+   "homeScreen_onboarding_settings_title": "Path Settings",
+   "homeScreen_onboarding_settings_description": "Tap here to customize the path generation, like setting your learning level.",
    "loginScreen_welcomePrimary": "Welcome to",
    "loginScreen_welcomeSecondary": "Your personal guide to learn anything.",
    "loginScreen_continueWithGoogle": "Continue with Google",
@@ -442,7 +444,7 @@
    "quizScreen_loadingSubtitle": "To help reinforce what you've learned, we're analyzing your path's content to create a unique set of questions. This may take a moment.",
    "quizReviewScreen_title": "Review Answers",
    "quizReviewScreen_reviewAnswersButton": "Review Answers",
-   "generationSettingsDialog_title": "Path Generation Settings",
+   "generationSettingsDialog_title": "Learning Path Settings",
    "generationSettingsDialog_learningLevel": "Learning Level",
    "generationSettingsDialog_levelBeginner": "Beginner",
    "generationSettingsDialog_levelIntermediate": "Intermediate",
@@ -452,5 +454,12 @@
    "generationSettingsDialog_pathLength": "Path Length",
    "generationSettingsDialog_lengthQuick": "Quick Overview",
    "generationSettingsDialog_lengthStandard": "Standard",
-   "generationSettingsDialog_lengthInDepth": "In-Depth"
+   "generationSettingsDialog_lengthInDepth": "In-Depth",
+   "generationSettingsDialog_levelBeginner_subtitle": "For those with no prior knowledge.",
+   "generationSettingsDialog_levelIntermediate_subtitle": "Assumes you know the basics.",
+   "generationSettingsDialog_levelAdvanced_subtitle": "For those who want to dive deeper.",
+   "generationSettingsDialog_lengthQuick_subtitle": "For a brief summary of the topic.",
+   "generationSettingsDialog_lengthStandard_subtitle": "A balanced, comprehensive guide.",
+   "generationSettingsDialog_lengthInDepth_subtitle": "For a detailed, deep-dive into the subject.",
+   "generationSettingsDialog_unavailableInFreeTier": "(Unavailable in Free Tier)"
 }

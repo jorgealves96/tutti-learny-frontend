@@ -133,6 +133,11 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
 
   void _onItemTapped(int index) {
     if (_selectedIndex == index) return;
+
+    if (_selectedIndex == 1) {
+      _homeScreenFocusNode.unfocus();
+    }
+
     if (mounted) {
       setState(() {
         _selectedIndex = index;

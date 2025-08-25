@@ -85,6 +85,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get homeScreen_settingsSaved => 'Settings saved!';
 
   @override
+  String get homeScreen_onboarding_settings_title => 'Paramètres du Parcours';
+
+  @override
+  String get homeScreen_onboarding_settings_description =>
+      'Appuyez ici pour personnaliser la génération de parcours, comme définir votre niveau d\'apprentissage.';
+
+  @override
   String get loginScreen_welcomePrimary => 'Bienvenue sur';
 
   @override
@@ -783,7 +790,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get generationSettingsDialog_title =>
-      'Paramètres de Génération de Parcours';
+      'Paramètres du Parcours d\'Apprentissage';
 
   @override
   String get generationSettingsDialog_learningLevel =>
@@ -815,4 +822,32 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get generationSettingsDialog_lengthInDepth => 'Approfondi';
+
+  @override
+  String get generationSettingsDialog_levelBeginner_subtitle =>
+      'Pour ceux qui n\'ont aucune connaissance préalable.';
+
+  @override
+  String get generationSettingsDialog_levelIntermediate_subtitle =>
+      'Suppose que vous connaissez les bases.';
+
+  @override
+  String get generationSettingsDialog_levelAdvanced_subtitle =>
+      'Pour ceux qui veulent approfondir.';
+
+  @override
+  String get generationSettingsDialog_lengthQuick_subtitle =>
+      'Pour un bref résumé du sujet.';
+
+  @override
+  String get generationSettingsDialog_lengthStandard_subtitle =>
+      'Un guide équilibré et complet.';
+
+  @override
+  String get generationSettingsDialog_lengthInDepth_subtitle =>
+      'Pour une analyse détaillée et approfondie du sujet.';
+
+  @override
+  String get generationSettingsDialog_unavailableInFreeTier =>
+      '(Non disponible dans le forfait gratuit)';
 }

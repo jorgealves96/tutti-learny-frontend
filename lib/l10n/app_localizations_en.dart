@@ -82,6 +82,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeScreen_settingsSaved => 'Settings saved!';
 
   @override
+  String get homeScreen_onboarding_settings_title => 'Path Settings';
+
+  @override
+  String get homeScreen_onboarding_settings_description =>
+      'Tap here to customize the path generation, like setting your learning level.';
+
+  @override
   String get loginScreen_welcomePrimary => 'Welcome to';
 
   @override
@@ -766,7 +773,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quizReviewScreen_reviewAnswersButton => 'Review Answers';
 
   @override
-  String get generationSettingsDialog_title => 'Path Generation Settings';
+  String get generationSettingsDialog_title => 'Learning Path Settings';
 
   @override
   String get generationSettingsDialog_learningLevel => 'Learning Level';
@@ -797,4 +804,32 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get generationSettingsDialog_lengthInDepth => 'In-Depth';
+
+  @override
+  String get generationSettingsDialog_levelBeginner_subtitle =>
+      'For those with no prior knowledge.';
+
+  @override
+  String get generationSettingsDialog_levelIntermediate_subtitle =>
+      'Assumes you know the basics.';
+
+  @override
+  String get generationSettingsDialog_levelAdvanced_subtitle =>
+      'For those who want to dive deeper.';
+
+  @override
+  String get generationSettingsDialog_lengthQuick_subtitle =>
+      'For a brief summary of the topic.';
+
+  @override
+  String get generationSettingsDialog_lengthStandard_subtitle =>
+      'A balanced, comprehensive guide.';
+
+  @override
+  String get generationSettingsDialog_lengthInDepth_subtitle =>
+      'For a detailed, deep-dive into the subject.';
+
+  @override
+  String get generationSettingsDialog_unavailableInFreeTier =>
+      '(Unavailable in Free Tier)';
 }

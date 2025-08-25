@@ -19,6 +19,8 @@
     "homeScreen_onboarding_welcome_description": "Ceci est votre guide personnel pour tout apprendre. Voyons rapidement comment cela fonctionne.",
     "homeScreen_generationLimitExceeded": "Vous avez atteint votre limite mensuelle pour la création de nouveaux parcours. Vous pouvez surclasser votre abonnement pour continuer.",
     "homeScreen_limitResetsOn": "Votre limite mensuelle se réinitialise le {date}.",
+    "homeScreen_onboarding_settings_title": "Paramètres du Parcours",
+    "homeScreen_onboarding_settings_description": "Appuyez ici pour personnaliser la génération de parcours, comme définir votre niveau d'apprentissage.",
     "loginScreen_welcomePrimary": "Bienvenue sur",
     "loginScreen_welcomeSecondary": "Votre guide personnel pour tout apprendre.",
     "loginScreen_continueWithGoogle": "Continuer avec Google",
@@ -220,7 +222,7 @@
     "quizScreen_loadingSubtitle": "Pour aider à renforcer ce que vous avez appris, nous analysons le contenu de votre parcours pour créer un ensemble unique de questions. Cela peut prendre un moment.",
     "quizReviewScreen_title": "Vérifier les Réponses",
     "quizReviewScreen_reviewAnswersButton": "Vérifier les Réponses",
-    "generationSettingsDialog_title": "Paramètres de Génération de Parcours",
+    "generationSettingsDialog_title": "Paramètres du Parcours d'Apprentissage",
     "generationSettingsDialog_learningLevel": "Niveau d'Apprentissage",
     "generationSettingsDialog_levelBeginner": "Débutant",
     "generationSettingsDialog_levelIntermediate": "Intermédiaire",
@@ -230,5 +232,12 @@
     "generationSettingsDialog_pathLength": "Longueur du Parcours",
     "generationSettingsDialog_lengthQuick": "Aperçu Rapide",
     "generationSettingsDialog_lengthStandard": "Standard",
-    "generationSettingsDialog_lengthInDepth": "Approfondi"
+    "generationSettingsDialog_lengthInDepth": "Approfondi",
+    "generationSettingsDialog_levelBeginner_subtitle": "Pour ceux qui n'ont aucune connaissance préalable.",
+    "generationSettingsDialog_levelIntermediate_subtitle": "Suppose que vous connaissez les bases.",
+    "generationSettingsDialog_levelAdvanced_subtitle": "Pour ceux qui veulent approfondir.",
+    "generationSettingsDialog_lengthQuick_subtitle": "Pour un bref résumé du sujet.",
+    "generationSettingsDialog_lengthStandard_subtitle": "Un guide équilibré et complet.",
+    "generationSettingsDialog_lengthInDepth_subtitle": "Pour une analyse détaillée et approfondie du sujet.",
+    "generationSettingsDialog_unavailableInFreeTier": "(Non disponible dans le forfait gratuit)"
 }
