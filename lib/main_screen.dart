@@ -7,6 +7,7 @@ import 'my_paths_screen.dart';
 import 'profile_screen.dart';
 import 'models/profile_stats_model.dart';
 import 'models/subscription_status_model.dart';
+import 'models/user_settings_model.dart';
 import 'l10n/app_localizations.dart';
 
 class MainScreen extends StatefulWidget {
@@ -31,13 +32,14 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   List<MyPath>? _myPaths;
   ProfileStats? _profileStats;
   SubscriptionStatus? _subscriptionStatus;
+  UserSettings? _userSettings;
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
     _initializeData();
-    
+
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -73,12 +75,14 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
       _myPaths = null;
       _profileStats = null;
       _subscriptionStatus = null;
+      _userSettings = null;
     });
 
     Future.wait([
       _fetchMyPaths(),
       _fetchProfileStats(),
       _fetchSubscriptionStatus(),
+      _fetchUserSettings(),
     ]).whenComplete(() {
       if (mounted) {
         setState(() {
@@ -118,8 +122,22 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     }
   }
 
+  Future<void> _fetchUserSettings() async {
+    try {
+      final settings = await _apiService.fetchUserSettings();
+      if (mounted) setState(() => _userSettings = settings);
+    } catch (e) {
+      debugPrint('Failed to fetch user settings: $e');
+    }
+  }
+
   void _onItemTapped(int index) {
     if (_selectedIndex == index) return;
+
+    if (_selectedIndex == 1) {
+      _homeScreenFocusNode.unfocus();
+    }
+
     if (mounted) {
       setState(() {
         _selectedIndex = index;
@@ -131,6 +149,13 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     _onItemTapped(1);
     Future.delayed(const Duration(milliseconds: 50), () {
       _homeScreenFocusNode.requestFocus();
+    });
+  }
+
+  Future<void> _updateUserSettings(UserSettings newSettings) async {
+    await ApiService().updatePathGenerationSettings(newSettings);
+    setState(() {
+      _userSettings = newSettings;
     });
   }
 
@@ -157,6 +182,8 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
             key: const PageStorageKey('HomeScreen'),
             recentPaths: _myPaths,
             subscriptionStatus: _subscriptionStatus,
+            userSettings: _userSettings,
+            onSettingsChanged: _updateUserSettings,
             onPathAction: _reloadData,
             homeFocusNode: _homeScreenFocusNode,
           ),

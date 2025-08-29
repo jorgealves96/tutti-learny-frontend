@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'services/auth_service.dart';
 import 'models/my_path_model.dart';
@@ -18,12 +17,16 @@ import 'models/path_detail_model.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
+import 'models/user_settings_model.dart';
+import 'widgets/generation_settings_dialog.dart';
 
 class HomeScreen extends StatefulWidget {
   final List<MyPath>? recentPaths;
   final VoidCallback onPathAction;
   final FocusNode homeFocusNode;
   final SubscriptionStatus? subscriptionStatus;
+  final UserSettings? userSettings;
+  final void Function(UserSettings) onSettingsChanged;
 
   const HomeScreen({
     super.key,
@@ -31,6 +34,8 @@ class HomeScreen extends StatefulWidget {
     required this.onPathAction,
     required this.homeFocusNode,
     required this.subscriptionStatus,
+    required this.userSettings,
+    required this.onSettingsChanged,
   });
 
   @override
@@ -40,18 +45,17 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _promptController = TextEditingController();
   final ApiService _apiService = ApiService();
-  User? _user;
   bool _isCheckingSuggestions = false;
 
   // Showcase things
   final GlobalKey _welcomeKey = GlobalKey();
   final GlobalKey _promptKey = GlobalKey();
   final GlobalKey _createPathKey = GlobalKey();
+  final GlobalKey _settingsKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
-    _user = AuthService.currentUser;
   }
 
   @override
@@ -73,7 +77,12 @@ class _HomeScreenState extends State<HomeScreen> {
     // This is the function that will start the showcase
     void startShowcase() {
       final showCase = ShowCaseWidget.of(context);
-      showCase.startShowCase([_welcomeKey, _promptKey, _createPathKey]);
+      showCase.startShowCase([
+        _welcomeKey,
+        _promptKey,
+        _createPathKey,
+        _settingsKey,
+      ]);
       prefs.setBool(homeScreenTourKey, true);
     }
 
@@ -87,6 +96,45 @@ class _HomeScreenState extends State<HomeScreen> {
           startShowcase();
         }
       });
+    }
+  }
+
+  Future<void> _showSettingsDialog() async {
+    FocusScope.of(context).requestFocus(FocusNode());
+    final l10n = AppLocalizations.of(context)!;
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    final currentSettings =
+        widget.userSettings ??
+        UserSettings(
+          learningLevel: LearningLevel.beginner,
+          pathLength: PathLength.standard,
+        );
+
+    // Show the dialog and wait for the full UserSettings object back.
+    final newSettings = await showDialog<UserSettings>(
+      context: context,
+      builder: (context) => GenerationSettingsDialog(
+        currentSettings: currentSettings,
+        subscriptionStatus: widget.subscriptionStatus,
+      ),
+    );
+
+    // After the dialog closes, check if the widget is still on screen.
+    if (!mounted) return;
+
+    // Only proceed if the user selected a new level.
+    if (newSettings != null) {
+      try {
+        // The API call is now in the onSettingsChanged callback.
+        widget.onSettingsChanged(newSettings);
+
+        showSuccessSnackBar(context, l10n.homeScreen_settingsSaved);
+      } catch (e) {
+        // If the API call fails, show a generic error message.
+        scaffoldMessenger.showSnackBar(
+          const SnackBar(content: Text('Failed to save settings.')),
+        );
+      }
     }
   }
 
@@ -361,6 +409,21 @@ class _HomeScreenState extends State<HomeScreen> {
           centerTitle: true,
           backgroundColor: Colors.transparent,
           elevation: 0,
+          actions: [
+            Showcase(
+              key: _settingsKey,
+              title: l10n.homeScreen_onboarding_settings_title,
+              description: l10n.homeScreen_onboarding_settings_description,
+              targetShapeBorder: const CircleBorder(),
+              child: IconButton(
+                icon: const Icon(Icons.settings_outlined),
+                onPressed: _showSettingsDialog,
+                iconSize: 28,
+                color: Colors.grey.shade600,
+              ),
+            ),
+            const SizedBox(width: 8), // Add a little padding
+          ],
         ),
         body: Builder(
           builder: (context) {

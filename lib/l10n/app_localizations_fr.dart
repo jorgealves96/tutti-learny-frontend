@@ -82,6 +82,16 @@ class AppLocalizationsFr extends AppLocalizations {
       'Vous avez atteint votre limite mensuelle pour la création de nouveaux parcours. Vous pouvez surclasser votre abonnement pour continuer.';
 
   @override
+  String get homeScreen_settingsSaved => 'Settings saved!';
+
+  @override
+  String get homeScreen_onboarding_settings_title => 'Paramètres du Parcours';
+
+  @override
+  String get homeScreen_onboarding_settings_description =>
+      'Appuyez ici pour personnaliser la génération de parcours, comme définir votre niveau d\'apprentissage.';
+
+  @override
   String get loginScreen_welcomePrimary => 'Bienvenue sur';
 
   @override
@@ -777,4 +787,67 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get quizReviewScreen_reviewAnswersButton => 'Vérifier les Réponses';
+
+  @override
+  String get generationSettingsDialog_title =>
+      'Paramètres du Parcours d\'Apprentissage';
+
+  @override
+  String get generationSettingsDialog_learningLevel =>
+      'Niveau d\'Apprentissage';
+
+  @override
+  String get generationSettingsDialog_levelBeginner => 'Débutant';
+
+  @override
+  String get generationSettingsDialog_levelIntermediate => 'Intermédiaire';
+
+  @override
+  String get generationSettingsDialog_levelAdvanced => 'Avancé';
+
+  @override
+  String get generationSettingsDialog_cancel => 'Annuler';
+
+  @override
+  String get generationSettingsDialog_save => 'Enregistrer';
+
+  @override
+  String get generationSettingsDialog_pathLength => 'Longueur du Parcours';
+
+  @override
+  String get generationSettingsDialog_lengthQuick => 'Aperçu Rapide';
+
+  @override
+  String get generationSettingsDialog_lengthStandard => 'Standard';
+
+  @override
+  String get generationSettingsDialog_lengthInDepth => 'Approfondi';
+
+  @override
+  String get generationSettingsDialog_levelBeginner_subtitle =>
+      'Pour ceux qui n\'ont aucune connaissance préalable.';
+
+  @override
+  String get generationSettingsDialog_levelIntermediate_subtitle =>
+      'Suppose que vous connaissez les bases.';
+
+  @override
+  String get generationSettingsDialog_levelAdvanced_subtitle =>
+      'Pour ceux qui veulent approfondir.';
+
+  @override
+  String get generationSettingsDialog_lengthQuick_subtitle =>
+      'Pour un bref résumé du sujet.';
+
+  @override
+  String get generationSettingsDialog_lengthStandard_subtitle =>
+      'Un guide équilibré et complet.';
+
+  @override
+  String get generationSettingsDialog_lengthInDepth_subtitle =>
+      'Pour une analyse détaillée et approfondie du sujet.';
+
+  @override
+  String get generationSettingsDialog_unavailableInFreeTier =>
+      '(Non disponible dans le forfait gratuit)';
 }

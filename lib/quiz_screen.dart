@@ -68,19 +68,11 @@ class _QuizScreenState extends State<QuizScreen>
     if (_quiz == null) return;
 
     setState(() => _isSubmitting = true);
-    final l10n = AppLocalizations.of(context)!;
 
     try {
-      int correctAnswers = 0;
       List<UserAnswer> answersList = [];
       for (var question in _quiz!.questions) {
         final selectedIndex = _userAnswers[question.id] ?? -1;
-        final isCorrect = selectedIndex == question.correctAnswerIndex;
-
-        if (isCorrect) {
-          correctAnswers++;
-        }
-
         answersList.add(
           UserAnswer(
             questionId: question.id,

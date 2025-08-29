@@ -17,6 +17,20 @@ import 'package:flutter/foundation.dart';
 import 'services/notification_service.dart';
 import 'providers/notification_settings_provider.dart';
 
+void _setupRevenueCatAuthListener() {
+  FirebaseAuth.instance.authStateChanges().listen((User? user) {
+    if (user != null) {
+      // User logged in: identify them with RevenueCat
+      Purchases.logIn(user.uid);
+      print('RevenueCat: Identified user ${user.uid}');
+    } else {
+      // User logged out: reset RevenueCat
+      Purchases.logOut();
+      print('RevenueCat: Logged out');
+    }
+  });
+}
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -39,6 +53,7 @@ Future<void> main() async {
   }
 
   await Purchases.configure(configuration);
+  _setupRevenueCatAuthListener();
 
   runApp(
     MultiProvider(

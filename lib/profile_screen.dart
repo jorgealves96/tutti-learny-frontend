@@ -542,7 +542,7 @@ class _AccountManagementState extends State<_AccountManagement> {
             title: Text(l10n.profileScreen_manageNotifications),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
-              FocusScope.of(context).unfocus();
+              FocusScope.of(context).requestFocus(FocusNode());
 
               Navigator.push(
                 context,

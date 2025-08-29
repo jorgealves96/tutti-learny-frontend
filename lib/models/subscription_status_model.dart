@@ -1,3 +1,5 @@
+import 'user_settings_model.dart';
+
 class SubscriptionStatus {
   final String tier;
   final int pathsGeneratedThisMonth;
@@ -9,6 +11,7 @@ class SubscriptionStatus {
   final DateTime? subscriptionExpiryDate;
   final int? daysLeftInSubscription;
   final DateTime lastUsageResetDate;
+  final LearningLevel learningLevel;
 
   SubscriptionStatus({
     required this.tier,
@@ -21,6 +24,7 @@ class SubscriptionStatus {
     this.subscriptionExpiryDate,
     this.daysLeftInSubscription,
     required this.lastUsageResetDate,
+    required this.learningLevel,
   });
 
   factory SubscriptionStatus.fromJson(Map<String, dynamic> json) {
@@ -39,6 +43,7 @@ class SubscriptionStatus {
           : null,
       daysLeftInSubscription: json['daysLeftInSubscription'],
       lastUsageResetDate: DateTime.parse(json['lastUsageResetDate']),
+      learningLevel: LearningLevel.values[json['learningLevel']],
     );
   }
 }

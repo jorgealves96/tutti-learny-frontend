@@ -222,6 +222,24 @@ abstract class AppLocalizations {
   /// **'You have reached your monthly limit for creating new paths. Consider upgrading to continue'**
   String get homeScreen_generationLimitExceeded;
 
+  /// No description provided for @homeScreen_settingsSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings saved!'**
+  String get homeScreen_settingsSaved;
+
+  /// No description provided for @homeScreen_onboarding_settings_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Path Settings'**
+  String get homeScreen_onboarding_settings_title;
+
+  /// No description provided for @homeScreen_onboarding_settings_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap here to customize the path generation, like setting your learning level.'**
+  String get homeScreen_onboarding_settings_description;
+
   /// No description provided for @loginScreen_welcomePrimary.
   ///
   /// In en, this message translates to:
@@ -1367,6 +1385,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Review Answers'**
   String get quizReviewScreen_reviewAnswersButton;
+
+  /// No description provided for @generationSettingsDialog_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Learning Path Settings'**
+  String get generationSettingsDialog_title;
+
+  /// No description provided for @generationSettingsDialog_learningLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Learning Level'**
+  String get generationSettingsDialog_learningLevel;
+
+  /// No description provided for @generationSettingsDialog_levelBeginner.
+  ///
+  /// In en, this message translates to:
+  /// **'Beginner'**
+  String get generationSettingsDialog_levelBeginner;
+
+  /// No description provided for @generationSettingsDialog_levelIntermediate.
+  ///
+  /// In en, this message translates to:
+  /// **'Intermediate'**
+  String get generationSettingsDialog_levelIntermediate;
+
+  /// No description provided for @generationSettingsDialog_levelAdvanced.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced'**
+  String get generationSettingsDialog_levelAdvanced;
+
+  /// No description provided for @generationSettingsDialog_cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get generationSettingsDialog_cancel;
+
+  /// No description provided for @generationSettingsDialog_save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get generationSettingsDialog_save;
+
+  /// No description provided for @generationSettingsDialog_pathLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Path Length'**
+  String get generationSettingsDialog_pathLength;
+
+  /// No description provided for @generationSettingsDialog_lengthQuick.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Overview'**
+  String get generationSettingsDialog_lengthQuick;
+
+  /// No description provided for @generationSettingsDialog_lengthStandard.
+  ///
+  /// In en, this message translates to:
+  /// **'Standard'**
+  String get generationSettingsDialog_lengthStandard;
+
+  /// No description provided for @generationSettingsDialog_lengthInDepth.
+  ///
+  /// In en, this message translates to:
+  /// **'In-Depth'**
+  String get generationSettingsDialog_lengthInDepth;
+
+  /// No description provided for @generationSettingsDialog_levelBeginner_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'For those with no prior knowledge.'**
+  String get generationSettingsDialog_levelBeginner_subtitle;
+
+  /// No description provided for @generationSettingsDialog_levelIntermediate_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Assumes you know the basics.'**
+  String get generationSettingsDialog_levelIntermediate_subtitle;
+
+  /// No description provided for @generationSettingsDialog_levelAdvanced_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'For those who want to dive deeper.'**
+  String get generationSettingsDialog_levelAdvanced_subtitle;
+
+  /// No description provided for @generationSettingsDialog_lengthQuick_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'For a brief summary of the topic.'**
+  String get generationSettingsDialog_lengthQuick_subtitle;
+
+  /// No description provided for @generationSettingsDialog_lengthStandard_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A balanced, comprehensive guide.'**
+  String get generationSettingsDialog_lengthStandard_subtitle;
+
+  /// No description provided for @generationSettingsDialog_lengthInDepth_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'For a detailed, deep-dive into the subject.'**
+  String get generationSettingsDialog_lengthInDepth_subtitle;
+
+  /// No description provided for @generationSettingsDialog_unavailableInFreeTier.
+  ///
+  /// In en, this message translates to:
+  /// **'(Unavailable in Free Tier)'**
+  String get generationSettingsDialog_unavailableInFreeTier;
 }
 
 class _AppLocalizationsDelegate
