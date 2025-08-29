@@ -70,16 +70,9 @@ class _QuizScreenState extends State<QuizScreen>
     setState(() => _isSubmitting = true);
 
     try {
-      int correctAnswers = 0;
       List<UserAnswer> answersList = [];
       for (var question in _quiz!.questions) {
         final selectedIndex = _userAnswers[question.id] ?? -1;
-        final isCorrect = selectedIndex == question.correctAnswerIndex;
-
-        if (isCorrect) {
-          correctAnswers++;
-        }
-
         answersList.add(
           UserAnswer(
             questionId: question.id,
